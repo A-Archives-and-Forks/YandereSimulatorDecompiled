@@ -726,7 +726,11 @@ public class PoliceScript : MonoBehaviour
 						{
 							Debug.Log("Yo, we got to this part of the code.");
 							BloodyClothing -= RedPaintClothing;
-							if (BloodyClothing > 0)
+							if (Corpses > 0)
+							{
+								ResultsLabels[0].text = Protagonist + " attempts to attend class without disposing of a corpse.";
+							}
+							else if (BloodyClothing > 0)
 							{
 								ResultsLabels[0].text = Protagonist + " attempts to attend class without disposing of bloody clothing.";
 							}
@@ -734,9 +738,13 @@ public class PoliceScript : MonoBehaviour
 							{
 								ResultsLabels[0].text = Protagonist + " attempts to attend class without disposing of clothing that was stained with red paint.";
 							}
+							else if (BloodyWeapons > 0)
+							{
+								ResultsLabels[0].text = Protagonist + " attempts to attend class without disposing of a bloody weapon.";
+							}
 							else
 							{
-								ResultsLabels[0].text = Protagonist + " attempts to attend class without disposing of a corpse.";
+								ResultsLabels[0].text = Protagonist + " attempts to attend class without disposing of murder evidence.";
 							}
 							BloodyClothing += RedPaintClothing;
 						}

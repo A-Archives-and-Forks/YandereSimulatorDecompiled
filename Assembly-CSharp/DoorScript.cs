@@ -66,8 +66,7 @@ public class DoorScript : MonoBehaviour
 
 	public bool Open;
 
-	[SerializeField]
-	private bool Near;
+	public bool Near;
 
 	[SerializeField]
 	private float ShiftNorth = -0.1f;

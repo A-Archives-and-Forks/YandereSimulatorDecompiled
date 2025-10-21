@@ -28,11 +28,17 @@ public class NoteLockerScript : MonoBehaviour
 
 	public GameObject Note;
 
-	public AudioClip NoteSuccess;
+	public AudioClip[] NoteSuccess;
 
-	public AudioClip NoteFail;
+	public AudioClip[] NoteFail;
 
-	public AudioClip NoteFind;
+	public AudioClip[] NoteFind;
+
+	public string[] SuccessText;
+
+	public string[] FailText;
+
+	public string[] FindText;
 
 	public bool CheckingNote;
 
@@ -217,20 +223,32 @@ public class NoteLockerScript : MonoBehaviour
 		}
 		if (Phase == 1)
 		{
-			if (Timer > 2.3333333f)
+			if (!(Timer > 2.3333333f))
 			{
-				if (!Student.Male)
+				return;
+			}
+			if (!Student.Male)
+			{
+				if (Student.Rival)
 				{
+					AudioClip audioClip = NoteFind[Student.StudentID - 10];
 					Yandere.Subtitle.Speaker = Student;
-					Yandere.Subtitle.UpdateLabel(SubtitleType.NoteReaction, 1, 3f);
+					Student.SpawnTimeRespectingAudioSource(audioClip, 0f, Follow: true);
+					Yandere.Subtitle.CustomText = FindText[Student.StudentID - 10];
+					Yandere.Subtitle.UpdateLabel(SubtitleType.Custom, 0, audioClip.length);
 				}
 				else
 				{
 					Yandere.Subtitle.Speaker = Student;
-					Yandere.Subtitle.UpdateLabel(SubtitleType.NoteReactionMale, 1, 3f);
+					Yandere.Subtitle.UpdateLabel(SubtitleType.NoteReaction, 1, 3f);
 				}
-				Phase++;
 			}
+			else
+			{
+				Yandere.Subtitle.Speaker = Student;
+				Yandere.Subtitle.UpdateLabel(SubtitleType.NoteReactionMale, 1, 3f);
+			}
+			Phase++;
 		}
 		else
 		{
@@ -240,27 +258,54 @@ public class NoteLockerScript : MonoBehaviour
 			}
 			if (!Success)
 			{
-				if (Timer > 9.666667f)
+				if (!(Timer > 9.666667f))
 				{
-					if (!Student.Male)
+					return;
+				}
+				if (!Student.Male)
+				{
+					if (Student.Rival)
 					{
+						AudioClip audioClip2 = NoteFail[Student.StudentID - 10];
 						Yandere.Subtitle.Speaker = Student;
-						Yandere.Subtitle.UpdateLabel(SubtitleType.NoteReaction, 2, 3f);
+						Student.SpawnTimeRespectingAudioSource(audioClip2, 0f, Follow: true);
+						Yandere.Subtitle.CustomText = FailText[Student.StudentID - 10];
+						Yandere.Subtitle.UpdateLabel(SubtitleType.Custom, 0, audioClip2.length);
 					}
 					else
 					{
 						Yandere.Subtitle.Speaker = Student;
-						Yandere.Subtitle.UpdateLabel(SubtitleType.NoteReactionMale, 2, 3f);
+						Yandere.Subtitle.UpdateLabel(SubtitleType.NoteReaction, 2, 3f);
 					}
-					Phase++;
 				}
-			}
-			else if (Timer > 10.166667f)
-			{
-				if (!Student.Male)
+				else
 				{
 					Yandere.Subtitle.Speaker = Student;
-					Yandere.Subtitle.UpdateLabel(SubtitleType.NoteReaction, 3, 3f);
+					Yandere.Subtitle.UpdateLabel(SubtitleType.NoteReactionMale, 2, 3f);
+				}
+				Phase++;
+			}
+			else
+			{
+				if (!(Timer > 10.166667f))
+				{
+					return;
+				}
+				if (!Student.Male)
+				{
+					if (Student.Rival)
+					{
+						AudioClip audioClip3 = NoteSuccess[Student.StudentID - 10];
+						Yandere.Subtitle.Speaker = Student;
+						Student.SpawnTimeRespectingAudioSource(audioClip3, 0f, Follow: true);
+						Yandere.Subtitle.CustomText = SuccessText[Student.StudentID - 10];
+						Yandere.Subtitle.UpdateLabel(SubtitleType.Custom, 0, audioClip3.length);
+					}
+					else
+					{
+						Yandere.Subtitle.Speaker = Student;
+						Yandere.Subtitle.UpdateLabel(SubtitleType.NoteReaction, 3, 3f);
+					}
 				}
 				else
 				{

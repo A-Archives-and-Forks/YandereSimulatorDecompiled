@@ -322,8 +322,7 @@ public class ModernRivalEventScript : MonoBehaviour
 			}
 			if (Instructions[Phase].Audio != null)
 			{
-				MyAudio.clip = Instructions[Phase].Audio;
-				AudioSource.PlayClipAtPoint(MyAudio.clip, Char[0].transform.position);
+				Char[i].SpawnTimeRespectingAudioSource(Instructions[Phase].Audio);
 			}
 			if (num < 10f)
 			{
@@ -396,14 +395,15 @@ public class ModernRivalEventScript : MonoBehaviour
 				Char[0].SmartPhone.transform.localEulerAngles = new Vector3(15f, -150f, 180f);
 				Char[0].SmartPhone.SetActive(value: true);
 			}
+			Char[0].PhoneCallScreen.SetActive(value: true);
 			break;
 		case 2:
 			if (!Private)
 			{
-				Char[0].SmartPhone.transform.localPosition = new Vector3(-0.005f, -0.0075f, 0f);
-				Char[0].SmartPhone.transform.localEulerAngles = new Vector3(15f, -150f, 180f);
-				Char[0].CharacterAnimation["f02_OsanaPhoneCall_00"].speed = 0.6f;
+				Char[0].SmartPhone.transform.localPosition = new Vector3(0.01f, 0.005f, 0f);
+				Char[0].SmartPhone.transform.localEulerAngles = new Vector3(0f, -155f, 165f);
 				Char[0].IgnoringPettyActions = false;
+				Char[0].Cosmetic.ResetBlendshapes();
 				Char[0].Private = true;
 				Private = true;
 			}
@@ -565,6 +565,9 @@ public class ModernRivalEventScript : MonoBehaviour
 		case 22:
 			EventObject[0].SetActive(value: true);
 			break;
+		case 23:
+			Char[0].PhoneCallScreen.SetActive(value: false);
+			break;
 		}
 	}
 
@@ -602,6 +605,8 @@ public class ModernRivalEventScript : MonoBehaviour
 		if (Char[0] != null)
 		{
 			Char[0].WalkAnim = Char[0].OriginalWalkAnim;
+			Char[0].PhoneCallScreen.SetActive(value: false);
+			Char[0].Cosmetic.EyeTypeCheck();
 		}
 		for (int i = 0; i < Char.Length; i++)
 		{
@@ -618,6 +623,10 @@ public class ModernRivalEventScript : MonoBehaviour
 				else
 				{
 					Debug.Log("Character # " + i + " was alarmed when event ended.");
+				}
+				if (Char[i].TimeRespectingAudioSource != null)
+				{
+					UnityEngine.Object.Destroy(Char[i].TimeRespectingAudioSource);
 				}
 				Char[i].CharacterAnimation.cullingType = AnimationCullingType.BasedOnRenderers;
 				Char[i].CurrentDestination = Char[i].Destinations[Char[i].Phase];

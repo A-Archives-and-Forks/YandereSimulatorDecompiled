@@ -296,7 +296,7 @@ public class StalkerYandereScript : MonoBehaviour
 		}
 		else if (GameGlobals.Eighties && EightiesAttacher != null)
 		{
-			if (HomeGlobals.Night || DateGlobals.Weekday == DayOfWeek.Sunday || DateGlobals.Weekday == DayOfWeek.Saturday)
+			if ((HomeGlobals.Night && GameGlobals.VtuberID == 0) || (DateGlobals.Weekday == DayOfWeek.Sunday && GameGlobals.VtuberID == 0) || (DateGlobals.Weekday == DayOfWeek.Saturday && GameGlobals.VtuberID == 0))
 			{
 				BreastL.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
 				BreastR.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
@@ -315,7 +315,6 @@ public class StalkerYandereScript : MonoBehaviour
 			MyRenderer.sharedMesh = null;
 			PonytailRenderer.transform.parent.gameObject.SetActive(value: false);
 			RyobaHair.SetActive(value: true);
-			Debug.Log("Setting Ryoba blendshapes.");
 			if (!Street)
 			{
 				MyRenderer.SetBlendShapeWeight(0, 50f);
@@ -743,6 +742,11 @@ public class StalkerYandereScript : MonoBehaviour
 							StudentGlobals.SetStudentMissing(j, value: false);
 							StudentGlobals.SetStudentDead(j, value: false);
 						}
+						PlayerGlobals.BoughtLockpick = false;
+						PlayerGlobals.FakeID = false;
+						PlayerGlobals.BoughtNarcotics = false;
+						PlayerGlobals.BoughtPoison = false;
+						PlayerGlobals.BoughtExplosive = false;
 						Application.LoadLevel(Application.loadedLevel);
 					}
 				}

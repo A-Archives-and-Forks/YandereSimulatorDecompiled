@@ -382,7 +382,7 @@ public class OsanaMorningFriendEventScript : MonoBehaviour
 		}
 		if (Rival != null)
 		{
-			if (!Rival.Alarmed && !Rival.Splashed)
+			if (!Rival.Alarmed && !Rival.Splashed && !Rival.Electrified && !Rival.Electrocuted)
 			{
 				Rival.CharacterAnimation.CrossFade(Rival.WalkAnim);
 				Rival.DistanceToDestination = 100f;

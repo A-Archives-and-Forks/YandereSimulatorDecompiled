@@ -543,9 +543,9 @@ public class GenericPromptScript : MonoBehaviour
 				Debug.Log("Pool chair is now lowered?");
 				StudentScript obj4 = Prompt.Yandere.StudentManager.Students[15];
 				obj4.Drowned = true;
+				obj4.NoRagdoll = true;
 				obj4.BecomeRagdoll();
 				obj4.Ragdoll.Zs.SetActive(value: false);
-				obj4.Ragdoll.DestroyRigidbodies();
 				obj4.DeathType = DeathType.Drowning;
 				obj4.CharacterAnimation.enabled = true;
 				obj4.CharacterAnimation.Play("f02_sunbatheSleep_00");

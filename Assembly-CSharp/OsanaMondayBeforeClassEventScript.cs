@@ -76,7 +76,7 @@ public class OsanaMondayBeforeClassEventScript : MonoBehaviour
 						{
 							Rival = StudentManager.Students[RivalID];
 						}
-						else if (Rival.enabled && Rival.Indoors && !Rival.Alarmed && !Rival.WitnessedCorpse && !Rival.WitnessedMurder && !Rival.Meeting && (Rival.Follower == null || (Rival.Follower != null && !Rival.Follower.Talking)))
+						else if (Rival.enabled && Rival.Indoors && !Rival.Alarmed && !Rival.WitnessedCorpse && !Rival.WitnessedMurder && !Rival.Meeting && (Rival.Follower == null || (Rival.Follower != null && !Rival.Follower.Talking && !Rival.Slave)))
 						{
 							Debug.Log("Osana's before class event has begun. Preparing to put two bento boxes on her desk.");
 							Rival.CharacterAnimation["f02_pondering_00"].speed = 0.65f;
@@ -88,13 +88,18 @@ public class OsanaMondayBeforeClassEventScript : MonoBehaviour
 							Rival.Pathfinding.canMove = true;
 							Rival.Routine = false;
 							Rival.InEvent = true;
-							if (Rival.Follower != null && !Rival.Follower.ReturningMisplacedWeapon && Rival.Follower.DistanceToDestination < 5f)
+							if (Rival.Follower != null && !Rival.Follower.ReturningMisplacedWeapon && Rival.Follower.DistanceToDestination < 5f && !Rival.Follower.Slave)
 							{
+								Debug.Log("Raibaru will be joining Osana for her bento event.");
 								Rival.Follower.TargetDistance = 1.5f;
 								Rival.Follower.InEvent = true;
 								Rival.Follower.CurrentDestination = Rival.FollowTargetDestination;
 								Rival.Follower.Pathfinding.target = Rival.FollowTargetDestination;
 								Rival.Follower.SmartPhone.SetActive(value: false);
+							}
+							else
+							{
+								Debug.Log("Raibaru will not be joining Osana for her bento event.");
 							}
 							if (!HintGiven)
 							{

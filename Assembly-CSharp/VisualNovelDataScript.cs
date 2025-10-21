@@ -35,4 +35,6 @@ public class VisualNovelDataScript : MonoBehaviour
 	public Texture Backdrop;
 
 	public AudioClip BGM;
+
+	public AudioClip[] VoiceLines;
 }

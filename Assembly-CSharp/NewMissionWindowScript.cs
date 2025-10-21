@@ -46,6 +46,8 @@ public class NewMissionWindowScript : MonoBehaviour
 
 	public UILabel MultiMissionDifficultyOptionsLabel;
 
+	public bool StartMissionNextFrame;
+
 	public int NemesisDifficulty;
 
 	public bool NemesisAggression;
@@ -89,6 +91,46 @@ public class NewMissionWindowScript : MonoBehaviour
 
 	private void Update()
 	{
+		if (StartMissionNextFrame)
+		{
+			Debug.Log("Switching GameGlobals.Profile to 4, since we are beginning a Mission Mode mission, and nothing we do in here should carry over to any of the player's other save files.");
+			GameGlobals.Profile = 4;
+			Globals.DeleteAll();
+			SaveInfo();
+			int num = 0;
+			for (int i = 0; i < 11; i++)
+			{
+				if (Target[i] > 0)
+				{
+					num++;
+				}
+			}
+			SchoolGlobals.SchoolAtmosphere = 1f - (float)num * 0.1f;
+			SchoolGlobals.SchoolAtmosphereSet = true;
+			MissionModeGlobals.MissionMode = true;
+			MissionModeGlobals.MultiMission = true;
+			MissionModeGlobals.MissionDifficulty = num;
+			ClassGlobals.BiologyGrade = 1;
+			ClassGlobals.ChemistryGrade = 1;
+			ClassGlobals.LanguageGrade = 1;
+			ClassGlobals.PhysicalGrade = 1;
+			ClassGlobals.PsychologyGrade = 1;
+			MissionModeMenu.PromptBar.Show = false;
+			MissionModeMenu.Speed = 0f;
+			MissionModeMenu.Phase = 4;
+			if (Eighties)
+			{
+				DateGlobals.Week = 10;
+				for (int j = 1; j < 101; j++)
+				{
+					StudentGlobals.SetStudentPhotographed(j, value: true);
+				}
+				StudentGlobals.FemaleUniform = 6;
+				StudentGlobals.MaleUniform = 1;
+			}
+			MissionModeMenu.PreparingMission.SetActive(value: false);
+			base.enabled = false;
+		}
 		if (!ChangingDifficulty)
 		{
 			if (InputManager.TappedDown)
@@ -113,49 +155,22 @@ public class NewMissionWindowScript : MonoBehaviour
 			}
 			if (Input.GetButtonDown(InputNames.Xbox_A))
 			{
-				int num = 0;
-				for (int i = 0; i < 11; i++)
+				int num2 = 0;
+				for (int k = 0; k < 11; k++)
 				{
-					if (Target[i] > 0)
+					if (Target[k] > 0)
 					{
-						num++;
+						num2++;
 					}
 				}
 				if (Row == 5)
 				{
 					if (Column == 1)
 					{
-						if (num > 0)
+						if (num2 > 0)
 						{
-							Debug.Log("Switching GameGlobals.Profile to 4, since we are beginning a Mission Mode mission, and nothing we do in here should carry over to any of the player's other save files.");
-							GameGlobals.Profile = 4;
-							Globals.DeleteAll();
-							SaveInfo();
-							MissionModeMenu.GetComponent<AudioSource>().PlayOneShot(MissionModeMenu.InfoLines[6]);
-							SchoolGlobals.SchoolAtmosphere = 1f - (float)num * 0.1f;
-							SchoolGlobals.SchoolAtmosphereSet = true;
-							MissionModeGlobals.MissionMode = true;
-							MissionModeGlobals.MultiMission = true;
-							MissionModeGlobals.MissionDifficulty = num;
-							ClassGlobals.BiologyGrade = 1;
-							ClassGlobals.ChemistryGrade = 1;
-							ClassGlobals.LanguageGrade = 1;
-							ClassGlobals.PhysicalGrade = 1;
-							ClassGlobals.PsychologyGrade = 1;
-							MissionModeMenu.PromptBar.Show = false;
-							MissionModeMenu.Speed = 0f;
-							MissionModeMenu.Phase = 4;
-							if (Eighties)
-							{
-								DateGlobals.Week = 10;
-								for (int j = 1; j < 101; j++)
-								{
-									StudentGlobals.SetStudentPhotographed(j, value: true);
-								}
-								StudentGlobals.FemaleUniform = 6;
-								StudentGlobals.MaleUniform = 1;
-							}
-							base.enabled = false;
+							MissionModeMenu.PreparingMission.SetActive(value: true);
+							StartMissionNextFrame = true;
 						}
 					}
 					else if (Column == 2)
@@ -205,9 +220,9 @@ public class NewMissionWindowScript : MonoBehaviour
 			{
 				if (Row == 1)
 				{
-					for (int k = 1; k < 11; k++)
+					for (int l = 1; l < 11; l++)
 					{
-						UnsafeNumbers[k] = Target[k];
+						UnsafeNumbers[l] = Target[l];
 					}
 					Increment(0);
 					if (Target[Column] != 0)
@@ -234,9 +249,9 @@ public class NewMissionWindowScript : MonoBehaviour
 				}
 				else if (Row == 3)
 				{
-					for (int l = 1; l < 11; l++)
+					for (int m = 1; m < 11; m++)
 					{
-						UnsafeNumbers[l] = Target[l];
+						UnsafeNumbers[m] = Target[m];
 					}
 					Increment(5);
 					if (Target[Column + 5] != 0)
@@ -266,9 +281,9 @@ public class NewMissionWindowScript : MonoBehaviour
 			{
 				if (Row == 1)
 				{
-					for (int m = 1; m < 11; m++)
+					for (int n = 1; n < 11; n++)
 					{
-						UnsafeNumbers[m] = Target[m];
+						UnsafeNumbers[n] = Target[n];
 					}
 					Decrement(0);
 					if (Target[Column] != 0)
@@ -296,9 +311,9 @@ public class NewMissionWindowScript : MonoBehaviour
 				}
 				else if (Row == 3)
 				{
-					for (int n = 1; n < 11; n++)
+					for (int num3 = 1; num3 < 11; num3++)
 					{
-						UnsafeNumbers[n] = Target[n];
+						UnsafeNumbers[num3] = Target[num3];
 					}
 					Decrement(5);
 					if (Target[Column + 5] != 0)
@@ -403,21 +418,17 @@ public class NewMissionWindowScript : MonoBehaviour
 	private void Decrement(int Number)
 	{
 		Target[Column + Number]--;
-		Debug.Log("Decremented. Number has become: " + Target[Column + Number]);
 		if (Target[Column + Number] == 1)
 		{
 			Target[Column + Number] = 0;
-			Debug.Log("Correcting to 0.");
 		}
 		else if (Target[Column + Number] == 20 && !Eighties)
 		{
 			Target[Column + Number] = 12;
-			Debug.Log("Correcting to 12.");
 		}
 		else if (Target[Column + Number] == -1)
 		{
 			Target[Column + Number] = 89;
-			Debug.Log("Correcting to 89.");
 		}
 		if (Target[Column + Number] == 0)
 		{
@@ -431,7 +442,6 @@ public class NewMissionWindowScript : MonoBehaviour
 		string text = "";
 		text = ((!Eighties) ? ("file:///" + Application.streamingAssetsPath + "/Portraits/Student_" + Target[Column + Number] + ".png") : ("file:///" + Application.streamingAssetsPath + "/Portraits1989/Student_" + Target[Column + Number] + ".png"));
 		WWW wWW = new WWW(text);
-		Debug.Log("Updating portraits in Decrement() function.");
 		if (Target[Column + Number] > 0)
 		{
 			Portrait[Column + Number].mainTexture = wWW.texture;

@@ -7645,60 +7645,60 @@ public class YandereScript : MonoBehaviour
 	public void StainWeapon()
 	{
 		Debug.Log("Yandere-chan is running the code for staining her equipped weapon with blood and marking it as evidence.");
-		if (!(EquippedWeapon != null))
+		if (EquippedWeapon != null)
 		{
-			return;
-		}
-		Debug.Log("Yandere-chan's eqipped weapon is: " + EquippedWeapon);
-		if (TargetStudent != null && TargetStudent.StudentID < EquippedWeapon.Victims.Length)
-		{
-			EquippedWeapon.Victims[TargetStudent.StudentID] = true;
-		}
-		if (!EquippedWeapon.Blood.enabled)
-		{
-			EquippedWeapon.Evidence = true;
-			EquippedWeapon.Bloody = true;
+			Debug.Log("Yandere-chan's eqipped weapon is: " + EquippedWeapon);
+			if (TargetStudent != null && TargetStudent.StudentID < EquippedWeapon.Victims.Length)
+			{
+				EquippedWeapon.Victims[TargetStudent.StudentID] = true;
+			}
+			if (!EquippedWeapon.Blood.enabled)
+			{
+				EquippedWeapon.Evidence = true;
+				EquippedWeapon.Bloody = true;
+				if (!Dismembering)
+				{
+					Police.MurderWeapons++;
+				}
+			}
+			EquippedWeapon.Blood.enabled = true;
+			EquippedWeapon.Blood.material.mainTexture = TransparentPixel;
+			EquippedWeapon.StainWithBlood();
 			if (!Dismembering)
 			{
-				Police.MurderWeapons++;
+				EquippedWeapon.MurderWeapon = true;
 			}
-		}
-		EquippedWeapon.Blood.enabled = true;
-		EquippedWeapon.Blood.material.mainTexture = TransparentPixel;
-		EquippedWeapon.StainWithBlood();
-		if (!Dismembering)
-		{
-			EquippedWeapon.MurderWeapon = true;
-		}
-		if (EquippedWeapon.Type == WeaponType.Bat)
-		{
-			NoStainGloves = true;
-		}
-		if (!NoStainGloves)
-		{
-			if ((Gloved || WearingRaincoat) && !Gloves.Blood.enabled)
+			if (EquippedWeapon.Type == WeaponType.Bat)
 			{
-				GloveAttacher.newRenderer.material.mainTexture = BloodyGloveTexture;
-				Gloves.Blood.material.SetColor("_TintColor", new Color(0.25f, 0.25f, 0.25f, 1f));
-				Gloves.Blood.material.mainTexture = BloodTextures[5];
-				Gloves.PickUp.Evidence = true;
-				Gloves.Blood.enabled = true;
-				GloveBlood = 1;
-				Police.BloodyClothing++;
+				NoStainGloves = true;
 			}
-			if (Mask != null && !Mask.Blood.enabled)
+			if (!NoStainGloves)
 			{
-				Mask.PickUp.Evidence = true;
-				Mask.Blood.enabled = true;
-				Police.BloodyClothing++;
+				if ((Gloved || WearingRaincoat) && !Gloves.Blood.enabled)
+				{
+					GloveAttacher.newRenderer.material.mainTexture = BloodyGloveTexture;
+					Gloves.Blood.material.SetColor("_TintColor", new Color(0.25f, 0.25f, 0.25f, 1f));
+					Gloves.Blood.material.mainTexture = BloodTextures[5];
+					Gloves.PickUp.Evidence = true;
+					Gloves.Blood.enabled = true;
+					GloveBlood = 1;
+					Police.BloodyClothing++;
+				}
+				if (Mask != null && !Mask.Blood.enabled)
+				{
+					Mask.PickUp.Evidence = true;
+					Mask.Blood.enabled = true;
+					Police.BloodyClothing++;
+				}
+			}
+			if (AttackManager.BreakWeapon && !EquippedWeapon.Broken && (EquippedWeapon.Type == WeaponType.Knife || EquippedWeapon.Type == WeaponType.Syringe))
+			{
+				EquippedWeapon.Broken = true;
+				NotificationManager.CustomText = "The weapon broke!";
+				NotificationManager.DisplayNotification(NotificationType.Custom);
 			}
 		}
-		if (AttackManager.BreakWeapon && !EquippedWeapon.Broken && (EquippedWeapon.Type == WeaponType.Knife || EquippedWeapon.Type == WeaponType.Syringe))
-		{
-			EquippedWeapon.Broken = true;
-			NotificationManager.CustomText = "The weapon broke!";
-			NotificationManager.DisplayNotification(NotificationType.Custom);
-		}
+		StudentManager.ChangeAllBloodTextures();
 	}
 
 	public void MoveTowardsTarget(Vector3 target)
@@ -10167,8 +10167,6 @@ public class YandereScript : MonoBehaviour
 		OriginalRunAnim = RunAnim;
 		FloatingWindow.SetActive(value: true);
 		LunaAttacher.SetActive(value: true);
-		RightSleeve.SetActive(value: true);
-		LeftSleeve.SetActive(value: true);
 		Hairstyle = 212;
 		UpdateHair();
 		MyRenderer.enabled = false;

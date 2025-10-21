@@ -226,7 +226,7 @@ public class RagdollScript : MonoBehaviour
 		Yandere = Student.StudentManager.Yandere;
 		Physics.IgnoreLayerCollision(11, 13, ignore: true);
 		Zs.SetActive(Tranquil);
-		if (!Tranquil && !Poisoned && !Drowned && !Cauterized && !Electrocuted && !Burning && !NeckSnapped && !Burned)
+		if (!Tranquil && !Poisoned && !Drowned && !Cauterized && !Electrocuted && !Burning && !NeckSnapped && !Burned && Student.DeathType != DeathType.Drowning)
 		{
 			Student.StudentManager.TutorialWindow.ShowPoolMessage = true;
 			BloodPoolSpawner.gameObject.SetActive(value: true);
@@ -1205,6 +1205,11 @@ public class RagdollScript : MonoBehaviour
 		Police.BodyParts += 6;
 		Yandere.NearBodies--;
 		Police.Corpses--;
+		if (Drowned)
+		{
+			Police.DrownVictims--;
+			Drowned = false;
+		}
 		base.transform.parent = Student.StudentManager.DisabledObjectParent;
 		base.gameObject.SetActive(value: false);
 		Dismembered = true;

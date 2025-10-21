@@ -68,6 +68,10 @@ public class FamilyVoiceScript : MonoBehaviour
 
 	public float Timer;
 
+	public float PauseThreshold;
+
+	public float PauseTimer;
+
 	public float TargetRotation;
 
 	public float Rotation;
@@ -91,6 +95,8 @@ public class FamilyVoiceScript : MonoBehaviour
 	public bool Started;
 
 	public bool Return;
+
+	public bool StalkerFather;
 
 	public bool ProximityGameOver;
 
@@ -122,37 +128,50 @@ public class FamilyVoiceScript : MonoBehaviour
 						}
 						else
 						{
-							MyAudio.pitch = Time.timeScale;
-							if (MultiClip)
+							if (SpeechPhase < SpeechText.Length)
 							{
-								if (MyAnimation["fatherFixing_00"].time > MyAnimation["fatherFixing_00"].length)
+								MyAudio.pitch = Time.timeScale;
+								if (MultiClip)
 								{
-									MyAnimation["fatherFixing_00"].time = MyAnimation["fatherFixing_00"].time - MyAnimation["fatherFixing_00"].length;
-								}
-								if (AnimPhase == 0)
-								{
-									if (MyAnimation["fatherFixing_00"].time > 18f && MyAnimation["fatherFixing_00"].time < 18.1f)
+									if (StalkerFather && MyAnimation["fatherFixing_00"].time > MyAnimation["fatherFixing_00"].length)
 									{
-										Subtitle.text = SpeechText[SpeechPhase];
-										MyAudio.clip = SpeechClip[SpeechPhase];
-										MyAudio.Play();
-										SpeechPhase++;
-										AnimPhase = 1;
+										MyAnimation["fatherFixing_00"].time = MyAnimation["fatherFixing_00"].time - MyAnimation["fatherFixing_00"].length;
+									}
+									if (AnimPhase == 0)
+									{
+										if ((StalkerFather && MyAnimation["fatherFixing_00"].time > 18f && MyAnimation["fatherFixing_00"].time < 18.1f) || MyAudio.clip == null || MyAudio.time >= MyAudio.clip.length || !MyAudio.isPlaying)
+										{
+											PauseTimer += Time.deltaTime;
+											if (PauseTimer > PauseThreshold)
+											{
+												Subtitle.text = SpeechText[SpeechPhase];
+												MyAudio.clip = SpeechClip[SpeechPhase];
+												MyAudio.Play();
+												PauseTimer = 0f;
+												SpeechPhase++;
+												AnimPhase = 1;
+											}
+										}
+									}
+									else if ((StalkerFather && MyAnimation["fatherFixing_00"].time < 1f) || MyAudio.clip == null || MyAudio.time > MyAudio.clip.length || !MyAudio.isPlaying)
+									{
+										PauseTimer += Time.deltaTime;
+										if (PauseTimer > PauseThreshold)
+										{
+											Subtitle.text = SpeechText[SpeechPhase];
+											MyAudio.clip = SpeechClip[SpeechPhase];
+											MyAudio.Play();
+											PauseTimer = 0f;
+											SpeechPhase++;
+											AnimPhase = 0;
+										}
 									}
 								}
-								else if (MyAnimation["fatherFixing_00"].time < 1f)
+								else if (SpeechPhase < SpeechTime.Length && MyAudio.time > SpeechTime[SpeechPhase])
 								{
 									Subtitle.text = SpeechText[SpeechPhase];
-									MyAudio.clip = SpeechClip[SpeechPhase];
-									MyAudio.Play();
 									SpeechPhase++;
-									AnimPhase = 0;
 								}
-							}
-							else if (SpeechPhase < SpeechTime.Length && MyAudio.time > SpeechTime[SpeechPhase])
-							{
-								Subtitle.text = SpeechText[SpeechPhase];
-								SpeechPhase++;
 							}
 							Scale = Mathf.Abs(1f - (Distance - FudgeDistance) / (MinimumDistance - FudgeDistance));
 							if (Scale < 0f)

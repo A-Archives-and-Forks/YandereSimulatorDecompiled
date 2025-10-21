@@ -108,7 +108,7 @@ public class OsanaTuesdayLunchEventScript : MonoBehaviour
 					Rival.InEvent = true;
 					Rival.EmptyHands();
 					bool flag = true;
-					if (PlayerGlobals.RaibaruLoner || StudentManager.Police.EndOfDay.RaibaruLoner)
+					if (PlayerGlobals.RaibaruLoner || StudentManager.Police.EndOfDay.RaibaruLoner || StudentGlobals.StudentSlave == FriendID)
 					{
 						flag = false;
 					}

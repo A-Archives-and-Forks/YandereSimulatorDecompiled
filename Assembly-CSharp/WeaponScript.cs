@@ -1048,6 +1048,7 @@ public class WeaponScript : MonoBehaviour
 		{
 			MyRenderer.material.SetFloat("_BlendAmount", 1f);
 		}
+		Blood.material.mainTexture = Yandere.StudentManager.TransPixel;
 	}
 
 	public void RemoveBlood()

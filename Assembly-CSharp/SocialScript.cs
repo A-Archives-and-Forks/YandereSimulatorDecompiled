@@ -164,6 +164,10 @@ public class SocialScript : MonoBehaviour
 						{
 							Student.Subtitle.PersonaSubtitle.UpdateLabel(Student.Persona, Student.Reputation.Reputation, 5f);
 							DialogueLabel.text = Student.Subtitle.Label.text;
+							if (Student.Traumatized)
+							{
+								DialogueLabel.text = "...huh? ...uh...yeah...thanks...";
+							}
 						}
 					}
 					else

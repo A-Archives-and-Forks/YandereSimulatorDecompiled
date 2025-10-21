@@ -1621,6 +1621,7 @@ public class TalkingScript : MonoBehaviour
 				{
 					S.Subtitle.UpdateLabel(SubtitleType.SuitorLove, 3, 5f);
 					S.CharacterAnimation.CrossFade(S.Nod1Anim);
+					Refuse = false;
 				}
 				else if ((!S.Male && S.BikiniAttacher.enabled && !S.MyRenderer.enabled) || S.Schoolwear == 2)
 				{
@@ -1673,11 +1674,14 @@ public class TalkingScript : MonoBehaviour
 				}
 				if (S.TalkTimer <= 0f)
 				{
+					Debug.Log("Yandere-chan just told a rival or suitor to go to the courting spot.");
+					Debug.Log("''Refuse'' is: " + Refuse);
 					if (!Refuse)
 					{
 						S.MeetTime = S.Clock.HourTime - 1f;
 						if (S.StudentID == S.DialogueWheel.LoveManager.SuitorID)
 						{
+							Debug.Log("Yandere-chan just told the suitor to go meet the rival at the courting spot.");
 							S.MeetSpot = S.StudentManager.SuitorSpot;
 						}
 						else

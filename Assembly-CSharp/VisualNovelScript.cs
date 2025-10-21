@@ -21,6 +21,8 @@ public class VisualNovelScript : MonoBehaviour
 
 	public TypewriterEffect Typewriter;
 
+	public AudioSource VoiceAudioSource;
+
 	public AudioSource Jukebox;
 
 	public UIPanel VisualNovelPanel;
@@ -64,6 +66,8 @@ public class VisualNovelScript : MonoBehaviour
 	public Color[] Colors;
 
 	public int[] SkipDestinations;
+
+	public AudioClip[] VoiceLines;
 
 	public Renderer Backdrop;
 
@@ -179,6 +183,7 @@ public class VisualNovelScript : MonoBehaviour
 			GraphicIDs = SisterData.GraphicIDs;
 			Backdrop.material.mainTexture = SisterData.Backdrop;
 			Jukebox.clip = SisterData.BGM;
+			VoiceLines = SisterData.VoiceLines;
 			DialogueLabel.transform.localPosition = new Vector3(0f, -350f, 0f);
 			MaleCharacter.gameObject.SetActive(value: false);
 			Character[3].gameObject.SetActive(value: true);
@@ -798,6 +803,11 @@ public class VisualNovelScript : MonoBehaviour
 		NameLabel.gradientBottom = Colors[Speaker[ID]];
 		Background.color = Colors[Speaker[ID]];
 		NameLabel.text = Names[Speaker[ID]];
+		if (VoiceLines.Length != 0)
+		{
+			VoiceAudioSource.clip = VoiceLines[ID];
+			VoiceAudioSource.Play();
+		}
 	}
 
 	private void BefriendRival()

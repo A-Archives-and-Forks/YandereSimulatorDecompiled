@@ -1955,6 +1955,13 @@ public class EndOfDayScript : MonoBehaviour
 					StudentManager.RivalEliminated = true;
 					RivalArrested = true;
 				}
+				if (!Patsy.Male)
+				{
+					Debug.Log("It was Osana.");
+					Patsy.Cosmetic.FemaleHair[Patsy.Cosmetic.Hairstyle].SetActive(value: true);
+					Patsy.OsanaHairL.transform.localScale = new Vector3(1f, 1f, 1f);
+					Patsy.OsanaHairR.transform.localScale = new Vector3(1f, 1f, 1f);
+				}
 			}
 			else
 			{

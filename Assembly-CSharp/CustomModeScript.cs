@@ -506,6 +506,8 @@ public class CustomModeScript : MonoBehaviour
 		StudentChan.GetComponent<StudentScript>().SetSplashes(Bool: false);
 		DestroyComponentsInChildren(StudentKun.transform);
 		DestroyComponentsInChildren(StudentChan.transform);
+		StudentKunCosmetic.SaveOriginalTextures();
+		StudentChanCosmetic.SaveOriginalTextures();
 		for (int i = 0; i < 101; i++)
 		{
 			GameObject obj = UnityEngine.Object.Instantiate(NumberBubble, base.transform.position, Quaternion.identity);
@@ -926,12 +928,15 @@ public class CustomModeScript : MonoBehaviour
 							FemaleUniform = FemaleUniformID;
 							FemaleCustomTextureBubble.SetActive(value: false);
 							StudentGlobals.CustomFemaleUniform = false;
+							JSON.Misc.CustomFemaleUniform = false;
+							StudentChanCosmetic.LoadOriginalTextures();
 						}
 						else
 						{
 							FemaleUniform = FemaleUniformID - 6;
 							FemaleCustomTextureBubble.SetActive(value: true);
 							StudentGlobals.CustomFemaleUniform = true;
+							JSON.Misc.CustomFemaleUniform = true;
 						}
 						FemaleUniformLabel.text = FemaleUniform.ToString() ?? "";
 						JSON.Misc.FemaleUniform = FemaleUniform;
@@ -950,12 +955,16 @@ public class CustomModeScript : MonoBehaviour
 							MaleUniform = MaleUniformID;
 							MaleCustomTextureBubble.SetActive(value: false);
 							StudentGlobals.CustomMaleUniform = false;
+							JSON.Misc.CustomMaleUniform = false;
+							StudentKunCosmetic.LoadOriginalTextures();
 						}
 						else
 						{
 							MaleUniform = MaleUniformID - 6;
 							MaleCustomTextureBubble.SetActive(value: true);
 							StudentGlobals.CustomMaleUniform = true;
+							JSON.Misc.CustomMaleUniform = true;
+							StudentKunCosmetic.GrabCustomTextures();
 						}
 						MaleUniformLabel.text = MaleUniform.ToString() ?? "";
 						JSON.Misc.MaleUniform = MaleUniform;

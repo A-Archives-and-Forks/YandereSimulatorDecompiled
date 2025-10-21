@@ -750,6 +750,7 @@ public class NewTitleScreenScript : MonoBehaviour
 				}
 				else if (Selection == 3)
 				{
+					UpdateDOF(2f);
 					SceneManager.LoadScene("MissionModeScene");
 				}
 				else if (Selection == 6)

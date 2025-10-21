@@ -234,7 +234,7 @@ public class PortalScript : MonoBehaviour
 				{
 					CheckForPoison();
 				}
-				if (Police.PoisonScene || (Police.SuicideScene && Police.Corpses - Police.HiddenCorpses > 0) || Police.Corpses - Police.HiddenCorpses > 0 || Police.BloodParent.childCount > 0 || Police.BloodyClothing > 0 || Reputation.Reputation <= -100f)
+				if (Police.PoisonScene || (Police.SuicideScene && Police.Corpses - Police.HiddenCorpses > 0) || Police.Corpses - Police.HiddenCorpses > 0 || Police.BloodParent.childCount > 0 || Police.BloodyClothing > 0 || Reputation.Reputation <= -100f || num2 > 0)
 				{
 					EndEvents();
 					EndDay();

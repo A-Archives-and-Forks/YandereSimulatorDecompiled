@@ -45,6 +45,8 @@ public class RivalMorningEventManagerScript : MonoBehaviour
 
 	public GameObject VoiceClip;
 
+	public bool HideBlendshapes;
+
 	public bool WaitForAnim = true;
 
 	public bool NaturalEnd;
@@ -82,6 +84,8 @@ public class RivalMorningEventManagerScript : MonoBehaviour
 	public int Frame;
 
 	public int Week = 1;
+
+	public string RivalName = string.Empty;
 
 	public string Weekday = string.Empty;
 
@@ -153,7 +157,7 @@ public class RivalMorningEventManagerScript : MonoBehaviour
 				else if (StudentManager.Students[1].gameObject.activeInHierarchy && StudentManager.Students[RivalID] != null)
 				{
 					Debug.Log(base.name + " is now taking place.");
-					if (StudentManager.Students[FriendID] != null && !PlayerGlobals.RaibaruLoner && StudentGlobals.StudentSlave != FriendID && !NoFriend)
+					if (StudentManager.Students[FriendID] != null && !PlayerGlobals.RaibaruLoner && StudentGlobals.StudentSlave != FriendID && !StudentManager.Students[FriendID].Slave && !NoFriend)
 					{
 						Friend = StudentManager.Students[FriendID];
 						if (Friend.Investigating)
@@ -180,6 +184,10 @@ public class RivalMorningEventManagerScript : MonoBehaviour
 						Friend.Routine = false;
 						Friend.InEvent = true;
 						Friend.Spawned = true;
+					}
+					else
+					{
+						Debug.Log("This script will not attempt to do anything to Raibaru.");
 					}
 					Senpai = StudentManager.Students[1];
 					Rival = StudentManager.Students[RivalID];
@@ -216,6 +224,10 @@ public class RivalMorningEventManagerScript : MonoBehaviour
 					{
 						StudentManager.Students[1].EventBook.SetActive(value: true);
 					}
+					if (HideBlendshapes)
+					{
+						Rival.Cosmetic.ResetBlendshapes();
+					}
 				}
 			}
 			Frame++;
@@ -228,8 +240,8 @@ public class RivalMorningEventManagerScript : MonoBehaviour
 				AudioClipPlayer.Play(SpeechClip, Epicenter.position + Vector3.up * 1.5f, 5f, 10f, out VoiceClip, Yandere.transform.position.y);
 				if (WaitForAnim)
 				{
-					Rival.CharacterAnimation.CrossFade("f02_" + Weekday + "_1");
-					Senpai.CharacterAnimation.CrossFade(Weekday + "_1");
+					Rival.CharacterAnimation.CrossFade("f02_" + RivalName + Weekday + "_1");
+					Senpai.CharacterAnimation.CrossFade(RivalName + Weekday + "_1");
 				}
 				else
 				{
@@ -247,10 +259,10 @@ public class RivalMorningEventManagerScript : MonoBehaviour
 				Debug.Log("Attempting to restore animation.");
 				if (WaitForAnim)
 				{
-					Rival.CharacterAnimation.Play("f02_" + Weekday + "_1");
-					Senpai.CharacterAnimation.Play(Weekday + "_1");
-					Rival.CharacterAnimation["f02_" + Weekday + "_1"].time = AnimationTime;
-					Senpai.CharacterAnimation[Weekday + "_1"].time = AnimationTime;
+					Rival.CharacterAnimation.Play("f02_" + RivalName + Weekday + "_1");
+					Senpai.CharacterAnimation.Play(RivalName + Weekday + "_1");
+					Rival.CharacterAnimation["f02_" + RivalName + Weekday + "_1"].time = AnimationTime;
+					Senpai.CharacterAnimation[RivalName + Weekday + "_1"].time = AnimationTime;
 				}
 				else
 				{
@@ -304,7 +316,7 @@ public class RivalMorningEventManagerScript : MonoBehaviour
 				}
 				if (WaitForAnim)
 				{
-					if (Senpai.CharacterAnimation[Weekday + "_1"].time >= Senpai.CharacterAnimation[Weekday + "_1"].length)
+					if (Senpai.CharacterAnimation[RivalName + Weekday + "_1"].time >= Senpai.CharacterAnimation[RivalName + Weekday + "_1"].length)
 					{
 						Debug.Log("This rival morning event ended naturally because the animation finished playing.");
 						NaturalEnd = true;
@@ -318,7 +330,7 @@ public class RivalMorningEventManagerScript : MonoBehaviour
 					EndEvent();
 				}
 			}
-			if (Transfer && Rival.CharacterAnimation["f02_" + Weekday + "_1"].time > TransferTime)
+			if (Transfer && Rival.CharacterAnimation["f02_" + RivalName + Weekday + "_1"].time > TransferTime)
 			{
 				Senpai.EventBook.SetActive(value: false);
 				Rival.EventBook.SetActive(value: true);
@@ -485,6 +497,10 @@ public class RivalMorningEventManagerScript : MonoBehaviour
 		base.enabled = false;
 		StudentManager.MorningEventOver = true;
 		Finished = true;
+		if (HideBlendshapes)
+		{
+			Rival.Cosmetic.EyeTypeCheck();
+		}
 	}
 
 	public void SaveAnimationTime()
@@ -493,7 +509,7 @@ public class RivalMorningEventManagerScript : MonoBehaviour
 		{
 			if (Rival != null)
 			{
-				AnimationTime = Rival.CharacterAnimation["f02_" + Weekday + "_1"].time;
+				AnimationTime = Rival.CharacterAnimation["f02_" + RivalName + Weekday + "_1"].time;
 			}
 			Debug.Log("AnimationTime was: " + AnimationTime);
 		}

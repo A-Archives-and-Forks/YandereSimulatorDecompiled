@@ -381,6 +381,7 @@ public class HomeYandereScript : MonoBehaviour
 				{
 					Running = !Running;
 				}
+				MyController.enabled = true;
 				MyController.Move(Physics.gravity * 0.01f);
 				float num = Input.GetAxis("Vertical");
 				float num2 = Input.GetAxis("Horizontal");

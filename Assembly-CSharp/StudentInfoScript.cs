@@ -180,97 +180,104 @@ public class StudentInfoScript : MonoBehaviour
 		{
 			PersonaLabel.text = "Friendly but Strict";
 		}
-		MatchmadeCheck();
-		int num2 = 0;
-		num2 = StudentManager.SuitorID;
-		if (Matchmade)
+		if (StudentManager.MissionMode)
 		{
-			Debug.Log("This character has been matchmade.");
-			LeftCrushLabel.text = "Relationship";
-			CrushLabel.text = JSON.Students[studentJson.Crush].Name;
-			CrushLabel.text = PartnerName;
+			CrushLabel.text = "None";
 		}
 		else
 		{
-			LeftCrushLabel.text = "Crush";
-			if (CurrentStudent > 10 && CurrentStudent < 21)
+			MatchmadeCheck();
+			int num2 = 0;
+			num2 = StudentManager.SuitorID;
+			if (Matchmade)
 			{
-				StudentManager.RivalID = DateGlobals.Week + 10;
-				if (CurrentStudent == StudentManager.RivalID && GameGlobals.RivalEliminationID == 0)
-				{
-					Debug.Log("This character is the current rival.");
-					CrushLabel.text = JSON.Students[studentJson.Crush].Name;
-				}
-				else
-				{
-					Debug.Log("This character was the rival.");
-					CrushLabel.text = "None Anymore";
-					if (Eighties && !StudentGlobals.GetStudentDead(CurrentStudent))
-					{
-						PersonaLabel.text = EliminatedEightiesRivalPersona(CurrentStudent);
-					}
-				}
-			}
-			else if (CurrentStudent == num2)
-			{
-				if (StudentManager.LoveManager != null && StudentManager.LoveManager.SuitorProgress == 0)
-				{
-					CrushLabel.text = "Unknown";
-				}
-				else
-				{
-					CrushLabel.text = JSON.Students[studentJson.Crush].Name;
-				}
-			}
-			else if (studentJson.Crush == 0)
-			{
-				CrushLabel.text = "None";
-			}
-			else if (studentJson.Crush == 99)
-			{
-				CrushLabel.text = "None";
+				Debug.Log("This character has been matchmade.");
+				LeftCrushLabel.text = "Relationship";
+				CrushLabel.text = JSON.Students[studentJson.Crush].Name;
+				CrushLabel.text = PartnerName;
 			}
 			else
 			{
-				Debug.Log("The JSON has an entry for this character's crush...");
-				CrushLabel.text = JSON.Students[studentJson.Crush].Name;
-				bool flag = false;
-				if (StudentManager.Week == 0)
+				LeftCrushLabel.text = "Crush";
+				if (CurrentStudent > 10 && CurrentStudent < 21)
 				{
-					Debug.Log("Week was 0. Are we in the HomeScene?");
-					StudentManager.Week = DateGlobals.Week;
-				}
-				for (int i = StudentManager.Week + 1; i < 11; i++)
-				{
-					if (CurrentStudent == StudentManager.SuitorIDs[i])
+					StudentManager.RivalID = DateGlobals.Week + 10;
+					if (CurrentStudent == StudentManager.RivalID && GameGlobals.RivalEliminationID == 0)
 					{
-						Debug.Log("This guy's ID is in the suitor list.");
-						flag = true;
+						Debug.Log("This character is the current rival.");
+						CrushLabel.text = JSON.Students[studentJson.Crush].Name;
 					}
-				}
-				if (flag)
-				{
-					for (int i = 2; i < 11; i++)
+					else
 					{
-						if (CurrentStudent == StudentManager.SuitorIDs[i] && StudentManager.Week < i)
+						Debug.Log("This character was the rival.");
+						CrushLabel.text = "None Anymore";
+						if (Eighties && !StudentGlobals.GetStudentDead(CurrentStudent))
 						{
-							Debug.Log("This guy will be a suitor one day in the future.");
-							CrushLabel.text = "Unknown";
+							PersonaLabel.text = EliminatedEightiesRivalPersona(CurrentStudent);
 						}
 					}
 				}
-				if (CurrentStudent == StudentManager.SuitorIDs[StudentManager.Week])
+				else if (CurrentStudent == num2)
 				{
-					Debug.Log("This guy is the CURRENT rival's suitor!");
-					int num3 = 0;
-					if (((!(StudentManager.LoveManager != null)) ? DatingGlobals.SuitorProgress : StudentManager.LoveManager.SuitorProgress) == 0)
+					if (StudentManager.LoveManager != null && StudentManager.LoveManager.SuitorProgress == 0)
 					{
-						Debug.Log("We don't know who he has a crush on yet.");
 						CrushLabel.text = "Unknown";
 					}
 					else
 					{
-						Debug.Log("We know who he has a crush on.");
+						CrushLabel.text = JSON.Students[studentJson.Crush].Name;
+					}
+				}
+				else if (studentJson.Crush == 0)
+				{
+					CrushLabel.text = "None";
+				}
+				else if (studentJson.Crush == 99)
+				{
+					CrushLabel.text = "None";
+				}
+				else
+				{
+					Debug.Log("The JSON has an entry for this character's crush...");
+					CrushLabel.text = JSON.Students[studentJson.Crush].Name;
+					bool flag = false;
+					if (StudentManager.Week == 0)
+					{
+						Debug.Log("Week was 0. Are we in the HomeScene?");
+						StudentManager.Week = DateGlobals.Week;
+					}
+					for (int i = StudentManager.Week + 1; i < 11; i++)
+					{
+						if (CurrentStudent == StudentManager.SuitorIDs[i])
+						{
+							Debug.Log("This guy's ID is in the suitor list.");
+							flag = true;
+						}
+					}
+					if (flag)
+					{
+						for (int i = 2; i < 11; i++)
+						{
+							if (CurrentStudent == StudentManager.SuitorIDs[i] && StudentManager.Week < i)
+							{
+								Debug.Log("This guy will be a suitor one day in the future.");
+								CrushLabel.text = "Unknown";
+							}
+						}
+					}
+					if (CurrentStudent == StudentManager.SuitorIDs[StudentManager.Week])
+					{
+						Debug.Log("This guy is the CURRENT rival's suitor!");
+						int num3 = 0;
+						if (((!(StudentManager.LoveManager != null)) ? DatingGlobals.SuitorProgress : StudentManager.LoveManager.SuitorProgress) == 0)
+						{
+							Debug.Log("We don't know who he has a crush on yet.");
+							CrushLabel.text = "Unknown";
+						}
+						else
+						{
+							Debug.Log("We know who he has a crush on.");
+						}
 					}
 				}
 			}

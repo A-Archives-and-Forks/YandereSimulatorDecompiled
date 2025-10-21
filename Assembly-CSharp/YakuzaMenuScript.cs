@@ -3,6 +3,8 @@ using UnityEngine.PostProcessing;
 
 public class YakuzaMenuScript : MonoBehaviour
 {
+	public AnimationSequenceController YakuzaCutsceneManager;
+
 	public InputManagerScript InputManager;
 
 	public StalkerYandereScript Yandere;
@@ -26,6 +28,8 @@ public class YakuzaMenuScript : MonoBehaviour
 	public string[] DialogueText;
 
 	public int[] Speaker;
+
+	public GameObject YakuzaOnly;
 
 	public AudioSource Dialogue;
 
@@ -161,7 +165,15 @@ public class YakuzaMenuScript : MonoBehaviour
 
 	public AudioClip Exit;
 
+	public GameObject Suitcase;
+
 	public int[] RansomIDs;
+
+	public SkinnedMeshRenderer RyobaRenderer;
+
+	public Mesh RyobaMesh;
+
+	public GameObject SkipCamera;
 
 	public MusicTest AudioData;
 
@@ -182,9 +194,15 @@ public class YakuzaMenuScript : MonoBehaviour
 	private void Start()
 	{
 		UpdateMoneyLabel();
+		YakuzaCutsceneManager.ryobaAnimation.transform.parent.gameObject.SetActive(value: false);
 		RansomConfirmationWindow.SetActive(value: false);
 		ConfirmationWindow.SetActive(value: false);
 		ResultWindow.SetActive(value: false);
+		Suitcase.SetActive(value: false);
+		if (GameGlobals.Eighties && HomeGlobals.Night)
+		{
+			Suitcase.SetActive(value: true);
+		}
 		AssassinationMenu.alpha = 0f;
 		ContrabandMenu.alpha = 0f;
 		KidnappingMenu.alpha = 0f;
@@ -478,12 +496,16 @@ public class YakuzaMenuScript : MonoBehaviour
 						PromptBar.UpdateButtons();
 						PromptBar.Show = true;
 						ResultWindow.SetActive(value: false);
-						if (!Fail && GameGlobals.YakuzaPhase == 6)
+						if (!Fail)
 						{
-							GameGlobals.YakuzaPhase = 7;
-							CutscenePhase = 28;
-							StartCutscene();
-							Show = false;
+							Debug.Log("Just confirmed an abduction for the first time.");
+							if (GameGlobals.YakuzaPhase == 6)
+							{
+								GameGlobals.YakuzaPhase = 7;
+								CutscenePhase = 28;
+								StartCutscene();
+								Show = false;
+							}
 						}
 						Fail = false;
 					}
@@ -550,6 +572,7 @@ public class YakuzaMenuScript : MonoBehaviour
 						{
 							if (GameGlobals.YakuzaPhase < 4)
 							{
+								Debug.Log("During their first meeting with the Yakuza, the player declined to accept any items.");
 								GameGlobals.YakuzaPhase = 2;
 								CutscenePhase = 8;
 								StartCutscene();
@@ -743,8 +766,10 @@ public class YakuzaMenuScript : MonoBehaviour
 				ButtonPrompt.alpha = Mathf.MoveTowards(ButtonPrompt.alpha, 1f, Time.deltaTime * 2f);
 				if (Input.GetButtonDown(InputNames.Xbox_A) && Alpha == 0f)
 				{
+					Debug.Log("Player pressed the A button.");
 					if (GameGlobals.YakuzaPhase == 1)
 					{
+						Debug.Log("First meeting.");
 						CutscenePhase = 1;
 						StartCutscene();
 						return;
@@ -789,121 +814,46 @@ public class YakuzaMenuScript : MonoBehaviour
 		{
 			Jukebox.Play();
 		}
-		Speed += Time.deltaTime;
-		Yandere.MainCamera.transform.position = Vector3.Lerp(Yandere.MainCamera.transform.position, new Vector3(-2.25f, 1.5f, -5.5f), Time.deltaTime * Speed * 0.01f);
-		if (Dialogue.isPlaying && !Input.GetButtonDown(InputNames.Xbox_A))
+		if (YakuzaCutsceneManager.isSequencePlaying)
 		{
 			return;
 		}
-		CutscenePhase++;
-		if (GameGlobals.YakuzaPhase == 1)
+		YakuzaCutsceneManager.audioSource.pitch = 1f;
+		SkipCamera.SetActive(value: false);
+		Time.timeScale = 1f;
+		if (CutscenePhase == 1 || CutscenePhase == 10)
 		{
-			if (CutscenePhase < 8)
-			{
-				Dialogue.clip = DialogueClip[CutscenePhase];
-				Dialogue.Play();
-				Subtitle.text = DialogueText[CutscenePhase];
-			}
-			else
-			{
-				SummonContrabandMenu();
-			}
+			SummonContrabandMenu();
 		}
-		else if (GameGlobals.YakuzaPhase == 2)
+		else if (CutscenePhase == 8 || CutscenePhase == 12 || CutscenePhase == 28)
 		{
-			if (CutscenePhase < 10)
-			{
-				Dialogue.clip = DialogueClip[CutscenePhase];
-				Dialogue.Play();
-				Subtitle.text = DialogueText[CutscenePhase];
-			}
-			else
+			if (CutscenePhase == 8)
 			{
 				GameGlobals.YakuzaPhase = 3;
-				Quit();
 			}
-		}
-		else if (GameGlobals.YakuzaPhase == 3)
-		{
-			if (CutscenePhase < 12)
-			{
-				Dialogue.clip = DialogueClip[CutscenePhase];
-				Dialogue.Play();
-				Subtitle.text = DialogueText[CutscenePhase];
-			}
-			else
-			{
-				SummonContrabandMenu();
-			}
-		}
-		else if (GameGlobals.YakuzaPhase == 4)
-		{
-			if (CutscenePhase < 16)
-			{
-				Dialogue.clip = DialogueClip[CutscenePhase];
-				Dialogue.Play();
-				Subtitle.text = DialogueText[CutscenePhase];
-			}
-			else
+			else if (CutscenePhase == 12)
 			{
 				GameGlobals.YakuzaPhase = 5;
-				Quit();
 			}
-		}
-		else if (GameGlobals.YakuzaPhase == 5)
-		{
-			if (CutscenePhase < 24)
-			{
-				Dialogue.clip = DialogueClip[CutscenePhase];
-				Dialogue.Play();
-				Subtitle.text = DialogueText[CutscenePhase];
-			}
-			else
+			else if (CutscenePhase == 28)
 			{
 				GameGlobals.YakuzaPhase = 100;
-				SummonServicesMenu();
 			}
+			Quit();
 		}
-		else if (GameGlobals.YakuzaPhase == 6)
+		else if (CutscenePhase == 16)
 		{
-			if (CutscenePhase < 28)
-			{
-				Dialogue.clip = DialogueClip[CutscenePhase];
-				Dialogue.Play();
-				Subtitle.text = DialogueText[CutscenePhase];
-			}
-			else
-			{
-				SummonAssassinationMenu();
-			}
+			GameGlobals.YakuzaPhase = 100;
+			SummonServicesMenu();
 		}
-		else if (GameGlobals.YakuzaPhase == 7)
+		else if (CutscenePhase == 24)
 		{
-			if (CutscenePhase < 33)
-			{
-				Dialogue.clip = DialogueClip[CutscenePhase];
-				Dialogue.Play();
-				Subtitle.text = DialogueText[CutscenePhase];
-			}
-			else
-			{
-				GameGlobals.YakuzaPhase = 100;
-				Quit();
-			}
+			SummonAssassinationMenu();
 		}
-		else if (GameGlobals.YakuzaPhase == 8)
+		else if (CutscenePhase == 33)
 		{
-			if (CutscenePhase < 41)
-			{
-				Dialogue.clip = DialogueClip[CutscenePhase];
-				Dialogue.Play();
-				Subtitle.text = DialogueText[CutscenePhase];
-			}
-			else
-			{
-				GameGlobals.YakuzaPhase = 100;
-				SummonKidnappingMenu();
-			}
+			GameGlobals.YakuzaPhase = 100;
+			SummonKidnappingMenu();
 		}
 	}
 
@@ -1044,8 +994,15 @@ public class YakuzaMenuScript : MonoBehaviour
 	private void Quit()
 	{
 		Debug.Log("Leaving Yakuza now.");
+		YakuzaCutsceneManager.ryobaAnimation.transform.parent.gameObject.SetActive(value: false);
+		YakuzaCutsceneManager.yakuzaAnimation.gameObject.SetActive(value: false);
+		YakuzaCutsceneManager.mainCamera.gameObject.SetActive(value: false);
+		Yandere.MainCamera.gameObject.GetComponent<AudioListener>().enabled = true;
+		Yandere.MainCamera.enabled = true;
 		Yandere.RPGCamera.enabled = true;
 		Yandere.CanMove = true;
+		YakuzaOnly.gameObject.SetActive(value: true);
+		Yandere.gameObject.SetActive(value: true);
 		TimeDayPanel.alpha = 1f;
 		Subtitle.text = "";
 		Cutscene = false;
@@ -1060,20 +1017,56 @@ public class YakuzaMenuScript : MonoBehaviour
 	private void StartCutscene()
 	{
 		Debug.Log("Starting Yakuza cutscene now.");
+		int index = 0;
+		if (CutscenePhase == 1)
+		{
+			index = 0;
+		}
+		else if (CutscenePhase == 8)
+		{
+			index = 1;
+		}
+		else if (CutscenePhase == 10)
+		{
+			index = 2;
+		}
+		else if (CutscenePhase == 12)
+		{
+			index = 3;
+		}
+		else if (CutscenePhase == 16)
+		{
+			index = 4;
+		}
+		else if (CutscenePhase == 24)
+		{
+			index = 5;
+		}
+		else if (CutscenePhase == 28)
+		{
+			index = 6;
+		}
+		else if (CutscenePhase == 33)
+		{
+			index = 7;
+		}
+		RyobaRenderer.sharedMesh = RyobaMesh;
+		YakuzaCutsceneManager.ryobaAnimation.transform.parent.gameObject.SetActive(value: true);
+		YakuzaCutsceneManager.yakuzaAnimation.gameObject.SetActive(value: true);
+		YakuzaCutsceneManager.PlaySequence(index);
+		Yandere.MainCamera.gameObject.GetComponent<AudioListener>().enabled = false;
 		Yandere.MyAnimation.CrossFade(Yandere.IdleAnim);
+		Yandere.MainCamera.enabled = false;
 		Yandere.RPGCamera.enabled = false;
 		Yandere.CanMove = false;
-		Yandere.MainCamera.transform.position = new Vector3(-2.25f, 0.1f, -5.5f);
-		Yandere.MainCamera.transform.eulerAngles = new Vector3(0f, 30f, 0f);
-		Yandere.transform.position = new Vector3(-2f, 0f, -4f);
-		Yandere.transform.eulerAngles = new Vector3(0f, 150f, 0f);
+		YakuzaCutsceneManager.mainCamera.gameObject.SetActive(value: true);
+		YakuzaOnly.gameObject.SetActive(value: false);
+		Yandere.gameObject.SetActive(value: false);
+		SkipCamera.SetActive(value: true);
 		ButtonPrompt.alpha = 0f;
 		TimeDayPanel.alpha = 0f;
-		Dialogue.clip = DialogueClip[CutscenePhase];
-		Dialogue.Play();
-		Subtitle.text = DialogueText[CutscenePhase];
 		Cutscene = true;
-		Speed = 0f;
+		UpdateDOF(0.5f, 16.8f);
 		PromptBar.ClearButtons();
 		PromptBar.Show = false;
 		if (!GameGlobals.Debug)
@@ -1081,7 +1074,6 @@ public class YakuzaMenuScript : MonoBehaviour
 			PlayerPrefs.SetInt("Yakuza", 1);
 			PlayerPrefs.SetInt("a", 1);
 		}
-		UpdateDOF(1f, 5.6f);
 	}
 
 	private void SummonContrabandMenu()

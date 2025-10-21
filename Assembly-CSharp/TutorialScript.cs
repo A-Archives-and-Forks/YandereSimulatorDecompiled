@@ -164,6 +164,10 @@ public class TutorialScript : MonoBehaviour
 
 	public float Timer;
 
+	public Animation SumireHair;
+
+	public AudioClip StabSFX;
+
 	public float RagdollRotation;
 
 	public Vector3 RightEyeOrigin;
@@ -684,8 +688,8 @@ public class TutorialScript : MonoBehaviour
 								VictimPrompt.Hide();
 								VictimPrompt.enabled = false;
 								AudioSource.PlayClipAtPoint(ReversePianoNote, MainCamera.transform.position);
-								Yandere.CharacterAnimation.CrossFade("f02_knifeStealthA_00");
-								Animator[2].CrossFade("f02_knifeStealthB_00");
+								Yandere.CharacterAnimation.CrossFade("f02_ryobaTutorial_02");
+								Animator[2].CrossFade("f02_sumireTutorial_05");
 								DOF = Profile.depthOfField.enabled;
 								GarbageBagBox.transform.position = GarbageBagBox.OriginalPosition;
 								Profile.depthOfField.enabled = false;
@@ -1096,7 +1100,8 @@ public class TutorialScript : MonoBehaviour
 						SubtitleLabel.text = Text[CutscenePhase];
 						MyAudio.clip = Voice[CutscenePhase];
 						MyAudio.Play();
-						Animator[2].CrossFade("f02_idleShy_00");
+						Animator[2].CrossFade("f02_sumireTutorial_01");
+						Animator[2]["f02_sumireTutorial_01"].speed = 1.6f;
 						CutscenePhase++;
 					}
 				}
@@ -1108,6 +1113,7 @@ public class TutorialScript : MonoBehaviour
 					}
 					if (!MyAudio.isPlaying)
 					{
+						Animator[2].CrossFade("f02_idleShy_00");
 						Yandere.RPGCamera.enabled = true;
 						TransitionToCutscene = false;
 						SubtitleLabel.text = "";
@@ -1118,16 +1124,6 @@ public class TutorialScript : MonoBehaviour
 				}
 				else if (CutscenePhase < 7)
 				{
-					if (CutscenePhase < 5)
-					{
-						Rotation = Mathf.Lerp(Rotation, -90f, Time.deltaTime * 5f);
-						VictimGirl.transform.localEulerAngles = new Vector3(0f, Rotation, 0f);
-					}
-					else
-					{
-						Rotation = Mathf.Lerp(Rotation, 90f, Time.deltaTime * 5f);
-						VictimGirl.transform.localEulerAngles = new Vector3(0f, Rotation, 0f);
-					}
 					Yandere.MoveTowardsTarget(new Vector3(28.5f, 8f, -28.5f));
 					Yandere.targetRotation = Quaternion.LookRotation(VictimGirl.transform.position - Yandere.transform.position);
 					Yandere.transform.rotation = Quaternion.Slerp(Yandere.transform.rotation, Yandere.targetRotation, Time.deltaTime * 10f);
@@ -1140,13 +1136,25 @@ public class TutorialScript : MonoBehaviour
 						if (Speaker[CutscenePhase] == 1)
 						{
 							Animator[1].CrossFade(Yandere.IdleAnim);
+							if (CutscenePhase == 3 || CutscenePhase == 4)
+							{
+								Debug.Log("Now putting Sumire into the ''idleShyReverse'' animation.");
+								Animator[2].CrossFade("f02_idleShyReverse_00");
+							}
 						}
 						else if (CutscenePhase == 5)
 						{
+							Debug.Log("Now putting Sumire into the ''idleShame'' animation.");
 							Animator[2].CrossFade("f02_idleShame_00");
+						}
+						else if (CutscenePhase == 3 || CutscenePhase == 4)
+						{
+							Debug.Log("Now putting Sumire into the ''idleShyReverse'' animation.");
+							Animator[2].CrossFade("f02_idleShyReverse_00");
 						}
 						else
 						{
+							Debug.Log("Now putting Sumire into the ''idleShy'' animation.");
 							Animator[2].CrossFade("f02_idleShy_00");
 						}
 					}
@@ -1156,7 +1164,15 @@ public class TutorialScript : MonoBehaviour
 						if (CutscenePhase < 7)
 						{
 							Animator[1].CrossFade(Yandere.IdleAnim);
-							Animator[2].CrossFade("f02_idleShy_00");
+							if (CutscenePhase == 3 || CutscenePhase == 4)
+							{
+								Debug.Log("Now putting Sumire into the ''idleShyReverse'' animation.");
+								Animator[2].CrossFade("f02_idleShyReverse_00");
+							}
+							else
+							{
+								Animator[2].CrossFade("f02_idleShy_00");
+							}
 							Animator[Speaker[CutscenePhase]].CrossFade(Animations[CutscenePhase]);
 							SubtitleLabel.text = Text[CutscenePhase];
 							MyAudio.clip = Voice[CutscenePhase];
@@ -1166,6 +1182,8 @@ public class TutorialScript : MonoBehaviour
 				}
 				else if (CutscenePhase == 7)
 				{
+					Debug.Log("Attempting to put Sumire into the idleShy animation.");
+					Animator[2].CrossFade("f02_idleShy_00");
 					TransitionToCutscene = false;
 					SubtitleLabel.text = "";
 					Yandere.CanMove = true;
@@ -1177,19 +1195,65 @@ public class TutorialScript : MonoBehaviour
 					BGM[2].volume = Mathf.MoveTowards(BGM[2].volume, 0f, Time.deltaTime * 0.2f);
 					BGM[3].volume = Mathf.MoveTowards(BGM[3].volume, 0f, Time.deltaTime * 0.2f);
 					BGM[4].volume = Mathf.MoveTowards(BGM[4].volume, 0f, Time.deltaTime * 0.2f);
-					Yandere.MainCamera.transform.position = new Vector3(30f, 9.366666f, -28.5f);
-					Yandere.MainCamera.transform.eulerAngles = new Vector3(0f, -90f, 0f);
 					VictimGirl.transform.eulerAngles = new Vector3(0f, 90f, 0f);
 					VictimGirl.transform.position = new Vector3(29.5f, 8f, -28.5f);
-					Yandere.transform.position = new Vector3(28.82f, 8f, -28.5f);
-					Yandere.EquippedWeapon.transform.localEulerAngles = new Vector3(0f, 180f, 0f);
-					Yandere.CharacterAnimation["f02_knifeStealthA_00"].speed = Mathf.MoveTowards(Yandere.CharacterAnimation["f02_knifeStealthA_00"].speed, 0.1f, Time.deltaTime);
-					Animator[2]["f02_knifeStealthB_00"].speed = Mathf.MoveTowards(Animator[2]["f02_knifeStealthB_00"].speed, 0.1f, Time.deltaTime);
-					if (Yandere.CharacterAnimation["f02_knifeStealthA_00"].time > 0.5f)
+					Yandere.transform.position = new Vector3(29.15f, 8f, -28.5f);
+					Yandere.EquippedWeapon.transform.localEulerAngles = new Vector3(0f, 0f, 0f);
+					Yandere.RightArmRoll.localEulerAngles = new Vector3(0f, 0f, 0f);
+					Yandere.RightArmRoll.GetChild(0).GetChild(1).localEulerAngles = new Vector3(0f, 0f, 0f);
+					Yandere.CharacterAnimation["f02_ryobaTutorial_02"].speed = 0.3f;
+					Animator[2]["f02_sumireTutorial_05"].speed = 0.3f;
+					SumireHair.Play();
+					SumireHair["SumireHairMurderAnim"].speed = 0.3f;
+					if (Yandere.CharacterAnimation["f02_ryobaTutorial_02"].time > 0.5f)
 					{
+						Debug.Log("Running this code now.");
 						EyeShrink = Mathf.MoveTowards(EyeShrink, 1f, Time.deltaTime);
+						Timer += Time.deltaTime;
+						MainCamera.transform.position = Vector3.Lerp(MainCamera.transform.position, new Vector3(30f, 9.5f, -28.5f), Time.deltaTime * Timer);
+						MainCamera.transform.eulerAngles = Vector3.Lerp(MainCamera.transform.eulerAngles, new Vector3(15f, -90f, 0f), Time.deltaTime * Timer);
+						MainCamera.transform.eulerAngles = new Vector3(MainCamera.transform.eulerAngles.x, -90f, 0f);
 					}
-					if (Yandere.CharacterAnimation["f02_knifeStealthA_00"].time > Yandere.CharacterAnimation["f02_knifeStealthA_00"].length * 0.475f)
+					else
+					{
+						Yandere.MainCamera.transform.position = new Vector3(30f, 9.366666f, -28.5f);
+						Yandere.MainCamera.transform.eulerAngles = new Vector3(0f, -90f, 0f);
+					}
+					if (Yandere.CharacterAnimation["f02_ryobaTutorial_02"].time > 1.66666f)
+					{
+						Debug.Log("We just hit this code.");
+						Yandere.CharacterAnimation["f02_ryobaTutorial_02"].speed = 1f;
+						Animator[2]["f02_sumireTutorial_05"].speed = 1f;
+						SubtitleLabel.text = Text[CutscenePhase];
+						MyAudio.clip = Voice[CutscenePhase];
+						MyAudio.Play();
+						BGM[2].volume = 0f;
+						BGM[3].volume = 0f;
+						BGM[4].volume = 0f;
+						Timer = 0f;
+						CutscenePhase++;
+					}
+				}
+				else if (CutscenePhase == 9)
+				{
+					Yandere.MainCamera.transform.position = new Vector3(29.29f, 9.41f, -28.33333f);
+					Yandere.MainCamera.transform.eulerAngles = new Vector3(0f, -135f, 0f);
+					Yandere.MainCamera.nearClipPlane = 0.01f;
+					Timer += Time.deltaTime;
+					if (Timer > 5f)
+					{
+						SubtitleLabel.text = "";
+						MyAudio.clip = StabSFX;
+						MyAudio.Play();
+						Timer = 0f;
+						Darkness.alpha = 1f;
+						CutscenePhase++;
+					}
+				}
+				else if (CutscenePhase == 10)
+				{
+					Timer += Time.deltaTime;
+					if (Timer > 3f)
 					{
 						Yandere.RPGCamera.mouseX = 45f;
 						Yandere.RPGCamera.mouseY = 45f;
@@ -1197,20 +1261,18 @@ public class TutorialScript : MonoBehaviour
 						Yandere.RPGCamera.mouseYSmooth = -315f;
 						Yandere.RPGCamera.GetDesiredPosition();
 						Yandere.RPGCamera.PositionUpdate();
-						SubtitleLabel.text = Text[CutscenePhase];
-						MyAudio.clip = Voice[CutscenePhase];
-						MyAudio.Play();
 						BGM[2].volume = 0f;
 						BGM[3].volume = 0f;
 						BGM[4].volume = 0f;
-						Darkness.alpha = 1f;
+						Timer = 0f;
 						CutscenePhase++;
 					}
 				}
-				else if (CutscenePhase == 9)
+				else if (CutscenePhase == 11)
 				{
 					if (StudentManager.Students[2] == null)
 					{
+						Debug.Log("Now spawning Yui Rio.");
 						StudentManager.ForceSpawn = true;
 						StudentManager.SpawnPositions[2] = VictimGirl.transform;
 						StudentManager.SpawnID = 2;
@@ -1218,9 +1280,10 @@ public class TutorialScript : MonoBehaviour
 					}
 					else if (!StudentManager.Students[2].Ragdoll.enabled)
 					{
+						Debug.Log("Now turning Yui Rio into a ragdoll.");
 						StudentManager.Students[2].CharacterAnimation.Play("f02_knifeStealthB_00");
 						StudentManager.Students[2].CharacterAnimation["f02_knifeStealthB_00"].time = StudentManager.Students[2].CharacterAnimation["f02_knifeStealthB_00"].length;
-						StudentManager.Students[2].transform.position = new Vector3(29.9f, 8f, -29.4f);
+						StudentManager.Students[2].transform.position = new Vector3(29.9f, 8f, -29.33333f);
 						StudentManager.Students[2].transform.eulerAngles = new Vector3(0f, -90f, 0f);
 						StudentManager.Students[2].BecomeRagdoll();
 						CosmeticScript cosmetic = StudentManager.Students[2].Cosmetic;
@@ -1236,16 +1299,14 @@ public class TutorialScript : MonoBehaviour
 						Ragdoll = StudentManager.Students[2].Ragdoll;
 						Ragdoll.Tutorial = true;
 					}
-					if (MyAudio.time > MyAudio.clip.length - 0.2f && !Yandere.RPGCamera.enabled)
+					else
 					{
-						ReturnToGameplay();
-					}
-					if (!MyAudio.isPlaying)
-					{
+						Debug.Log("Yui Rio is a ragdoll, so we are now returning to gameplay.");
 						AudioSource.PlayClipAtPoint(DramaticPianoNote, MainCamera.transform.position);
 						MainCamera.backgroundColor = new Color(0f, 0f, 0f, 1f);
 						RenderSettings.fogColor = new Color(0f, 0f, 0f, 1f);
 						BGM[3].volume = 0.5f;
+						Yandere.MainCamera.nearClipPlane = 0.1f;
 						if (AlternateTimeline)
 						{
 							BGM[4].volume = 0.5f;
@@ -1254,8 +1315,12 @@ public class TutorialScript : MonoBehaviour
 						Knife.MurderWeapon = true;
 						Knife.StainWithBlood();
 						Knife.Bloody = true;
+						Yandere.transform.position = new Vector3(28f, 8f, -28.5f);
+						Yandere.transform.eulerAngles = new Vector3(0f, 90f, 0f);
+						Physics.SyncTransforms();
 						Yandere.Bloodiness += 100f;
 						Yandere.Sanity -= 50f;
+						StudentManager.Students[2].Ragdoll.DisableRigidbodies();
 						StudentManager.Students[2].CharacterAnimation.enabled = true;
 						StudentManager.Students[2].CharacterAnimation.Play("f02_knifeStealthB_00");
 						StudentManager.Students[2].CharacterAnimation["f02_knifeStealthB_00"].time = StudentManager.Students[2].CharacterAnimation["f02_knifeStealthB_00"].length;
@@ -1275,7 +1340,7 @@ public class TutorialScript : MonoBehaviour
 						}
 					}
 				}
-				else if (CutscenePhase == 10 && StudentManager.Students[25].Routine)
+				else if (CutscenePhase == 12 && StudentManager.Students[25].Routine)
 				{
 					TransitionToCutscene = false;
 					Yandere.Frozen = true;
@@ -1346,10 +1411,6 @@ public class TutorialScript : MonoBehaviour
 			RightEye.localPosition = new Vector3(RightEye.localPosition.x, RightEye.localPosition.y, RightEyeOrigin.z + EyeShrink * 0.01f);
 			LeftEye.localScale = new Vector3(1f - EyeShrink * 0.5f, 1f - EyeShrink * 0.5f, LeftEye.localScale.z);
 			RightEye.localScale = new Vector3(1f - EyeShrink * 0.5f, 1f - EyeShrink * 0.5f, RightEye.localScale.z);
-		}
-		if (CutscenePhase == 8)
-		{
-			RightArm.localEulerAngles += new Vector3(15f, 0f, 0f);
 		}
 	}
 

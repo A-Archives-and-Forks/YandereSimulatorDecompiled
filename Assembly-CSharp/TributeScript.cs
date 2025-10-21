@@ -12,11 +12,15 @@ public class TributeScript : MonoBehaviour
 
 	public YandereScript Yandere;
 
+	public GameObject HenshinObject;
+
 	public GameObject TitleBelt;
 
 	public GameObject FunGirl;
 
 	public GameObject Rainey;
+
+	public GameObject Sun;
 
 	public string[] MinecraftLetters;
 
@@ -50,6 +54,10 @@ public class TributeScript : MonoBehaviour
 
 	public string[] Letter;
 
+	public bool TransformNurse;
+
+	public bool Transforming;
+
 	public int MinecraftID;
 
 	public int ChessterID;
@@ -82,11 +90,11 @@ public class TributeScript : MonoBehaviour
 
 	public int ID;
 
+	public Material MinecraftMaterial;
+
 	public Mesh ThiccMesh;
 
-	public bool TransformNurse;
-
-	public Material MinecraftMaterial;
+	public float Timer;
 
 	private void Start()
 	{
@@ -100,7 +108,19 @@ public class TributeScript : MonoBehaviour
 
 	private void Update()
 	{
-		if (RiggedAttacher.gameObject.activeInHierarchy)
+		if (Transforming)
+		{
+			Timer += Time.deltaTime;
+			if (Timer > 45f)
+			{
+				RenderSettings.ambientLight = new Color(0.75f, 0.75f, 0.75f, 0f);
+				Sun.SetActive(value: true);
+				Henshin.RestoreEverything();
+				Transforming = false;
+				base.enabled = false;
+			}
+		}
+		else if (RiggedAttacher.gameObject.activeInHierarchy)
 		{
 			RiggedAttacher.newRenderer.SetBlendShapeWeight(0, 100f);
 			RiggedAttacher.newRenderer.SetBlendShapeWeight(1, 100f);
@@ -217,10 +237,13 @@ public class TributeScript : MonoBehaviour
 				MiyukiID++;
 				if (MiyukiID == MiyukiLetters.Length)
 				{
+					RenderSettings.ambientLight = new Color(1.5f, 1.5f, 1.5f, 1f);
+					Sun.SetActive(value: false);
 					StudentManager.BlindEveryone();
+					HenshinObject.SetActive(value: true);
 					Henshin.TransformYandere();
 					Yandere.CanMove = false;
-					base.enabled = false;
+					Transforming = true;
 				}
 			}
 			if (Input.GetKeyDown(FootageLetters[FootageID]))

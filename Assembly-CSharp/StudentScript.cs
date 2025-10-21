@@ -450,6 +450,8 @@ public class StudentScript : MonoBehaviour
 
 	public GameObject EmptyGameObject;
 
+	public GameObject PhoneCallScreen;
+
 	public GameObject StabBloodEffect;
 
 	public GameObject BountyCollider;
@@ -1967,6 +1969,8 @@ public class StudentScript : MonoBehaviour
 	public string[] OriginalDests;
 
 	public string[] OriginalActs;
+
+	public GameObject TimeRespectingAudioSource;
 
 	public OutlineScript[] RiggedAccessoryOutlines;
 
@@ -5138,6 +5142,10 @@ public class StudentScript : MonoBehaviour
 				else if (Actions[Phase] != StudentActionType.SitAndEatBento)
 				{
 					TargetDistance = 0.5f;
+				}
+				if (StudentID == 1 && Phase == 7)
+				{
+					TargetDistance = 1f;
 				}
 				if (Club == ClubType.Gardening && StudentID != 71 && Actions[Phase] == StudentActionType.ClubAction)
 				{
@@ -9514,6 +9522,7 @@ public class StudentScript : MonoBehaviour
 										MyPlate.parent = null;
 										MyPlate.position = StudentManager.BakeSalePlateParents[StudentID].position;
 										MyPlate.rotation = StudentManager.BakeSalePlateParents[StudentID].rotation;
+										CharacterAnimation.cullingType = AnimationCullingType.AlwaysAnimate;
 									}
 									if (StudentID == 12)
 									{
@@ -9710,6 +9719,7 @@ public class StudentScript : MonoBehaviour
 										BakeSalePhase = 3;
 									}
 									Debug.Log("BakeSaleAnim is: " + BakeSaleAnim);
+									CharacterAnimation.cullingType = AnimationCullingType.AlwaysAnimate;
 								}
 								else if (BakeSalePhase == 1)
 								{
@@ -10848,7 +10858,7 @@ public class StudentScript : MonoBehaviour
 									{
 										if (!Yandere.DelinquentFighting)
 										{
-											Debug.Log(Name + " is supposed to begin the combat minigame now.");
+											Debug.Log(Name + ", a ''Violent'' student, has just been threatened.");
 											SmartPhone.SetActive(value: false);
 											Threatened = true;
 											Fleeing = false;
@@ -12389,6 +12399,8 @@ public class StudentScript : MonoBehaviour
 									HuntTarget.FocusOnYandere = false;
 									HuntTarget.Investigating = false;
 									HuntTarget.Distracting = false;
+									HuntTarget.EatingSnack = false;
+									HuntTarget.Tripping = false;
 									HuntTarget.SentHome = false;
 									HuntTarget.Splashed = false;
 									HuntTarget.Alarmed = false;
@@ -13141,10 +13153,15 @@ public class StudentScript : MonoBehaviour
 					Debug.Log("ScheduleBlocks[2].destination is: " + ScheduleBlocks[2].destination);
 					RestoreOriginalScheduleBlocks();
 					RestoreOriginalActions();
-					if (Actions[2] == StudentActionType.Graffiti && !StudentManager.Bully)
+					if (ScheduleBlocks[2].action == "Graffiti" || Actions[2] == StudentActionType.Graffiti || CurrentAction == StudentActionType.Graffiti)
 					{
-						scheduleBlock3.destination = "Patrol";
-						scheduleBlock3.action = "Patrol";
+						Debug.Log("Student #" + StudentID + ", " + Name + ", just added ''Graffiti'' to her schedule.");
+						if (!StudentManager.Bully)
+						{
+							Debug.Log("However, there is nobody to bully! Changing routine to patrol, instead.");
+							scheduleBlock3.destination = "Patrol";
+							scheduleBlock3.action = "Patrol";
+						}
 					}
 					Debug.Log("And now, ScheduleBlocks[2].destination is: " + ScheduleBlocks[2].destination);
 					GetDestinations();
@@ -13209,6 +13226,7 @@ public class StudentScript : MonoBehaviour
 					}
 					else
 					{
+						Debug.Log(Name + ", who just shoved the protagonist, has just been threatened.");
 						SpawnAlarmDisc();
 						SmartPhone.SetActive(value: false);
 						Distracted = true;
@@ -15295,7 +15313,7 @@ public class StudentScript : MonoBehaviour
 				Witness = true;
 			}
 			EmptyHands();
-			if ((Persona == PersonaType.PhoneAddict && !Phoneless && !flag) || Persona == PersonaType.Sleuth || StudentID == 20)
+			if ((Persona == PersonaType.PhoneAddict && !Phoneless && !flag && !Wet) || Persona == PersonaType.Sleuth || StudentID == 20)
 			{
 				SmartPhone.SetActive(value: true);
 				Scrubber.SetActive(value: false);
@@ -15372,6 +15390,7 @@ public class StudentScript : MonoBehaviour
 				}
 				if (Club == ClubType.Delinquent && ((!Injured && Persona == PersonaType.Violent && Yandere.Armed && !WitnessedCorpse && !RespectEarned) || (Persona == PersonaType.Violent && Yandere.DelinquentFighting)))
 				{
+					Debug.Log(Name + ", a delinquent, has just been threatened.");
 					Subtitle.Speaker = this;
 					Subtitle.UpdateLabel(SubtitleType.DelinquentWeaponReaction, 0, 3f);
 					ThreatDistance = DistanceToPlayer;
@@ -16525,6 +16544,15 @@ public class StudentScript : MonoBehaviour
 				{
 					StopFollowing();
 				}
+				if (ReturningMisplacedWeapon)
+				{
+					DropMisplacedWeapon();
+				}
+				if (BloodPool != null)
+				{
+					Debug.Log("ForgetAboutBloodPool() was called from this place in the code.");
+					ForgetAboutBloodPool();
+				}
 				if (!Male)
 				{
 					if (!Yandere.AttackManager.Stealth)
@@ -16994,7 +17022,7 @@ public class StudentScript : MonoBehaviour
 					}
 					if (FocusOnYandere)
 					{
-						if (DistanceToPlayer < 1f && !Injured && ((Club == ClubType.Council && !DoNotShove) || (Club == ClubType.Delinquent && !Injured) || Shovey))
+						if (DistanceToPlayer < 1f && !Injured && ((Club == ClubType.Council && !DoNotShove) || (Club == ClubType.Delinquent && !Injured) || (Shovey && !Confessing)))
 						{
 							AlarmTimer = 0f;
 							if (Yandere.CanMove)
@@ -17752,7 +17780,7 @@ public class StudentScript : MonoBehaviour
 				}
 				Reacted = true;
 			}
-			if (((Club == ClubType.Council && !DoNotShove) || Shovey) && DistanceToPlayer < 1.1f && !Yandere.Invisible && !EatingSnack && (Yandere.Armed || (Yandere.Carrying && !Yandere.CurrentRagdoll.Concealed) || (Yandere.Dragging && !Yandere.CurrentRagdoll.Concealed)) && Prompt.InSight)
+			if (((Club == ClubType.Council && !DoNotShove) || (Shovey && !Confessing)) && DistanceToPlayer < 1.1f && !Yandere.Invisible && !EatingSnack && (Yandere.Armed || (Yandere.Carrying && !Yandere.CurrentRagdoll.Concealed) || (Yandere.Dragging && !Yandere.CurrentRagdoll.Concealed)) && Prompt.InSight)
 			{
 				if (Yandere.Armed && !Yandere.EquippedWeapon.Suspicious && !WitnessedMurder && !WitnessedCorpse && !Yandere.Chased && Yandere.Chasers == 0)
 				{
@@ -17767,6 +17795,7 @@ public class StudentScript : MonoBehaviour
 			}
 			return;
 		}
+		Debug.Log(Name + " feels threatened.");
 		Alarm -= Time.deltaTime * 100f * (1f / Paranoia);
 		if (StudentManager.CombatMinigame.Delinquent == null || StudentManager.CombatMinigame.Delinquent == this)
 		{
@@ -17813,6 +17842,7 @@ public class StudentScript : MonoBehaviour
 			}
 			else
 			{
+				Debug.Log("For some reason, the criteria for this code running was just met.");
 				CharacterAnimation.CrossFade(IdleAnim, 5f);
 				NoTalk = true;
 			}
@@ -17898,7 +17928,7 @@ public class StudentScript : MonoBehaviour
 			if (!NoTalk)
 			{
 				Yandere.Shoved = false;
-				Debug.Log("The combat minigame is now beginning.");
+				Debug.Log(Name + " is now running the code that initializes the combat minigame.");
 				Yandere.CustomThreshold = 5f;
 				Yandere.WallToRight = false;
 				Yandere.Direction = 2;
@@ -17914,12 +17944,12 @@ public class StudentScript : MonoBehaviour
 				{
 					text = "Female_";
 				}
-				if (StudentID == 46)
-				{
-					CharacterAnimation.CrossFade("delinquentDrawWeapon_00");
-				}
+				CharacterAnimation.CrossFade(text + "delinquentDrawWeapon_00");
+				Pathfinding.canSearch = false;
+				Pathfinding.canMove = false;
 				if (StudentManager.CombatMinigame.Delinquent == null)
 				{
+					Debug.Log(Name + " is now initializing some variables in the CombatMinigame script.");
 					Yandere.CharacterAnimation.CrossFade("Yandere_CombatIdle");
 					if (MyWeapon.transform.parent != ItemParent)
 					{
@@ -17977,7 +18007,6 @@ public class StudentScript : MonoBehaviour
 						Subtitle.UpdateLabel(SubtitleType.DelinquentFight, 0, 5f);
 					}
 				}
-				Debug.Log("Yandere is turning to face Pursuer.");
 				Yandere.transform.rotation = Quaternion.LookRotation(new Vector3(Hips.transform.position.x, Yandere.transform.position.y, Hips.transform.position.z) - Yandere.transform.position);
 				if (CharacterAnimation[text + "delinquentDrawWeapon_00"].time >= 0.5f)
 				{
@@ -17987,15 +18016,18 @@ public class StudentScript : MonoBehaviour
 				}
 				if (CharacterAnimation[text + "delinquentDrawWeapon_00"].time >= CharacterAnimation[text + "delinquentDrawWeapon_00"].length)
 				{
+					Debug.Log("The delinquent reached the end of their ''draw weapon'' animation.");
 					Threatened = false;
 					Alarmed = false;
 					base.enabled = false;
 				}
 				return;
 			}
+			Debug.Log(Name + "'s ThreatTimer is now decrementing.");
 			ThreatTimer -= Time.deltaTime;
-			if (ThreatTimer < 0f)
+			if (ThreatTimer <= 0f)
 			{
+				Debug.Log(Name + "'s ThreatTimer just reached 0.");
 				if (CurrentDestination != Destinations[Phase])
 				{
 					StopInvestigating();
@@ -18599,7 +18631,7 @@ public class StudentScript : MonoBehaviour
 				Yandere.Shutter.FaceStudent = this;
 				Yandere.Shutter.Penalize();
 			}
-			if (((Club == ClubType.Council && !DoNotShove) || (Shovey && !Following)) && !WitnessedSomething)
+			if (((Club == ClubType.Council && !DoNotShove) || (Shovey && !Following && !Confessing)) && !WitnessedSomething)
 			{
 				if (DistanceToPlayer < 5f)
 				{
@@ -18637,7 +18669,7 @@ public class StudentScript : MonoBehaviour
 					}
 				}
 			}
-			if (((Club == ClubType.Council && !Spraying && !DoNotShove) || (Club == ClubType.Delinquent && !Injured && !RespectEarned && !Vomiting && !Emetic && !Headache && !Sedated && !Lethal) || (Shovey && !Spraying && !Following && !Meeting && !EatingSnack)) && (double)DistanceToPlayer < 0.5 && Yandere.CanMove && !Yandere.Invisible && (Yandere.h != 0f || Yandere.v != 0f) && !Yandere.Chased && Yandere.Chasers == 0 && Yandere.NoShoveTimer == 0f)
+			if (((Club == ClubType.Council && !Spraying && !DoNotShove) || (Club == ClubType.Delinquent && !Injured && !RespectEarned && !Vomiting && !Emetic && !Headache && !Sedated && !Lethal) || (Shovey && !Spraying && !Following && !Meeting && !EatingSnack && !Confessing)) && (double)DistanceToPlayer < 0.5 && Yandere.CanMove && !Yandere.Invisible && (Yandere.h != 0f || Yandere.v != 0f) && !Yandere.Chased && Yandere.Chasers == 0 && Yandere.NoShoveTimer == 0f)
 			{
 				if (Club == ClubType.Delinquent)
 				{
@@ -18648,7 +18680,7 @@ public class StudentScript : MonoBehaviour
 				Shove();
 			}
 		}
-		else if (((Club == ClubType.Council && !DoNotShove) || Shovey) && DistanceToPlayer < 1.1f && !Yandere.Invisible && !EatingSnack && Mathf.Abs(Vector3.Angle(-base.transform.forward, Yandere.transform.position - base.transform.position)) > 45f && ((!IgnoringPettyActions && Yandere.Armed && Yandere.EquippedWeapon.Suspicious) || (Yandere.Carrying && !Yandere.CurrentRagdoll.Concealed) || (Yandere.Dragging && !Yandere.CurrentRagdoll.Concealed)) && Prompt.InSight)
+		else if (((Club == ClubType.Council && !DoNotShove) || (Shovey && !Confessing)) && DistanceToPlayer < 1.1f && !Yandere.Invisible && !EatingSnack && Mathf.Abs(Vector3.Angle(-base.transform.forward, Yandere.transform.position - base.transform.position)) > 45f && ((!IgnoringPettyActions && Yandere.Armed && Yandere.EquippedWeapon.Suspicious) || (Yandere.Carrying && !Yandere.CurrentRagdoll.Concealed) || (Yandere.Dragging && !Yandere.CurrentRagdoll.Concealed)) && Prompt.InSight)
 		{
 			Debug.Log(Name + " will now decide whether to spray or shove the protagonist.");
 			if (Yandere.Armed && !Yandere.EquippedWeapon.Suspicious && !WitnessedMurder && !Yandere.Chased && Yandere.Chasers == 0)
@@ -18859,17 +18891,25 @@ public class StudentScript : MonoBehaviour
 		}
 		if (UpdateOutlines && Outlines[0].h != null)
 		{
-			Debug.Log("1");
-			if (BikiniAttacher.newRenderer != null)
+			if (BikiniAttacher != null && BikiniAttacher.newRenderer != null)
 			{
-				Debug.Log("2");
 				OutlineScript component = BikiniAttacher.newRenderer.gameObject.GetComponent<OutlineScript>();
 				if (component != null)
 				{
-					Debug.Log("3");
 					component.h.ConstantOnImmediate(Outlines[0].color);
 					UpdateOutlines = false;
 				}
+			}
+			if (LabcoatAttacher.newRenderer != null)
+			{
+				OutlineScript component2 = LabcoatAttacher.newRenderer.gameObject.GetComponent<OutlineScript>();
+				if (component2 != null)
+				{
+					component2.h.ConstantOnImmediate(Outlines[0].color);
+					UpdateOutlines = false;
+				}
+				component2.enabled = Outlines[0].enabled;
+				component2.h.enabled = Outlines[0].enabled;
 			}
 		}
 		if (Chesster)
@@ -23030,6 +23070,7 @@ public class StudentScript : MonoBehaviour
 					component.h.ConstantOnImmediate(Outlines[0].color);
 				}
 			}
+			UpdateOutlines = true;
 		}
 		else
 		{
@@ -24158,7 +24199,7 @@ public class StudentScript : MonoBehaviour
 		{
 			IgnoreTimer = 5f;
 		}
-		if (Persona == PersonaType.PhoneAddict && !Phoneless)
+		if (Persona == PersonaType.PhoneAddict && !Phoneless && !Wet)
 		{
 			SmartPhone.SetActive(value: true);
 		}
@@ -24636,7 +24677,10 @@ public class StudentScript : MonoBehaviour
 			Drumsticks[1].SetActive(value: false);
 			AirGuitar.Stop();
 		}
-		PicnicProps[0].SetActive(value: false);
+		if (PicnicProps[0] != null)
+		{
+			PicnicProps[0].SetActive(value: false);
+		}
 		if (!Male)
 		{
 			PicnicProps[1].SetActive(value: false);
@@ -26324,7 +26368,7 @@ public class StudentScript : MonoBehaviour
 			if (!StudentManager.Eighties && StudentID == 12)
 			{
 				Debug.Log("Moving Amai's bento back a bit more.");
-				Bento.transform.localPosition = new Vector3(0f, 0.5f, -1f);
+				Bento.transform.localPosition = new Vector3(0f, 0.501f, -0.2533333f);
 			}
 		}
 		Bento.transform.localEulerAngles = new Vector3(0f, 0f, 0f);
@@ -26807,6 +26851,16 @@ public class StudentScript : MonoBehaviour
 				}
 			}
 		}
+		if (LabcoatAttacher != null && LabcoatAttacher.newRenderer != null)
+		{
+			OutlineScript component = LabcoatAttacher.newRenderer.gameObject.GetComponent<OutlineScript>();
+			if (component != null)
+			{
+				component.h.ConstantOnImmediate(Outlines[0].color);
+			}
+			component.enabled = true;
+			component.h.enabled = true;
+		}
 	}
 
 	public void TurnOutlinesPink()
@@ -26989,12 +27043,17 @@ public class StudentScript : MonoBehaviour
 		Bento.SetActive(value: false);
 	}
 
-	public void SpawnTimeRespectingAudioSource(AudioClip Clip, float AudioOffset = 0f)
+	public void SpawnTimeRespectingAudioSource(AudioClip Clip, float AudioOffset = 0f, bool Follow = false)
 	{
 		Debug.Log("AudioOffset is: " + AudioOffset);
-		GameObject obj = UnityEngine.Object.Instantiate(AudioSourceObject, base.transform.position + new Vector3(0f, 1f, 0f), Quaternion.identity);
-		obj.GetComponent<AudioSourceScript>().MyClip = Clip;
-		obj.GetComponent<AudioSourceScript>().Offset = AudioOffset;
+		GameObject gameObject = UnityEngine.Object.Instantiate(AudioSourceObject, base.transform.position + new Vector3(0f, 1f, 0f), Quaternion.identity);
+		gameObject.GetComponent<AudioSourceScript>().MyClip = Clip;
+		gameObject.GetComponent<AudioSourceScript>().Offset = AudioOffset;
+		if (Follow)
+		{
+			gameObject.transform.parent = base.transform;
+		}
+		TimeRespectingAudioSource = gameObject;
 	}
 
 	public void CheckForNearbyWalls()
@@ -27092,6 +27151,7 @@ public class StudentScript : MonoBehaviour
 	public void LeaveBakeSale()
 	{
 		Debug.Log(Name + " is now firing LeaveBakeSale()");
+		CharacterAnimation.cullingType = AnimationCullingType.BasedOnRenderers;
 		StudentManager.BakeSale.CurrentCustomer = null;
 		Fingerfood[12].SetActive(value: false);
 		MyController.radius = 0.1f;

@@ -88,10 +88,6 @@ public class EightiesEndCutsceneScript : MonoBehaviour
 				Debug.Log("Rival #" + i + " was killed.");
 				Deaths++;
 			}
-			else
-			{
-				Debug.Log("Apparently, Rival #" + i + " does not appear to have been killed.");
-			}
 			if (GameGlobals.GetRivalEliminations(i) == 11)
 			{
 				Disappearances++;

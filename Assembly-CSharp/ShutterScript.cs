@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Video;
 
 public class ShutterScript : MonoBehaviour
 {
@@ -20,6 +21,8 @@ public class ShutterScript : MonoBehaviour
 	public StudentScript Student;
 
 	public YandereScript Yandere;
+
+	public VideoPlayer MiyukiTV;
 
 	public StudentScript FaceStudent;
 
@@ -240,6 +243,7 @@ public class ShutterScript : MonoBehaviour
 					Yandere.DetectionPanel.alpha = 0f;
 					PromptBar.UpdateButtons();
 					PromptBar.Show = true;
+					MiyukiTV.playbackSpeed = 0f;
 					Time.timeScale = 0.0001f;
 				}
 			}
@@ -415,6 +419,7 @@ public class ShutterScript : MonoBehaviour
 		{
 			if (PhotoIcons.activeInHierarchy && !Snapping && !TextMessages.gameObject.activeInHierarchy)
 			{
+				MiyukiTV.playbackSpeed = 0f;
 				Time.timeScale = 0.0001f;
 				if (Input.GetButtonDown(InputNames.Xbox_A))
 				{
@@ -652,7 +657,8 @@ public class ShutterScript : MonoBehaviour
 					Yandere.ResetYandereEffects();
 					PhotoIcons.SetActive(value: true);
 					InfoX.SetActive(value: true);
-					Time.timeScale = 0f;
+					MiyukiTV.playbackSpeed = 0f;
+					Time.timeScale = 0.0001f;
 					Panel.SetActive(value: true);
 					MainMenu.SetActive(value: false);
 					PauseScreen.Show = true;
@@ -1040,6 +1046,7 @@ public class ShutterScript : MonoBehaviour
 		SubPanel.SetActive(value: true);
 		MainMenu.SetActive(value: true);
 		Yandere.CanMove = true;
+		MiyukiTV.playbackSpeed = 1f;
 		DisplayError = false;
 		Panel.SetActive(value: true);
 		Time.timeScale = 1f;

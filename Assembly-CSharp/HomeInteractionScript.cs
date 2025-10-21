@@ -51,7 +51,7 @@ public class HomeInteractionScript : MonoBehaviour
 				ObjectToActivate.SetActive(value: false);
 			}
 		}
-		if (DisableInEighties && GameGlobals.Eighties)
+		if ((DisableInEighties && GameGlobals.Eighties) || (ID == 7 && GameGlobals.VtuberID > 0))
 		{
 			base.gameObject.SetActive(value: false);
 			Label.alpha = 0f;

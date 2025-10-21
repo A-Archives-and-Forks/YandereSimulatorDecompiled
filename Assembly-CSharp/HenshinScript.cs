@@ -79,29 +79,14 @@ public class HenshinScript : MonoBehaviour
 
 	public void TransformYandere()
 	{
-		PostProcessing.enabled = true;
-		TransformingYandere = true;
 		Cameras[1].SetActive(value: false);
 		Cameras[2].SetActive(value: false);
 		Cameras[3].SetActive(value: false);
 		Cameras[4].SetActive(value: false);
 		Cameras[5].SetActive(value: false);
 		Cameras[6].SetActive(value: false);
-		MiyukiCamera.targetTexture = null;
-		MiyukiCamera.enabled = true;
-		Listener.enabled = true;
-		OriginalPosition = Yandere.transform.position;
-		OriginalRotation = Yandere.transform.rotation;
-		Yandere.CharacterAnimation.Play("f02_henshin_00");
-		Yandere.transform.parent = Miyuki;
 		Yandere.enabled = false;
-		Yandere.transform.localEulerAngles = new Vector3(0f, 0f, 0f);
-		Yandere.transform.localPosition = new Vector3(0f, 0f, 0f);
 		Yandere.Accessories[Yandere.AccessoryID].SetActive(value: false);
-		Physics.SyncTransforms();
-		AudioSource.PlayClipAtPoint(Catchphrase, base.transform.position);
-		MyAudio.Play();
-		Start();
 	}
 
 	private void Start()
@@ -304,25 +289,7 @@ public class HenshinScript : MonoBehaviour
 				{
 					if (TransformingYandere)
 					{
-						Cameras[1].SetActive(value: true);
-						Cameras[2].SetActive(value: true);
-						Cameras[3].SetActive(value: true);
-						Cameras[4].SetActive(value: true);
-						Cameras[5].SetActive(value: true);
-						Cameras[6].SetActive(value: true);
-						base.gameObject.SetActive(value: false);
-						Yandere.transform.parent = null;
-						Yandere.gameObject.SetActive(value: true);
-						Yandere.transform.position = OriginalPosition;
-						Yandere.transform.rotation = OriginalRotation;
-						Yandere.Stance.Current = StanceType.Standing;
-						Yandere.WeaponManager.Weapons[19].AnimID = 0;
-						Yandere.SetAnimationLayers();
-						Yandere.enabled = true;
-						Yandere.CanMove = true;
-						Yandere.Miyuki();
-						base.transform.parent.gameObject.SetActive(value: false);
-						Time.timeScale = 1f;
+						RestoreEverything();
 					}
 					else
 					{
@@ -337,5 +304,26 @@ public class HenshinScript : MonoBehaviour
 			MiyukiCamera.enabled = false;
 			MyRenderer.enabled = false;
 		}
+	}
+
+	public void RestoreEverything()
+	{
+		Cameras[1].SetActive(value: true);
+		Cameras[2].SetActive(value: true);
+		Cameras[3].SetActive(value: true);
+		Cameras[4].SetActive(value: true);
+		Cameras[5].SetActive(value: true);
+		Cameras[6].SetActive(value: true);
+		base.gameObject.SetActive(value: false);
+		Yandere.transform.parent = null;
+		Yandere.gameObject.SetActive(value: true);
+		Yandere.Stance.Current = StanceType.Standing;
+		Yandere.WeaponManager.Weapons[19].AnimID = 0;
+		Yandere.SetAnimationLayers();
+		Yandere.enabled = true;
+		Yandere.CanMove = true;
+		Yandere.Miyuki();
+		base.transform.parent.gameObject.SetActive(value: false);
+		Time.timeScale = 1f;
 	}
 }

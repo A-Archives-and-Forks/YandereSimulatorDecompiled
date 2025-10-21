@@ -578,6 +578,8 @@ public class DialogueWheelScript : MonoBehaviour
 						TopicInterface.UpdateOpinions();
 						TopicInterface.UpdateTopicHighlight();
 						Yandere.TargetStudent.CharacterAnimation[Yandere.TargetStudent.WaveAnim].weight = 0f;
+						Yandere.TargetStudent.SpeechLines.Clear();
+						Yandere.TargetStudent.DelinquentSpeechLines.Clear();
 						Social.StudentID = Yandere.TargetStudent.StudentID;
 						Social.DialogueLabel.text = Social.Dialogue[0];
 						Social.Patience = Impatience.fillAmount;
@@ -1303,6 +1305,22 @@ public class DialogueWheelScript : MonoBehaviour
 
 	public void End()
 	{
+		Debug.Log("The DialogueWheel is calling End() now.");
+		if (Social.Show)
+		{
+			Debug.Log("Uh-oh. Complication. The ''Social'' window was visible at the moment that DialogueWheel.End() was called.");
+			Yandere.ShoulderCamera.enabled = true;
+			Yandere.TargetStudent.TalkTimer = 0f;
+			Yandere.CameraEffects.UpdateDOF(2f);
+			Yandere.HUD.alpha = 1f;
+			Impatience.fillAmount = Social.Patience;
+			Panel.enabled = true;
+			Panel.alpha = 1f;
+			Show = true;
+			Yandere.TargetStudent.Blind = false;
+			Time.timeScale = 1f;
+			Social.Show = false;
+		}
 		if (Yandere.TargetStudent != null)
 		{
 			if (Yandere.TargetStudent.Pestered >= 10)
@@ -1317,8 +1335,10 @@ public class DialogueWheelScript : MonoBehaviour
 			Yandere.TargetStudent.WaitTimer = 1f;
 			if (Yandere.TargetStudent.enabled)
 			{
+				Debug.Log(Yandere.TargetStudent.Name + " has just been released from the DialogueWheel.");
 				Yandere.TargetStudent.CurrentDestination = Yandere.TargetStudent.Destinations[Yandere.TargetStudent.Phase];
 				Yandere.TargetStudent.Pathfinding.target = Yandere.TargetStudent.Destinations[Yandere.TargetStudent.Phase];
+				Debug.Log("The student's target destination is: " + Yandere.TargetStudent.CurrentDestination);
 				if (Yandere.TargetStudent.Actions[Yandere.TargetStudent.Phase] == StudentActionType.Clean)
 				{
 					Yandere.TargetStudent.EquipCleaningItems();

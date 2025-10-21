@@ -72,6 +72,8 @@ public class MissionModeMenuScript : MonoBehaviour
 
 	public GameObject DiscordCodeWindow;
 
+	public GameObject PreparingMission;
+
 	public GameObject NowLoading;
 
 	public string[] ConditionDescs;
@@ -158,11 +160,15 @@ public class MissionModeMenuScript : MonoBehaviour
 
 	public bool[] InfoSpoke;
 
+	public bool StartMissionNextFrame;
+
 	public bool NemesisAggression;
 
 	public bool Eighties;
 
 	public bool Toggling;
+
+	public bool Exiting;
 
 	public bool Valid;
 
@@ -179,6 +185,10 @@ public class MissionModeMenuScript : MonoBehaviour
 	public GameObject CustomYakuzaWindow;
 
 	public GameObject[] InvalidOptions;
+
+	public Animation InfoChairAnim;
+
+	public Animation InfoAnim;
 
 	public int TargetNumber;
 
@@ -343,11 +353,18 @@ public class MissionModeMenuScript : MonoBehaviour
 			CustomNemesisWindow.SetActive(value: true);
 			RenderSettings.ambientSkyColor = new Color(1f, 1f, 1f, 1f);
 		}
+		InfoChairAnim.Play();
+		InfoAnim.Play();
 		NowLoading.SetActive(value: false);
 	}
 
 	private void Update()
 	{
+		if (StartMissionNextFrame)
+		{
+			StartMissionNextFrame = false;
+			StartMission();
+		}
 		if (Phase == 1)
 		{
 			Speed += Time.deltaTime;
@@ -363,7 +380,7 @@ public class MissionModeMenuScript : MonoBehaviour
 				Header.color = new Color(Header.color.r, Header.color.g, Header.color.b, Mathf.MoveTowards(Header.color.a, 1f, Time.deltaTime));
 				if (Speed > 3f)
 				{
-					if (!InfoSpoke[0])
+					if (Eighties && !InfoSpoke[0])
 					{
 						MyAudio.clip = InfoLines[0];
 						MyAudio.Play();
@@ -401,6 +418,17 @@ public class MissionModeMenuScript : MonoBehaviour
 						}
 					}
 				}
+				else
+				{
+					InfoChairAnim["InfoChairWelcome"].time = Speed;
+					InfoAnim["f02_infoWelcome_00"].time = Speed;
+				}
+				if (!Eighties && Speed >= 5f && !InfoSpoke[0])
+				{
+					MyAudio.clip = InfoLines[0];
+					MyAudio.Play();
+					InfoSpoke[0] = true;
+				}
 			}
 			if (Input.GetButtonDown(InputNames.Xbox_A))
 			{
@@ -429,12 +457,23 @@ public class MissionModeMenuScript : MonoBehaviour
 				PromptBar.Label[4].text = "Choose";
 				PromptBar.UpdateButtons();
 				PromptBar.Show = true;
+				if (Speed < 5f)
+				{
+					Speed = 5f;
+					InfoChairAnim["InfoChairWelcome"].time = 5f;
+					InfoAnim["f02_infoWelcome_00"].time = 5f;
+				}
 				Phase++;
 			}
 			return;
 		}
 		if (Phase == 2)
 		{
+			Speed += Time.deltaTime;
+			if (Speed >= InfoAnim["f02_infoWelcome_00"].length)
+			{
+				InfoAnim.Play("f02_infoIdle_00");
+			}
 			Header.color = new Color(Header.color.r, Header.color.g, Header.color.b, Mathf.MoveTowards(Header.color.a, 1f, Time.deltaTime * 10f));
 			InfoChan.localEulerAngles = new Vector3(InfoChan.localEulerAngles.x, Mathf.Lerp(InfoChan.localEulerAngles.y, 180f, Time.deltaTime * (Speed - 3f)), InfoChan.localEulerAngles.z);
 			base.transform.position = new Vector3(base.transform.position.x, base.transform.position.y, Mathf.Lerp(base.transform.position.z, 2f, Speed * Time.deltaTime * 0.25f));
@@ -479,6 +518,7 @@ public class MissionModeMenuScript : MonoBehaviour
 				MyAudio.clip = InfoLines[Selected];
 				MyAudio.Play();
 				InfoSpoke[Selected] = true;
+				InfoAnim.Play("f02_infoIdle_00");
 			}
 			if (Selected == 1)
 			{
@@ -572,9 +612,13 @@ public class MissionModeMenuScript : MonoBehaviour
 			}
 			else if (Selected == 5)
 			{
+				Debug.Log("The player just decided to exit to the main menu.");
 				PromptBar.Show = false;
 				Phase = 4;
 				Speed = 0f;
+				Timer = 1f;
+				Exiting = true;
+				InfoAnim.Play("f02_infoComeBack_00");
 			}
 			return;
 		}
@@ -661,7 +705,8 @@ public class MissionModeMenuScript : MonoBehaviour
 			}
 			if (Input.GetButtonDown(InputNames.Xbox_A))
 			{
-				StartMission();
+				PreparingMission.SetActive(value: true);
+				StartMissionNextFrame = true;
 			}
 			else if (Input.GetButtonDown(InputNames.Xbox_B))
 			{
@@ -699,6 +744,17 @@ public class MissionModeMenuScript : MonoBehaviour
 		}
 		else if (Phase == 4)
 		{
+			Timer += Time.deltaTime;
+			if (!(Timer > 1f))
+			{
+				return;
+			}
+			if (!Exiting && MyAudio.clip != InfoLines[6])
+			{
+				MyAudio.clip = InfoLines[6];
+				MyAudio.Play();
+				InfoAnim.Play("f02_infoGoodLuck_00");
+			}
 			Speed += Time.deltaTime;
 			CustomMissionWindow.localScale = Vector3.Lerp(CustomMissionWindow.localScale, Vector3.zero, Time.deltaTime * 10f);
 			LoadMissionWindow.localScale = Vector3.Lerp(LoadMissionWindow.localScale, Vector3.zero, Time.deltaTime * 10f);
@@ -813,7 +869,8 @@ public class MissionModeMenuScript : MonoBehaviour
 							num++;
 						}
 					}
-					StartMission();
+					PreparingMission.SetActive(value: true);
+					StartMissionNextFrame = true;
 				}
 				else if (CustomSelected == 12)
 				{
@@ -1667,8 +1724,6 @@ public class MissionModeMenuScript : MonoBehaviour
 
 	private void StartMission()
 	{
-		MyAudio.clip = InfoLines[6];
-		MyAudio.Play();
 		Debug.Log("Switching GameGlobals.Profile to 4, since we are beginning a Mission Mode mission, and nothing we do in here should carry over to any of the player's other save files.");
 		bool disableBloom = OptionGlobals.DisableBloom;
 		GameGlobals.Profile = 4;
@@ -1720,6 +1775,7 @@ public class MissionModeMenuScript : MonoBehaviour
 		Speed = 0f;
 		Phase = 4;
 		Debug.Log("This is the moment we leave the Mission Mode scene. OptionGlobals.DisableBloom is: " + OptionGlobals.DisableBloom);
+		PreparingMission.SetActive(value: false);
 	}
 
 	private void ChangeFont()

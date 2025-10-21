@@ -658,7 +658,7 @@ public class CosmeticScript : MonoBehaviour
 					}
 				}
 			}
-			if (StudentManager != null && Male && StudentID == StudentManager.SuitorID)
+			if (StudentManager != null && !CustomModeMenu && Male && StudentID == StudentManager.SuitorID)
 			{
 				MaleHair[55] = PonySuitorHair[StudentManager.Week];
 				MaleHair[56] = SlickSuitorHair[StudentManager.Week];
@@ -666,7 +666,7 @@ public class CosmeticScript : MonoBehaviour
 				MaleHairRenderers[56] = SlickSuitorHairRenderers[StudentManager.Week];
 			}
 		}
-		else if (StudentManager != null && Male && StudentID == StudentManager.SuitorID && ModernPonySuitorHair[StudentManager.Week] != null)
+		else if (StudentManager != null && !CustomModeMenu && Male && StudentID == StudentManager.SuitorID && ModernPonySuitorHair[StudentManager.Week] != null)
 		{
 			MaleHair[55] = ModernPonySuitorHair[StudentManager.Week];
 			MaleHair[56] = ModernSlickSuitorHair[StudentManager.Week];
@@ -721,15 +721,19 @@ public class CosmeticScript : MonoBehaviour
 					Student.EightiesGymTexture = CustomUniform.MaleGymUniform;
 					Student.GymTexture = CustomUniform.MaleGymUniform;
 				}
-				if (StudentGlobals.CustomFemaleUniform)
+				if (!Male && StudentGlobals.CustomFemaleUniform)
 				{
 					LoadOriginalTextures();
-					if ((!Male && StudentGlobals.CustomFemaleUniform) || (Male && StudentGlobals.CustomMaleUniform))
-					{
-						Debug.Log("This code is the next code in the chain to begin running.");
-						SaveOriginalTextures();
-						GrabCustomTextures();
-					}
+					Debug.Log("This code is the next code in the chain to begin running.");
+					SaveOriginalTextures();
+					GrabCustomTextures();
+				}
+				if (Male && StudentGlobals.CustomMaleUniform)
+				{
+					LoadOriginalTextures();
+					Debug.Log("This code is the next code in the chain to begin running.");
+					SaveOriginalTextures();
+					GrabCustomTextures();
 				}
 				if (Student.Rival)
 				{
@@ -4601,6 +4605,7 @@ public class CosmeticScript : MonoBehaviour
 		else
 		{
 			Debug.Log("Psst...for some reason, HairRenderer is null here. Not sure if that's a bug.");
+			Debug.Log("Hair ID is: " + Hairstyle);
 		}
 		UsingDefaultHairColor = true;
 	}
@@ -4609,6 +4614,7 @@ public class CosmeticScript : MonoBehaviour
 	{
 		if (!Male && OriginalFemaleUniformTextures1 == null)
 		{
+			Debug.Log("A female student is saving original textures for the first time.");
 			OriginalFemaleUniformTextures1 = FemaleUniformTextures[1];
 			OriginalFemaleUniformTextures2 = FemaleUniformTextures[2];
 			OriginalFemaleUniformTextures3 = FemaleUniformTextures[3];
@@ -4624,6 +4630,7 @@ public class CosmeticScript : MonoBehaviour
 		}
 		else if (Male && OriginalMaleUniformTextures1 == null)
 		{
+			Debug.Log("A male student is saving original textures for the first time.");
 			OriginalMaleUniformTextures1 = MaleUniformTextures[1];
 			OriginalMaleUniformTextures2 = MaleUniformTextures[2];
 			OriginalMaleUniformTextures3 = MaleUniformTextures[3];
@@ -4779,6 +4786,7 @@ public class CosmeticScript : MonoBehaviour
 		}
 		else
 		{
+			Debug.Log("A male student was just instructed to run GrabCustomTextures().");
 			MaleUniformTextures[1] = CustomUniform.MaleUniformTextures[1];
 			MaleUniformTextures[2] = CustomUniform.MaleUniformTextures[2];
 			MaleUniformTextures[3] = CustomUniform.MaleUniformTextures[3];
@@ -4791,6 +4799,7 @@ public class CosmeticScript : MonoBehaviour
 			MaleSocksTextures[2] = CustomUniform.MaleSocksTextures[2];
 			MaleSocksTextures[3] = CustomUniform.MaleSocksTextures[3];
 			MaleSocksTextures[4] = CustomUniform.MaleSocksTextures[4];
+			Debug.Log("GrabCustomTextures() is now firing SetMaleUniform()");
 			SetMaleUniform();
 		}
 		Student.ShoeRemoval.OutdoorShoes = CasualTexture;

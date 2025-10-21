@@ -101,6 +101,10 @@ public class StreetManagerScript : MonoBehaviour
 
 	public Texture EightiesKonbini;
 
+	public Renderer GiftShop;
+
+	public Texture EightiesGiftShop;
+
 	public Font VCR;
 
 	private void Start()
@@ -347,6 +351,7 @@ public class StreetManagerScript : MonoBehaviour
 		EightiesCivilians.SetActive(value: true);
 		ModernCivilians.SetActive(value: false);
 		Konbini.material.mainTexture = EightiesKonbini;
+		GiftShop.material.mainTexture = EightiesGiftShop;
 	}
 
 	public void EightiesifyLabel(UILabel Label)

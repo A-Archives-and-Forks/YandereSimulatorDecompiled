@@ -36,6 +36,8 @@ public class PersonaSubtitleScript : MonoBehaviour
 
 	public string[] ViolentReactions;
 
+	public string[] LandlineReactions;
+
 	public string[] NemesisReactions;
 
 	public string[] IndifferentReactions;
@@ -96,6 +98,9 @@ public class PersonaSubtitleScript : MonoBehaviour
 			break;
 		case PersonaType.Violent:
 			SubtitleArray = ViolentReactions;
+			break;
+		case PersonaType.LandlineUser:
+			SubtitleArray = LandlineReactions;
 			break;
 		case PersonaType.Nemesis:
 			SubtitleArray = NemesisReactions;

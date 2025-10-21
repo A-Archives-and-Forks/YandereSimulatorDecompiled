@@ -78,7 +78,7 @@ public class OsanaPoolEventScript : MonoBehaviour
 				else if (StudentManager.Students[RivalID] != null && StudentManager.Students[RivalID].enabled && Clock.Period == 3)
 				{
 					Debug.Log("Osana's pool event has begun.");
-					if (StudentManager.Students[FriendID] != null && StudentManager.Students[FriendID].FollowTarget != null)
+					if (StudentManager.Students[FriendID] != null && StudentManager.Students[FriendID].FollowTarget != null && StudentGlobals.StudentSlave != FriendID)
 					{
 						Friend = StudentManager.Students[FriendID];
 						if (Friend != null)

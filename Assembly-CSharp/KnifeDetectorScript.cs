@@ -59,20 +59,33 @@ public class KnifeDetectorScript : MonoBehaviour
 		{
 			Disable();
 		}
-		if (Timer > 0f)
+		if (!(Timer > 0f))
 		{
-			Yandere.transform.rotation = Quaternion.Slerp(Yandere.transform.rotation, HeatingSpot.rotation, Time.deltaTime * 10f);
-			Yandere.MoveTowardsTarget(HeatingSpot.position);
-			WeaponScript equippedWeapon = Yandere.EquippedWeapon;
+			return;
+		}
+		Yandere.transform.rotation = Quaternion.Slerp(Yandere.transform.rotation, HeatingSpot.rotation, Time.deltaTime * 10f);
+		Yandere.MoveTowardsTarget(HeatingSpot.position);
+		WeaponScript equippedWeapon = Yandere.EquippedWeapon;
+		if (equippedWeapon != null)
+		{
 			Material material = equippedWeapon.MyRenderer.material;
 			material.color = new Color(material.color.r, Mathf.MoveTowards(material.color.g, 0.5f, Time.deltaTime * 0.2f), Mathf.MoveTowards(material.color.b, 0.5f, Time.deltaTime * 0.2f), material.color.a);
 			Timer = Mathf.MoveTowards(Timer, 0f, Time.deltaTime);
-			if (Timer == 0f)
+		}
+		if (Timer == 0f || equippedWeapon == null)
+		{
+			if (equippedWeapon != null)
 			{
 				equippedWeapon.Heated = true;
-				base.enabled = false;
-				Disable();
 			}
+			Blowtorches[1].enabled = false;
+			Blowtorches[2].enabled = false;
+			Blowtorches[3].enabled = false;
+			Blowtorches[1].Timer = 0f;
+			Blowtorches[2].Timer = 0f;
+			Blowtorches[3].Timer = 0f;
+			base.enabled = false;
+			Disable();
 		}
 	}
 

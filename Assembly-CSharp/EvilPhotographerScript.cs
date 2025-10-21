@@ -123,6 +123,10 @@ public class EvilPhotographerScript : MonoBehaviour
 	private void Start()
 	{
 		Subtitle.transform.localScale = new Vector3(0f, 0f, 0f);
+		for (int i = 1; i < SpeechClip.Length; i++)
+		{
+			SpeechTime[i] = SpeechTime[i - 1] + SpeechClip[i - 1].length + 1f;
+		}
 	}
 
 	private void Update()

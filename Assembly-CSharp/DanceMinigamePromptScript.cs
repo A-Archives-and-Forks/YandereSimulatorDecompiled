@@ -31,33 +31,39 @@ public class DanceMinigamePromptScript : MonoBehaviour
 				flag = true;
 			}
 		}
-		if (!flag)
-		{
-			Prompt.Yandere.transform.position = PlayerLocation.position;
-			Prompt.Yandere.transform.rotation = PlayerLocation.rotation;
-			Prompt.Yandere.CharacterAnimation.Play("f02_danceMachineIdle_00");
-			Prompt.Yandere.StudentManager.Clock.StopTime = true;
-			Prompt.Yandere.MyController.enabled = false;
-			Prompt.Yandere.HeartCamera.enabled = false;
-			Prompt.Yandere.HUD.enabled = false;
-			Prompt.Yandere.CanMove = false;
-			Prompt.Yandere.enabled = false;
-			Prompt.Yandere.Jukebox.LastVolume = Prompt.Yandere.Jukebox.Volume;
-			Prompt.Yandere.Jukebox.Volume = 0f;
-			Prompt.Yandere.HUD.transform.parent.gameObject.SetActive(value: false);
-			Prompt.Yandere.MainCamera.gameObject.SetActive(value: false);
-			OriginalRenderer.enabled = false;
-			Physics.SyncTransforms();
-			DanceMinigame.SetActive(value: true);
-			DanceManager.BeginMinigame();
-			StudentManager.DisableEveryone();
-		}
-		else
+		if (flag)
 		{
 			Prompt.Yandere.NotificationManager.CustomText = "Try again in a few minutes.";
 			Prompt.Yandere.NotificationManager.DisplayNotification(NotificationType.Custom);
 			Prompt.Yandere.NotificationManager.CustomText = "It's installing a firmware update.";
 			Prompt.Yandere.NotificationManager.DisplayNotification(NotificationType.Custom);
+			return;
 		}
+		if (StudentManager.Police.Corpses - StudentManager.Police.HiddenCorpses > 0)
+		{
+			Prompt.Yandere.NotificationManager.CustomText = "...while there are corpses at school.";
+			Prompt.Yandere.NotificationManager.DisplayNotification(NotificationType.Custom);
+			Prompt.Yandere.NotificationManager.CustomText = "You can't focus on dancing...";
+			Prompt.Yandere.NotificationManager.DisplayNotification(NotificationType.Custom);
+			return;
+		}
+		Prompt.Yandere.transform.position = PlayerLocation.position;
+		Prompt.Yandere.transform.rotation = PlayerLocation.rotation;
+		Prompt.Yandere.CharacterAnimation.Play("f02_danceMachineIdle_00");
+		Prompt.Yandere.StudentManager.Clock.StopTime = true;
+		Prompt.Yandere.MyController.enabled = false;
+		Prompt.Yandere.HeartCamera.enabled = false;
+		Prompt.Yandere.HUD.enabled = false;
+		Prompt.Yandere.CanMove = false;
+		Prompt.Yandere.enabled = false;
+		Prompt.Yandere.Jukebox.LastVolume = Prompt.Yandere.Jukebox.Volume;
+		Prompt.Yandere.Jukebox.Volume = 0f;
+		Prompt.Yandere.HUD.transform.parent.gameObject.SetActive(value: false);
+		Prompt.Yandere.MainCamera.gameObject.SetActive(value: false);
+		OriginalRenderer.enabled = false;
+		Physics.SyncTransforms();
+		DanceMinigame.SetActive(value: true);
+		DanceManager.BeginMinigame();
+		StudentManager.DisableEveryone();
 	}
 }

@@ -793,10 +793,8 @@ public class QualityManagerScript : MonoBehaviour
 
 	public void UpdateOutlinesAndRimlight()
 	{
-		Debug.Log("Now updating Outlines and Rimlights.");
 		if (OptionGlobals.DisableOutlines)
 		{
-			Debug.Log("''Disable Outlines'' is true.");
 			if (OptionGlobals.RimLight)
 			{
 				NewHairShader = ToonRimLight;

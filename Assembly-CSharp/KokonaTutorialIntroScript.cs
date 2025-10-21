@@ -88,6 +88,7 @@ public class KokonaTutorialIntroScript : MonoBehaviour
 		Window.localScale = new Vector3(0f, 0f, 0f);
 		GameGlobals.Eighties = false;
 		SkipPanel.alpha = 0f;
+		Time.timeScale = 1f;
 		Darkness.alpha = 1f;
 		Subtitle.text = "";
 		VtuberCheck();

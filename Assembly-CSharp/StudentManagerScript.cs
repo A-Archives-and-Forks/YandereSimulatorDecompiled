@@ -694,6 +694,8 @@ public class StudentManagerScript : MonoBehaviour
 
 	public GameObject Note;
 
+	public UILabel Watermark;
+
 	public float[] SpawnTimes;
 
 	public int InitialSabotageProgress;
@@ -733,6 +735,8 @@ public class StudentManagerScript : MonoBehaviour
 	public int NewUniforms;
 
 	public int NPCsSpawned;
+
+	public int SavesLoaded;
 
 	public int SleuthPhase = 1;
 
@@ -1256,6 +1260,10 @@ public class StudentManagerScript : MonoBehaviour
 	public int[] RivalWitnessIDs;
 
 	public bool CensorBlood;
+
+	public Material TransPixelMat;
+
+	public Texture TransPixel;
 
 	public Texture PinkBlood;
 
@@ -2128,6 +2136,8 @@ public class StudentManagerScript : MonoBehaviour
 					StudentScript[] students;
 					if (LoadedSave)
 					{
+						SavesLoaded++;
+						Watermark.text = Watermark.text + " Loads: " + SavesLoaded;
 						RagdollScript[] corpseList = Police.CorpseList;
 						foreach (RagdollScript ragdollScript in corpseList)
 						{
@@ -8232,9 +8242,11 @@ public class StudentManagerScript : MonoBehaviour
 
 	public void ChangeAllBloodTextures()
 	{
+		Debug.Log("StudentManager is firing ChangeAllBloodTextures() now.");
 		CensorBlood = GameGlobals.CensorBlood;
 		if (Yandere != null && Yandere.WeaponManager != null)
 		{
+			Debug.Log("Updating all Weapon Materials now.");
 			Yandere.WeaponManager.UpdateWeaponMaterials();
 		}
 		FoldedUniformScript[] array = UnityEngine.Object.FindObjectsOfType<FoldedUniformScript>();

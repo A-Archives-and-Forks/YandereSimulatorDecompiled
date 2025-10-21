@@ -315,16 +315,15 @@ public class AmbientEventScript : MonoBehaviour
 					}
 				}
 			}
-			if (Private)
+			if (Private && num < 6f)
 			{
 				if (num < 5f)
 				{
 					Yandere.Eavesdropping = true;
+					return;
 				}
-				else
-				{
-					Yandere.Eavesdropping = false;
-				}
+				Debug.Log("This code is running right now.");
+				Yandere.Eavesdropping = false;
 			}
 		}
 		else if (Vector3.Distance(Yandere.transform.position, EventLocation[1].parent.position) < 5f && (EventStudent[1].CanSeeObject(Yandere.gameObject) || EventStudent[2].CanSeeObject(Yandere.gameObject)))

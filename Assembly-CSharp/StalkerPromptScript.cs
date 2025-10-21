@@ -461,6 +461,8 @@ public class StalkerPromptScript : MonoBehaviour
 				}
 				else if (ID == 1)
 				{
+					Fire.transform.parent.gameObject.GetComponent<OutlineScript>().enabled = false;
+					Fire.transform.parent.gameObject.GetComponent<OutlineScript>().h.enabled = false;
 					ExitPrompt.CountBags();
 					Fire.SetActive(value: true);
 					ServedPurpose = true;

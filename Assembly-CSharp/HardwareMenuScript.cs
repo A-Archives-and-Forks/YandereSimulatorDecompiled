@@ -56,6 +56,11 @@ public class HardwareMenuScript : MonoBehaviour
 				Hardware[i].gameObject.SetActive(value: false);
 				Labels[i].alpha = 0.5f;
 			}
+			else
+			{
+				Hardware[i].gameObject.SetActive(value: true);
+				Labels[i].alpha = 1f;
+			}
 		}
 		Selected = 1;
 		UpdateHighlight();
@@ -158,6 +163,7 @@ public class HardwareMenuScript : MonoBehaviour
 				{
 					CollectibleGlobals.SetHardwarePurchased(num, value: true);
 				}
+				Debug.Log("All hardware purchased.");
 			}
 			else if (PlayerGlobals.Money == 100f)
 			{
@@ -181,6 +187,7 @@ public class HardwareMenuScript : MonoBehaviour
 					CollectibleGlobals.SetHardwarePurchased(num, value: false);
 				}
 			}
+			Start();
 		}
 		else
 		{

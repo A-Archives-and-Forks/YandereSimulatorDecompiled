@@ -243,7 +243,6 @@ public class StreetShopInterfaceScript : MonoBehaviour
 
 	private void AdjustBlur()
 	{
-		Debug.Log("Adjusting blur from StreetShopInterface script.");
 		DepthOfFieldModel.Settings settings = Profile.depthOfField.settings;
 		settings.focusDistance = BlurAmount;
 		Profile.depthOfField.settings = settings;

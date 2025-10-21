@@ -520,6 +520,11 @@ public class WeaponManagerScript : MonoBehaviour
 				Shader shader = Shader.Find("Legacy Shaders/Transparent/Diffuse");
 				Weapons[i].MyRenderer.materials[0].shader = shader;
 			}
+			if (Weapons[i].Blood != null)
+			{
+				Debug.Log("Weapon.Blood.material.mainTexture is supposed to be getting set to TransPixel now.");
+				Weapons[i].Blood.material = Yandere.StudentManager.TransPixelMat;
+			}
 		}
 	}
 }

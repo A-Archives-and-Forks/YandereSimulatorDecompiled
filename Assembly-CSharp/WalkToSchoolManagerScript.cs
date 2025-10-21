@@ -199,6 +199,11 @@ public class WalkToSchoolManagerScript : MonoBehaviour
 		}
 		RivalAnim.Play(WalkAnims[DateGlobals.Week]);
 		Rival.Start();
+		if (GameGlobals.Eighties)
+		{
+			GameGlobals.Eighties = false;
+			SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+		}
 	}
 
 	private void Update()
@@ -211,6 +216,11 @@ public class WalkToSchoolManagerScript : MonoBehaviour
 		if (Input.GetKeyDown("2"))
 		{
 			DateGlobals.Week = 2;
+			SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+		}
+		if (Input.GetKeyDown("8"))
+		{
+			GameGlobals.Eighties = false;
 			SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 		}
 		for (int i = 1; i < 3; i++)

@@ -49,7 +49,7 @@ public class MissionModeScript : MonoBehaviour
 
 	public WoodChipperScript WoodChipper;
 
-	public WoodChipperScript AcidVat;
+	public WoodChipperScript[] AcidVat;
 
 	public WoodChipperScript Kiln;
 
@@ -569,7 +569,7 @@ public class MissionModeScript : MonoBehaviour
 				Jukebox.YakuzaMusic.SetActive(value: true);
 			}
 			BroughtHardware = PlayerGlobals.BringingHardware > 0;
-			MainCamera.transform.position = new Vector3(0f, 6.51505f, -76.9222f);
+			MainCamera.transform.position = new Vector3(0f, 6.491756f, -76.83526f);
 			MainCamera.transform.eulerAngles = new Vector3(15f, MainCamera.transform.eulerAngles.y, MainCamera.transform.eulerAngles.z);
 			Yandere.RPGCamera.enabled = false;
 			Yandere.SanityBased = true;
@@ -580,7 +580,7 @@ public class MissionModeScript : MonoBehaviour
 			TranqDetector.SetActive(value: false);
 			VoidGoddess.SetActive(value: false);
 			MurderKit.SetActive(value: false);
-			TargetHeight = 1.51505f;
+			TargetHeight = 1.491756f;
 			Yandere.HUD.alpha = 0f;
 			MusicIcon.color = new Color(MusicIcon.color.r, MusicIcon.color.g, MusicIcon.color.b, 1f);
 			Darkness.color = new Color(Darkness.color.r, Darkness.color.g, Darkness.color.b, 1f);
@@ -933,23 +933,26 @@ public class MissionModeScript : MonoBehaviour
 						DisposalMethod = 3;
 					}
 				}
-				for (ID = 1; ID < AcidVat.Victims + 1; ID++)
+				for (int j = 1; j < 3; j++)
 				{
-					if (AcidVat.VictimList[ID] == TargetID)
+					for (ID = 1; ID < AcidVat[j].Victims + 1; ID++)
 					{
-						DisposalMethod = 4;
+						if (AcidVat[j].VictimList[ID] == TargetID)
+						{
+							DisposalMethod = 4;
+						}
 					}
-				}
-				int num2 = 0;
-				for (ID = 1; ID < AcidVat.Limbs + 1; ID++)
-				{
-					if (AcidVat.LimbList[ID] == TargetID)
+					int num2 = 0;
+					for (ID = 1; ID < AcidVat[j].Limbs + 1; ID++)
 					{
-						num2++;
-					}
-					if (num2 == 6)
-					{
-						DisposalMethod = 4;
+						if (AcidVat[j].LimbList[ID] == TargetID)
+						{
+							num2++;
+						}
+						if (num2 == 6)
+						{
+							DisposalMethod = 4;
+						}
 					}
 				}
 				for (ID = 1; ID < Manhole.Victims + 1; ID++)
@@ -1343,10 +1346,10 @@ public class MissionModeScript : MonoBehaviour
 								if (Eighties)
 								{
 									DateGlobals.Week = 10;
-									for (int j = 1; j < 101; j++)
+									for (int k = 1; k < 101; k++)
 									{
-										StudentGlobals.SetStudentPhotographed(j, value: true);
-										StudentManager.StudentPhotographed[j] = true;
+										StudentGlobals.SetStudentPhotographed(k, value: true);
+										StudentManager.StudentPhotographed[k] = true;
 									}
 								}
 								SceneManager.LoadScene(SceneManager.GetActiveScene().name);
@@ -1377,22 +1380,25 @@ public class MissionModeScript : MonoBehaviour
 			}
 			if (GameOverPhase == 1)
 			{
-				if (Timer > 2.5f)
+				if (Timer > 2f)
 				{
 					if (Chastise)
 					{
+						Debug.Log("Advancing GameOverPhase from " + GameOverPhase + " to " + (GameOverPhase + 1));
 						MyAudio.PlayOneShot(InfoFailure);
 						GameOverPhase++;
 					}
 					else
 					{
+						Debug.Log("Advancing GameOverPhase from " + GameOverPhase + " to " + (GameOverPhase + 1));
 						GameOverPhase++;
 						Timer += 5f;
 					}
 				}
 			}
-			else if (GameOverPhase == 2 && Timer > 7.5f)
+			else if (GameOverPhase == 2 && Timer > 6f)
 			{
+				Debug.Log("Advancing GameOverPhase from " + GameOverPhase + " to " + (GameOverPhase + 1));
 				Jukebox.MissionMode.clip = Failure;
 				Jukebox.MissionMode.Play();
 				Jukebox.Volume = 0.5f;
@@ -1424,6 +1430,7 @@ public class MissionModeScript : MonoBehaviour
 		Yandere.HUD.gameObject.SetActive(value: false);
 		Subtitle.SetActive(value: false);
 		Time.timeScale = 0.0001f;
+		Debug.Log("Advancing GameOverPhase from " + GameOverPhase + " to " + (GameOverPhase + 1));
 		GameOverPhase = 1;
 		Jukebox.MissionMode.Stop();
 		Jukebox.YakuzaMusic.SetActive(value: false);

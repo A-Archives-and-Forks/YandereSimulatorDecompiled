@@ -329,11 +329,13 @@ public class KokonaTutorialScript : MonoBehaviour
 				Bleach.transform.eulerAngles = Bleach.OriginalRotation;
 				Bleach.transform.position = Bleach.OriginalPosition;
 			}
+			Yandere.Location.Show = false;
 			DoorScript[] doors = StudentManager.Doors;
 			foreach (DoorScript doorScript in doors)
 			{
 				if (doorScript != null)
 				{
+					doorScript.Near = false;
 					doorScript.Prompt.Hide();
 					doorScript.Prompt.enabled = false;
 					doorScript.enabled = false;
@@ -392,6 +394,7 @@ public class KokonaTutorialScript : MonoBehaviour
 		{
 			UseSonyInputs();
 		}
+		StudentManager.QualityManager.UpdateOutlinesAndRimlight();
 	}
 
 	private void SpawnStudent(int ID)
@@ -544,7 +547,7 @@ public class KokonaTutorialScript : MonoBehaviour
 				}
 				else
 				{
-					MainCamera.transform.position = new Vector3(25.59676f, 1.233333f, 72f);
+					MainCamera.transform.position = new Vector3(25.11067f, 1.365645f, 72f);
 					MainCamera.transform.eulerAngles = new Vector3(15f, 90f, 0f);
 				}
 			}
@@ -1201,6 +1204,7 @@ public class KokonaTutorialScript : MonoBehaviour
 			{
 				if (StudentManager.Students[30].Forgave && Yandere.CanMove)
 				{
+					StudentManager.Students[30].Blind = true;
 					StudentManager.DialogueWheel.KokonaTutorialPhase = 2;
 					TutorialPhase++;
 					PlayKokonaVoice();
@@ -1218,6 +1222,7 @@ public class KokonaTutorialScript : MonoBehaviour
 				}
 				if (StudentManager.DialogueWheel.TopicInterface.gameObject.activeInHierarchy)
 				{
+					StudentManager.Students[30].Blind = true;
 					TutorialPhase++;
 					PlayKokonaVoice();
 				}
@@ -1241,6 +1246,7 @@ public class KokonaTutorialScript : MonoBehaviour
 					StudentManager.Students[30].Prompt.enabled = false;
 					StudentManager.Students[30].Prompt.Hide();
 					StudentManager.Students[30].CanTalk = false;
+					StudentManager.Students[30].Blind = true;
 					TutorialPhase++;
 					PlayKokonaVoice();
 				}
@@ -1250,6 +1256,7 @@ public class KokonaTutorialScript : MonoBehaviour
 				TutorialTimer += Time.deltaTime;
 				if (TutorialTimer > 5f)
 				{
+					StudentManager.Students[30].Blind = true;
 					Checkmarks[Selected].enabled = true;
 					TutorialsPerformed++;
 					ExitTutorial();
@@ -1684,7 +1691,7 @@ public class KokonaTutorialScript : MonoBehaviour
 
 	public void ExitTutorial()
 	{
-		if (!Yandere.Attacking && !Yandere.Dipping && !KokonaAudioSource.isPlaying && NextClip == null)
+		if (!Yandere.Attacking && !Yandere.Dipping && !Yandere.Lifting && !Yandere.Shoved && !Yandere.CleaningWeapon && !KokonaAudioSource.isPlaying && NextClip == null)
 		{
 			InstructionLabel.text = "";
 			SubtitleLabel.text = "";
@@ -1728,8 +1735,14 @@ public class KokonaTutorialScript : MonoBehaviour
 			}
 			Yandere.CanMove = false;
 			Yandere.DropSpecifically = false;
-			Phase++;
 			Yandere.CharacterAnimation.CrossFade(Yandere.IdleAnim);
+			Yandere.Sanity = 100f;
+			Yandere.EyeShrink = 0f;
+			Yandere.LeftEye.localPosition = Yandere.LeftEyeOrigin;
+			Yandere.RightEye.localPosition = Yandere.RightEyeOrigin;
+			Yandere.LeftEye.localScale = Vector3.one;
+			Yandere.RightEye.localScale = Vector3.one;
+			Phase++;
 		}
 	}
 
@@ -2094,6 +2107,7 @@ public class KokonaTutorialScript : MonoBehaviour
 		PoliceLabels[3].text = "Wash Circular Saw";
 		AStar.OnEnable();
 		Physics.SyncTransforms();
+		StudentManager.QualityManager.UpdateOutlinesAndRimlight();
 	}
 
 	public void UseSonyInputs()

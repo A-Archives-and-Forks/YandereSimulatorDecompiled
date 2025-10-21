@@ -34,7 +34,7 @@ public class PillowScript : MonoBehaviour
 			StudentScript[] students = StudentManager.Students;
 			foreach (StudentScript studentScript in students)
 			{
-				if (studentScript != null && studentScript.Alive && !studentScript.Hunted && (studentScript.CurrentAction == StudentActionType.Relax || studentScript.CurrentAction == StudentActionType.Sleep || studentScript.Sedated || studentScript.Sleepy) && Vector3.Distance(base.transform.position, studentScript.transform.position) < 1f)
+				if (studentScript != null && studentScript.Alive && !studentScript.Hunted && studentScript.StudentID > 1 && (studentScript.CurrentAction == StudentActionType.Relax || studentScript.CurrentAction == StudentActionType.Sleep || studentScript.Sedated || studentScript.Sleepy) && Vector3.Distance(base.transform.position, studentScript.transform.position) < 1f)
 				{
 					Prompt.gameObject.SetActive(value: true);
 					Student = studentScript;
