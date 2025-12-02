@@ -68,6 +68,8 @@ public class VoidGoddessScript : MonoBehaviour
 
 	public Transform RightAngle;
 
+	public bool TVHeadsAssigned;
+
 	public void Start()
 	{
 		Window.parent.gameObject.SetActive(value: false);
@@ -143,6 +145,7 @@ public class VoidGoddessScript : MonoBehaviour
 		Column = 0;
 		Row = 0;
 		UpdatePortraits();
+		AssignTVHeads();
 		Initialized = true;
 	}
 
@@ -474,5 +477,17 @@ public class VoidGoddessScript : MonoBehaviour
 				Portraits[100].color = new Color(1f, 1f, 1f, 0.5f);
 			}
 		}
+	}
+
+	public void AssignTVHeads()
+	{
+		for (ID = 1; ID < 98; ID++)
+		{
+			if (Portraits[ID] != null && StudentManager.Students[ID] != null && StudentManager.Students[ID].gameObject.activeInHierarchy)
+			{
+				StudentManager.Students[ID].TVHead.GetComponent<Renderer>().materials[1].mainTexture = Portraits[ID].mainTexture;
+			}
+		}
+		TVHeadsAssigned = true;
 	}
 }

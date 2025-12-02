@@ -723,16 +723,19 @@ public class PickUpScript : MonoBehaviour
 		{
 			Mop.MyAudio.Stop();
 		}
-		if (!Yandere.BucketDropping)
+		if (Yandere.PickUp == this)
 		{
-			Yandere.Direction = 1;
-			Yandere.CheckForWall();
+			if (!Yandere.BucketDropping)
+			{
+				Yandere.Direction = 1;
+				Yandere.CheckForWall();
+			}
+			if (Yandere.WallInFront)
+			{
+				base.transform.position = new Vector3(Yandere.transform.position.x, base.transform.position.y, Yandere.transform.position.z);
+			}
+			Yandere.WallInFront = false;
 		}
-		if (Yandere.WallInFront)
-		{
-			base.transform.position = new Vector3(Yandere.transform.position.x, base.transform.position.y, Yandere.transform.position.z);
-		}
-		Yandere.WallInFront = false;
 		if (Salty && SchemeGlobals.GetSchemeStage(4) == 5)
 		{
 			SchemeGlobals.SetSchemeStage(4, 4);

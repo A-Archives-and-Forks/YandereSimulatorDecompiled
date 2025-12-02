@@ -357,23 +357,30 @@ public class CalendarScript : MonoBehaviour
 		{
 			EliminationNameLabel.transform.parent.gameObject.SetActive(value: false);
 		}
-		if (Eighties || DateGlobals.Week <= 1)
+		if (!Eighties && DateGlobals.Week > 1)
 		{
-			return;
-		}
-		if (DateGlobals.Weekday == DayOfWeek.Sunday)
-		{
-			ResetButton.SetActive(value: false);
-			SkipButton.SetActive(value: false);
-			ResetRivalStatus();
-			if (DateGlobals.ForceSkip)
+			if (DateGlobals.Weekday == DayOfWeek.Sunday)
+			{
+				ResetButton.SetActive(value: false);
+				SkipButton.SetActive(value: false);
+				ResetRivalStatus();
+				if (DateGlobals.ForceSkip)
+				{
+					Save();
+				}
+			}
+			else if (DateGlobals.Weekday == DayOfWeek.Monday && DateGlobals.PassDays == 0)
 			{
 				Save();
 			}
 		}
-		else if (DateGlobals.Weekday == DayOfWeek.Monday && DateGlobals.PassDays == 0)
+		if (GameGlobals.PlaythroughID == 0)
 		{
-			Save();
+			GameGlobals.PlaythroughID = DateTime.Now.Ticks.GetHashCode();
+		}
+		if (GameGlobals.BoughtHairDye)
+		{
+			GameGlobals.BlondeHair = true;
 		}
 	}
 

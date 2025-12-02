@@ -1440,6 +1440,7 @@ public class DialogueWheelScript : MonoBehaviour
 					Yandere.TargetStudent.Pathfinding.target = Yandere.TargetStudent.StudentManager.StrippingPositions[Yandere.TargetStudent.GirlID];
 				}
 			}
+			Yandere.TargetStudent.Cosmetic.EyeTypeCheck();
 			if (Yandere.TargetStudent != null && Yandere.TargetStudent.Talk != null)
 			{
 				Yandere.TargetStudent.Talk.NegativeResponse = false;

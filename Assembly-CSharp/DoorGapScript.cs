@@ -87,6 +87,10 @@ public class DoorGapScript : MonoBehaviour
 				}
 				else
 				{
+					if (Prompt.Yandere.RivalPhone)
+					{
+						Prompt.Yandere.SmartphoneRenderer.material.mainTexture = Prompt.Yandere.YanderePhoneTexture;
+					}
 					Prompt.Hide();
 					Prompt.enabled = false;
 					Prompt.Yandere.Inventory.RivalPhone = false;

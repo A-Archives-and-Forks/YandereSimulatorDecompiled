@@ -7,6 +7,8 @@ public class ModernRivalEventScript : MonoBehaviour
 
 	public bool Depressing;
 
+	public ModernRivalEventScript AlternateEvent;
+
 	public StudentManagerScript StudentManager;
 
 	public UILabel EventSubtitle;
@@ -45,6 +47,8 @@ public class ModernRivalEventScript : MonoBehaviour
 
 	public float Timer;
 
+	public bool DisableBlendshapes;
+
 	public bool AlreadyPopulated;
 
 	public bool ClubCheck;
@@ -73,11 +77,13 @@ public class ModernRivalEventScript : MonoBehaviour
 		}
 		if (ClubCheck && ClubGlobals.GetClubClosed(Club))
 		{
-			Instructions[0].Destination[0].eulerAngles = Vector3.zero;
-			for (int i = 1; i < Instructions.Length; i++)
+			AlternateEvent.gameObject.SetActive(value: true);
+			base.gameObject.SetActive(value: false);
+			AlternateEvent.Instructions[0].Destination[0].eulerAngles = Vector3.zero;
+			for (int i = 1; i < AlternateEvent.Instructions.Length; i++)
 			{
-				Instructions[i].Dialogue = AlternateDialogue[i];
-				Instructions[i].Anim[0] = "f02_bulliedIdle_00";
+				AlternateEvent.Instructions[i].Dialogue = AlternateEvent.AlternateDialogue[i];
+				AlternateEvent.Instructions[i].Anim[0] = "f02_bulliedIdle_00";
 			}
 		}
 	}
@@ -177,6 +183,7 @@ public class ModernRivalEventScript : MonoBehaviour
 					}
 					Phase++;
 					TakeInstructions();
+					CheckForDeaths();
 				}
 			}
 			else if (StartCriteria == StartCriteriaType.Time && Clock.HourTime > StartTime)
@@ -281,6 +288,10 @@ public class ModernRivalEventScript : MonoBehaviour
 		{
 			EventSubtitle.text = string.Empty;
 		}
+		if (Phase == 0 && DisableBlendshapes)
+		{
+			Char[0].Cosmetic.ResetBlendshapes();
+		}
 		Timer = 0f;
 		if (Phase == Instructions.Length)
 		{
@@ -294,45 +305,47 @@ public class ModernRivalEventScript : MonoBehaviour
 		}
 		for (int i = 0; i < Char.Length; i++)
 		{
-			if (Char[i] != null)
+			if (!(Char[i] != null))
 			{
-				if (Instructions[Phase].Type == InstructionType.Stay)
+				continue;
+			}
+			if (Instructions[Phase].Type == InstructionType.Stay)
+			{
+				Char[i].Pathfinding.canSearch = false;
+				Char[i].Pathfinding.canMove = false;
+				Char[i].Pathfinding.speed = 0f;
+			}
+			else
+			{
+				Char[i].Pathfinding.target = Instructions[Phase].Destination[i];
+				Char[i].CurrentDestination = Instructions[Phase].Destination[i];
+				Char[i].Pathfinding.canSearch = true;
+				Char[i].Pathfinding.canMove = true;
+				Char[i].DistanceToDestination = 100f;
+				if (Instructions[Phase].Rush)
 				{
-					Char[i].Pathfinding.canSearch = false;
-					Char[i].Pathfinding.canMove = false;
-					Char[i].Pathfinding.speed = 0f;
+					Char[i].Pathfinding.speed = 4f;
 				}
 				else
 				{
-					Char[i].Pathfinding.target = Instructions[Phase].Destination[i];
-					Char[i].CurrentDestination = Instructions[Phase].Destination[i];
-					Char[i].Pathfinding.canSearch = true;
-					Char[i].Pathfinding.canMove = true;
-					Char[i].DistanceToDestination = 100f;
-					if (Instructions[Phase].Rush)
-					{
-						Char[i].Pathfinding.speed = 4f;
-					}
-					else
-					{
-						Char[i].Pathfinding.speed = 1f;
-					}
+					Char[i].Pathfinding.speed = 1f;
 				}
-				PlayDesignatedAnimation(i);
 			}
-			if (Instructions[Phase].Audio != null)
-			{
-				Char[i].SpawnTimeRespectingAudioSource(Instructions[Phase].Audio);
-			}
-			if (num < 10f)
-			{
-				EventSubtitle.text = Instructions[Phase].Dialogue;
-			}
-			NextCriteria = Instructions[Phase].NextCritera;
-			SpecialCase = Instructions[Phase].SpecialCase;
-			TimeLimit = Instructions[Phase].TimeLimit;
-			SpecialCaseTimer = 0f;
+			PlayDesignatedAnimation(i);
 		}
+		if (Instructions[Phase].Audio != null)
+		{
+			Debug.Log("Phase is " + Phase + ". The game thinks that we should be playing some audio right now.");
+			Char[0].SpawnTimeRespectingAudioSource(Instructions[Phase].Audio);
+		}
+		if (num < 10f)
+		{
+			EventSubtitle.text = Instructions[Phase].Dialogue;
+		}
+		NextCriteria = Instructions[Phase].NextCritera;
+		SpecialCase = Instructions[Phase].SpecialCase;
+		TimeLimit = Instructions[Phase].TimeLimit;
+		SpecialCaseTimer = 0f;
 	}
 
 	public void UpdateSubtitle()
@@ -403,7 +416,6 @@ public class ModernRivalEventScript : MonoBehaviour
 				Char[0].SmartPhone.transform.localPosition = new Vector3(0.01f, 0.005f, 0f);
 				Char[0].SmartPhone.transform.localEulerAngles = new Vector3(0f, -155f, 165f);
 				Char[0].IgnoringPettyActions = false;
-				Char[0].Cosmetic.ResetBlendshapes();
 				Char[0].Private = true;
 				Private = true;
 			}
@@ -574,6 +586,10 @@ public class ModernRivalEventScript : MonoBehaviour
 	public void EndEvent()
 	{
 		Debug.Log("A Modern Rival Event named " + base.gameObject.name + " has ended.");
+		if (EventID == RivalEventType.AmaiPhoneEvent)
+		{
+			Char[0].PhoneCallScreen.SetActive(value: false);
+		}
 		if (EventID == RivalEventType.AmaiClubEvent)
 		{
 			SendClubToBakeSale();
@@ -605,7 +621,6 @@ public class ModernRivalEventScript : MonoBehaviour
 		if (Char[0] != null)
 		{
 			Char[0].WalkAnim = Char[0].OriginalWalkAnim;
-			Char[0].PhoneCallScreen.SetActive(value: false);
 			Char[0].Cosmetic.EyeTypeCheck();
 		}
 		for (int i = 0; i < Char.Length; i++)
@@ -722,5 +737,23 @@ public class ModernRivalEventScript : MonoBehaviour
 			}
 		}
 		StudentManager.BakeSaleHasBegun = true;
+	}
+
+	public void CheckForDeaths()
+	{
+		Debug.Log("Now checking to see if any of the characters involved in this event are dead.");
+		for (int i = 2; i <= 5; i++)
+		{
+			int num = CharIDs[i];
+			if (StudentManager.Students[num] == null)
+			{
+				Debug.Log("Student #" + num + " is not at school?");
+				int num2 = i * 2;
+				Instructions[num2].Dialogue = "";
+				Instructions[num2].TimeLimit = 0f;
+				Instructions[num2 + 1].Dialogue = "";
+				Instructions[num2 + 1].TimeLimit = 0f;
+			}
+		}
 	}
 }

@@ -26,6 +26,8 @@ public static class GameGlobals
 
 	private const string Str_SpareUniform = "SpareUniform";
 
+	private const string Str_BoughtHairDye = "BoughtHairDye";
+
 	private const string Str_BlondeHair = "BlondeHair";
 
 	private const string Str_SenpaiMourning = "SenpaiMourning";
@@ -155,6 +157,12 @@ public static class GameGlobals
 	private const string Str_SisterCutscene = "SisterCutscene";
 
 	private const string Str_BakeSalePoisoned = "BakeSalePoisoned";
+
+	private const string Str_PlaythroughID = "PlaythroughID";
+
+	private const string Str_WhipGameUnlocked = "WhipGameUnlocked";
+
+	private const string Str_TVHeads = "TVHeads";
 
 	public static int Profile
 	{
@@ -297,6 +305,18 @@ public static class GameGlobals
 		set
 		{
 			GlobalsHelper.SetBool("Profile_" + Profile + "_SpareUniform", value);
+		}
+	}
+
+	public static bool BoughtHairDye
+	{
+		get
+		{
+			return GlobalsHelper.GetBool("Profile_" + Profile + "_BoughtHairDye");
+		}
+		set
+		{
+			GlobalsHelper.SetBool("Profile_" + Profile + "_BoughtHairDye", value);
 		}
 	}
 
@@ -996,6 +1016,42 @@ public static class GameGlobals
 		}
 	}
 
+	public static int PlaythroughID
+	{
+		get
+		{
+			return PlayerPrefs.GetInt("Profile_" + Profile + "_PlaythroughID");
+		}
+		set
+		{
+			PlayerPrefs.SetInt("Profile_" + Profile + "_PlaythroughID", value);
+		}
+	}
+
+	public static bool WhipGameUnlocked
+	{
+		get
+		{
+			return GlobalsHelper.GetBool("Profile_" + Profile + "_WhipGameUnlocked");
+		}
+		set
+		{
+			GlobalsHelper.SetBool("Profile_" + Profile + "_WhipGameUnlocked", value);
+		}
+	}
+
+	public static bool TVHeads
+	{
+		get
+		{
+			return GlobalsHelper.GetBool("Profile_" + Profile + "_TVHeads");
+		}
+		set
+		{
+			GlobalsHelper.SetBool("Profile_" + Profile + "_TVHeads", value);
+		}
+	}
+
 	public static int GetRivalEliminations(int elimID)
 	{
 		return PlayerPrefs.GetInt("Profile_" + Profile + "_RivalEliminations" + elimID);
@@ -1127,6 +1183,7 @@ public static class GameGlobals
 		Globals.Delete("Profile_" + Profile + "_CensorPanties");
 		Globals.Delete("Profile_" + Profile + "_CensorKillingAnims");
 		Globals.Delete("Profile_" + Profile + "_SpareUniform");
+		Globals.Delete("Profile_" + Profile + "_BoughtHairDye");
 		Globals.Delete("Profile_" + Profile + "_BlondeHair");
 		Globals.Delete("Profile_" + Profile + "_SenpaiMourning");
 		Globals.Delete("Profile_" + Profile + "_RivalEliminationID");
@@ -1197,5 +1254,8 @@ public static class GameGlobals
 		Globals.Delete("Profile_" + Profile + "_RockProgress");
 		Globals.Delete("Profile_" + Profile + "_SisterCutscene");
 		Globals.Delete("Profile_" + Profile + "_BakeSalePoisoned");
+		Globals.Delete("Profile_" + Profile + "_PlaythroughID");
+		Globals.Delete("Profile_" + Profile + "_WhipGameUnlocked");
+		Globals.Delete("Profile_" + Profile + "_TVHeads");
 	}
 }

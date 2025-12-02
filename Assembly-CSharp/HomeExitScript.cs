@@ -141,7 +141,6 @@ public class HomeExitScript : MonoBehaviour
 				}
 				else if (ID == 6)
 				{
-					Debug.Log("Leaving bedroom, allegedly.");
 					HomeYandere.MyController.radius = 0.25f;
 					HomeCamera.Triggers[1].gameObject.transform.position = new Vector3(-4.063334f, -2.5165f, -4.0875f);
 					HomeCamera.Triggers[1].gameObject.GetComponent<BoxCollider>().size = new Vector3(2.16f, 1f, 1f);

@@ -942,6 +942,7 @@ public class DatingMinigameScript : MonoBehaviour
 					StudentManager.Students[10].Pathfinding.target = StudentManager.Students[10].FollowTarget.transform;
 				}
 				DataNeedsSaving = true;
+				Rival.Cosmetic.PutOnStockings();
 			}
 			else if (Panel.alpha == 1f)
 			{

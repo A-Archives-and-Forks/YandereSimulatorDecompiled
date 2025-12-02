@@ -38,9 +38,10 @@ public class KnifeDetectorScript : MonoBehaviour
 					Prompt.Circle[0].fillAmount = 1f;
 					if (!Yandere.Chased && Yandere.Chasers == 0)
 					{
+						Debug.Log("The player has just made the decision to begin heating a knife with blowtorches.");
 						Yandere.CharacterAnimation.CrossFade("f02_heating_00");
 						Yandere.CanMove = false;
-						Timer = 5f;
+						Timer = 4.75f;
 						Blowtorches[1].enabled = true;
 						Blowtorches[2].enabled = true;
 						Blowtorches[3].enabled = true;
@@ -63,6 +64,7 @@ public class KnifeDetectorScript : MonoBehaviour
 		{
 			return;
 		}
+		Debug.Log("The player is now heating a knife with blowtorches.");
 		Yandere.transform.rotation = Quaternion.Slerp(Yandere.transform.rotation, HeatingSpot.rotation, Time.deltaTime * 10f);
 		Yandere.MoveTowardsTarget(HeatingSpot.position);
 		WeaponScript equippedWeapon = Yandere.EquippedWeapon;
@@ -84,6 +86,7 @@ public class KnifeDetectorScript : MonoBehaviour
 			Blowtorches[1].Timer = 0f;
 			Blowtorches[2].Timer = 0f;
 			Blowtorches[3].Timer = 0f;
+			Yandere.CanMove = true;
 			base.enabled = false;
 			Disable();
 		}

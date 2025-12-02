@@ -41,12 +41,20 @@ public class HomeVideoGamesScript : MonoBehaviour
 			GameTitles[1].text = "??????????";
 			GameTitles[1].color = new Color(1f, 1f, 1f, 0.5f);
 		}
-		else if (TaskGlobals.GetTaskStatus(38) == 0)
+		else
 		{
-			TitleScreens[1] = TitleScreens[5];
-			UILabel uILabel = GameTitles[1];
-			uILabel.text = GameTitles[5].text;
-			uILabel.color = new Color(uILabel.color.r, uILabel.color.g, uILabel.color.b, 0.5f);
+			if (TaskGlobals.GetTaskStatus(38) == 0)
+			{
+				TitleScreens[1] = TitleScreens[0];
+				GameTitles[1].text = "??????????";
+				GameTitles[1].color = new Color(1f, 1f, 1f, 0.5f);
+			}
+			if (!GameGlobals.WhipGameUnlocked)
+			{
+				TitleScreens[3] = TitleScreens[0];
+				GameTitles[3].text = "??????????";
+				GameTitles[3].color = new Color(1f, 1f, 1f, 0.5f);
+			}
 		}
 		TitleScreen.mainTexture = TitleScreens[1];
 	}

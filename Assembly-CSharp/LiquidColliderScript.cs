@@ -76,6 +76,11 @@ public class LiquidColliderScript : MonoBehaviour
 			component.Club = ClubType.None;
 			flag = true;
 		}
+		bool flag2 = false;
+		if (component.Reflexes && component.FollowTarget != null)
+		{
+			flag2 = true;
+		}
 		if (component.Wet || component.Fleeing || component.SenpaiWitnessingRivalDie || component.SpecialRivalDeathReaction || (component.Schoolwear == 2 && !Brown && !Blood && !Gas) || component.Confessing || component.Guarding || component.SentHome || (component.Club == ClubType.Sports && component.ClubAttire && component.Clock.Period > 5 && !Brown && !Blood && !Gas))
 		{
 			component.Yandere.NotificationManager.CustomText = "Didn't care.";
@@ -91,7 +96,7 @@ public class LiquidColliderScript : MonoBehaviour
 				component.Subtitle.UpdateLabel(SubtitleType.Custom, 0, 5f);
 			}
 		}
-		else if (!component.BeenSplashed && component.StudentID > 1 && !component.Reflexes && !component.Teacher && component.Club != ClubType.Council && !component.GasWarned && component.CurrentAction != StudentActionType.Sunbathe && !component.ClubAttire)
+		else if (!component.BeenSplashed && component.StudentID > 1 && !flag2 && !component.Teacher && component.Club != ClubType.Council && !component.GasWarned && component.CurrentAction != StudentActionType.Sunbathe && !component.ClubAttire)
 		{
 			AudioSource.PlayClipAtPoint(SplashSound, base.transform.position);
 			Object.Instantiate(Splash, new Vector3(base.transform.position.x, 1.5f, base.transform.position.z), Quaternion.identity);

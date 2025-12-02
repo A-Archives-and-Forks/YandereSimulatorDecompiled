@@ -568,7 +568,7 @@ public class HomeInternetScript : MonoBehaviour
 						else
 						{
 							AreYouSure.SetActive(value: false);
-							GameGlobals.BlondeHair = true;
+							GameGlobals.BoughtHairDye = true;
 							PlayerGlobals.Money -= 8.49f;
 							MyAudio.Play();
 							MoneyLabel.text = "$" + PlayerGlobals.Money.ToString("F2", NumberFormatInfo.InvariantInfo);

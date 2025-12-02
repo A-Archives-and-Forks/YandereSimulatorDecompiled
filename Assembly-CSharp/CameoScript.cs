@@ -26,17 +26,6 @@ public class CameoScript : MonoBehaviour
 
 	private void Update()
 	{
-		if (Input.GetKeyDown(Letters[ID]))
-		{
-			ID++;
-			if (ID == Letters.Length)
-			{
-				Renderer.material.mainTexture = CameoTexture;
-				AdditionalCharacter[1].SetActive(value: true);
-				AdditionalCharacter[2].SetActive(value: true);
-				base.enabled = false;
-			}
-		}
 		if (Input.GetKeyDown(ChipLetters[ChipID]))
 		{
 			ChipID++;

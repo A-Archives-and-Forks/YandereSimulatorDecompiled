@@ -46,12 +46,18 @@ public class BrokenScript : MonoBehaviour
 
 	private void Start()
 	{
-		HairPhysics[0].enabled = false;
-		HairPhysics[1].enabled = false;
-		PermanentAngleR = TwintailR.eulerAngles;
-		PermanentAngleL = TwintailL.eulerAngles;
-		Subtitle = GameObject.Find("EventSubtitle").GetComponent<UILabel>();
-		Yandere = GameObject.Find("YandereChan");
+		if (HairPhysics.Length != 0)
+		{
+			HairPhysics[0].enabled = false;
+			HairPhysics[1].enabled = false;
+			PermanentAngleR = TwintailR.eulerAngles;
+			PermanentAngleL = TwintailL.eulerAngles;
+		}
+		if (GameObject.Find("EventSubtitle") != null)
+		{
+			Subtitle = GameObject.Find("EventSubtitle").GetComponent<UILabel>();
+			Yandere = GameObject.Find("YandereChan");
+		}
 	}
 
 	private void Update()
@@ -107,13 +113,16 @@ public class BrokenScript : MonoBehaviour
 				}
 			}
 		}
-		Vector3 eulerAngles = TwintailR.eulerAngles;
-		Vector3 eulerAngles2 = TwintailL.eulerAngles;
-		eulerAngles.x = PermanentAngleR.x;
-		eulerAngles.z = PermanentAngleR.z;
-		eulerAngles2.x = PermanentAngleL.x;
-		eulerAngles2.z = PermanentAngleL.z;
-		TwintailR.eulerAngles = eulerAngles;
-		TwintailL.eulerAngles = eulerAngles2;
+		if (HairPhysics.Length != 0)
+		{
+			Vector3 eulerAngles = TwintailR.eulerAngles;
+			Vector3 eulerAngles2 = TwintailL.eulerAngles;
+			eulerAngles.x = PermanentAngleR.x;
+			eulerAngles.z = PermanentAngleR.z;
+			eulerAngles2.x = PermanentAngleL.x;
+			eulerAngles2.z = PermanentAngleL.z;
+			TwintailR.eulerAngles = eulerAngles;
+			TwintailL.eulerAngles = eulerAngles2;
+		}
 	}
 }

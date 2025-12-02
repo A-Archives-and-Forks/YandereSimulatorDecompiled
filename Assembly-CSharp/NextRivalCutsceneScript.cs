@@ -46,8 +46,16 @@ public class NextRivalCutsceneScript : MonoBehaviour
 
 	public int SubtitleID;
 
+	public Renderer HairRenderer;
+
+	public Texture BlondeHair;
+
 	private void Start()
 	{
+		if (GameGlobals.BlondeHair)
+		{
+			HairRenderer.material.mainTexture = BlondeHair;
+		}
 		if (GameGlobals.Eighties)
 		{
 			_ = GameGlobals.CustomMode;
@@ -125,7 +133,11 @@ public class NextRivalCutsceneScript : MonoBehaviour
 			if (SkipCircle.fillAmount == 0f)
 			{
 				Debug.Log("Skipping, now, from here.");
-				ObjectsToDisable[0].SetActive(value: false);
+				GameObject[] objectsToDisable = ObjectsToDisable;
+				for (int i = 0; i < objectsToDisable.Length; i++)
+				{
+					objectsToDisable[i].SetActive(value: false);
+				}
 				Cutscene.animationComponent.Stop();
 				Cutscene.isPlaying = false;
 				Cutscene.enabled = false;

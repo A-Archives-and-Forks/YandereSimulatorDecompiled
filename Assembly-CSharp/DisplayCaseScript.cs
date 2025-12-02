@@ -26,6 +26,8 @@ public class DisplayCaseScript : MonoBehaviour
 
 	public int Type;
 
+	public bool Broken;
+
 	private void Update()
 	{
 		if (Prompt.Circle[0].fillAmount == 0f)
@@ -126,8 +128,7 @@ public class DisplayCaseScript : MonoBehaviour
 		GameObject obj = Object.Instantiate(AlarmDisc, base.transform.position, Quaternion.identity);
 		obj.transform.localScale = new Vector3(1150f, 1150f, 1150f);
 		obj.GetComponent<AlarmDiscScript>().NoScream = true;
-		ShatteredGlass[1].SetActive(value: true);
-		ShatteredGlass[2].SetActive(value: true);
+		BreakGlass();
 		foreach (Transform item in ShatteredGlass[2].transform)
 		{
 			float x = Random.Range(-15f, 15f);
@@ -136,6 +137,13 @@ public class DisplayCaseScript : MonoBehaviour
 			Vector3 vector = new Vector3(x, y, z);
 			item.eulerAngles += vector;
 		}
+	}
+
+	public void BreakGlass()
+	{
+		Broken = true;
+		ShatteredGlass[1].SetActive(value: true);
+		ShatteredGlass[2].SetActive(value: true);
 		if (Type == 1)
 		{
 			ShatteredGlass[3].SetActive(value: true);

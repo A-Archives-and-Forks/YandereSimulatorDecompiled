@@ -1944,7 +1944,9 @@ public class EndOfDayScript : MonoBehaviour
 				}
 				else
 				{
-					Label.text = JSON.Students[fingerprintID2].Name + " is found asleep inside of a musical instrument case. The police assume that she hid herself inside of the box after committing murder, and arrest her.";
+					string text6 = "";
+					text6 = ((JSON.Students[fingerprintID2].Gender != 1) ? "The police assume that she hid herself inside of the box after committing murder, and arrest her." : "The police assume that he hid himself inside of the box after committing murder, and arrest him.");
+					Label.text = JSON.Students[fingerprintID2].Name + " is found asleep inside of a musical instrument case. " + text6;
 					StudentsToArrest[fingerprintID2] = true;
 					ArrestID = fingerprintID2;
 					TranqCase.Occupied = false;
@@ -3023,6 +3025,10 @@ public class EndOfDayScript : MonoBehaviour
 		StudentGlobals.SetBlogKnown(3, Yandere.PauseScreen.SocialMedia.BlogKnown[3]);
 		StudentGlobals.SetBlogKnown(4, Yandere.PauseScreen.SocialMedia.BlogKnown[4]);
 		GameGlobals.BakeSalePoisoned = StudentManager.BakeSale.Poisoned;
+		if (StudentManager.TookUSB)
+		{
+			GameGlobals.WhipGameUnlocked = true;
+		}
 	}
 
 	private void DisableThings(StudentScript TargetStudent)

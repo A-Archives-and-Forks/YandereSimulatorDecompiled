@@ -95,7 +95,15 @@ public class QualityManagerScript : MonoBehaviour
 
 	public bool LoveSick;
 
+	public Shader Hologram;
+
+	public Texture MatrixTexture;
+
+	public Material HologramMaterial;
+
 	public bool OriginalFog;
+
+	public bool TVHeads;
 
 	public void Start()
 	{
@@ -169,6 +177,10 @@ public class QualityManagerScript : MonoBehaviour
 			if (ColorGrading != null)
 			{
 				UpdateColorGrading();
+			}
+			if (GameGlobals.TVHeads)
+			{
+				StudentManager.TVHeads();
 			}
 		}
 		LoveSick = GameGlobals.LoveSick;
@@ -816,6 +828,12 @@ public class QualityManagerScript : MonoBehaviour
 			NewHairShader = ToonOutline;
 			NewBodyShader = ToonOutlineOverlay;
 		}
+		TVHeads = GameGlobals.TVHeads;
+		if (TVHeads)
+		{
+			NewHairShader = Hologram;
+			NewBodyShader = Hologram;
+		}
 		if (!DoNothing)
 		{
 			for (int i = 1; i < StudentManager.Students.Length; i++)
@@ -992,8 +1010,19 @@ public class QualityManagerScript : MonoBehaviour
 				}
 				studentScript.Cosmetic.Bookbag.GetComponent<Renderer>().material.shader = NewHairShader;
 				studentScript.Cosmetic.CanRenderer.material.shader = NewHairShader;
+				if (TVHeads)
+				{
+					Debug.Log("QualityManager is supposed to be setting this student's materials to the Hologram material now...");
+					for (int k = 0; k < studentScript.MyRenderer.materials.Length; k++)
+					{
+						ApplyMatrixSettings(studentScript.MyRenderer.materials[k], MatrixTexture);
+					}
+				}
 			}
-			UpdateYandereChan();
+			if (!TVHeads)
+			{
+				UpdateYandereChan();
+			}
 			Nemesis.Cosmetic.MyRenderer.materials[0].shader = NewBodyShader;
 			Nemesis.Cosmetic.MyRenderer.materials[1].shader = NewBodyShader;
 			Nemesis.Cosmetic.MyRenderer.materials[2].shader = NewBodyShader;
@@ -1126,6 +1155,18 @@ public class QualityManagerScript : MonoBehaviour
 		if (StudentManager.Yandere.PauseScreen != null)
 		{
 			StudentManager.Yandere.PauseScreen.UpdateSubtitleSize();
+		}
+	}
+
+	private void ApplyMatrixSettings(Material mat, Texture matrixTexture)
+	{
+		if (!(mat == null))
+		{
+			mat.SetFloat("_Alpha", 1f);
+			mat.SetFloat("_RimIntensity", 0f);
+			mat.SetFloat("_NoiseTextureEnabled", 0f);
+			mat.SetFloat("_AnimateNoise", 1f);
+			mat.SetFloat("_NoiseIntensity", 1f);
 		}
 	}
 }

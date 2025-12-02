@@ -151,10 +151,20 @@ public class SaveLoadMenuScript : MonoBehaviour
 					}
 					else if (DataLabels[Selected].text != "No Data")
 					{
-						PlayerPrefs.SetInt("LoadingSave", 1);
-						PlayerPrefs.SetInt("SaveSlot", Selected);
-						YanSave.LoadPrefs("Profile_" + GameGlobals.Profile + "_Slot_" + Selected);
-						SceneManager.LoadScene("LoadingScene");
+						if (GameGlobals.PlaythroughID != PlayerPrefs.GetInt("SaveSlot_" + Selected + "_PlaythroughID"))
+						{
+							StudentManager.Yandere.NotificationManager.CustomText = "from a different playthrough.";
+							StudentManager.Yandere.NotificationManager.DisplayNotification(NotificationType.Custom);
+							StudentManager.Yandere.NotificationManager.CustomText = "You cannot load a save file";
+							StudentManager.Yandere.NotificationManager.DisplayNotification(NotificationType.Custom);
+						}
+						else
+						{
+							PlayerPrefs.SetInt("LoadingSave", 1);
+							PlayerPrefs.SetInt("SaveSlot", Selected);
+							YanSave.LoadPrefs("Profile_" + GameGlobals.Profile + "_Slot_" + Selected);
+							SceneManager.LoadScene("LoadingScene");
+						}
 					}
 				}
 			}
@@ -168,25 +178,31 @@ public class SaveLoadMenuScript : MonoBehaviour
 				else
 				{
 					ConfirmWindow.SetActive(value: false);
-					PlayerPrefs.SetInt("SaveSlot", Selected);
+					PlayerPrefs.SetInt("SaveSlot_" + Selected + "_PlaythroughID", GameGlobals.PlaythroughID);
 					GameGlobals.MostRecentSlot = Selected;
 					PlayerPrefs.SetString("Profile_" + Profile + "_Slot_" + Selected + "_DateTime", DateGlobals.Weekday.ToString() + ", Week " + DateGlobals.Week + " " + DateTime.Now);
-					ScreenCapture.CaptureScreenshot(Application.streamingAssetsPath + "/SaveData/Profile_" + Profile + "/Slot_" + Selected + "_Thumbnail.png");
+					ScreenCapture.CaptureScreenshot(Application.streamingAssetsPath + "/SaveData/Profile_" + Profile + "Slot_" + Selected + "_Thumbnail.png");
 					PauseScreen.Yandere.Blur.enabled = false;
 					UICamera.enabled = false;
 					GrabScreenshot = true;
 				}
 			}
 		}
-		if (Input.GetButtonDown("X") && PlayerPrefs.GetString("Profile_" + Profile + "_Slot_" + Selected + "_DateTime") != "")
+		if (Input.GetButtonDown("X"))
 		{
-			File.Delete(Application.streamingAssetsPath + "/SaveData/Profile_" + Profile + "/Slot_" + Selected + "_Thumbnail.png");
-			PlayerPrefs.SetString("Profile_" + Profile + "_Slot_" + Selected + "_DateTime", "");
-			Thumbnails[Selected].mainTexture = DefaultThumbnail;
-			DataLabels[Selected].text = "No Data";
-			if (Selected == GameGlobals.MostRecentSlot)
+			Debug.Log("Now attempting to delete a save file.");
+			Debug.Log("Current Profile is " + Profile + ", current Slot is " + Selected + ".");
+			if (PlayerPrefs.GetString("Profile_" + Profile + "_Slot_" + Selected + "_DateTime") != "")
 			{
-				GameGlobals.MostRecentSlot = 0;
+				File.Delete(Application.streamingAssetsPath + "/SaveData/Profile_" + Profile + "Slot_" + Selected + "_Thumbnail.png");
+				File.Delete(Application.streamingAssetsPath + "/SaveFiles/Profile_" + Profile + "Slot_" + Selected + ".yansave");
+				PlayerPrefs.SetString("Profile_" + Profile + "_Slot_" + Selected + "_DateTime", "");
+				Thumbnails[Selected].mainTexture = DefaultThumbnail;
+				DataLabels[Selected].text = "No Data";
+				if (Selected == GameGlobals.MostRecentSlot)
+				{
+					GameGlobals.MostRecentSlot = 0;
+				}
 			}
 		}
 		if (Input.GetButtonDown("B"))
@@ -216,7 +232,7 @@ public class SaveLoadMenuScript : MonoBehaviour
 			if (PlayerPrefs.GetString("Profile_" + Profile + "_Slot_" + ID + "_DateTime") != "")
 			{
 				DataLabels[ID].text = PlayerPrefs.GetString("Profile_" + Profile + "_Slot_" + ID + "_DateTime");
-				string url = "file:///" + Application.streamingAssetsPath + "/SaveData/Profile_" + Profile + "/Slot_" + ID + "_Thumbnail.png";
+				string url = "file:///" + Application.streamingAssetsPath + "/SaveData/Profile_" + Profile + "Slot_" + ID + "_Thumbnail.png";
 				WWW www = new WWW(url);
 				yield return www;
 				if (www.error == null)

@@ -1371,6 +1371,10 @@ public class RagdollScript : MonoBehaviour
 			Student.Cosmetic.DisableFingernails();
 			Student.BookBag.SetActive(value: false);
 		}
+		else if (Student.Cosmetic.SkullCapRenderer != null)
+		{
+			Student.Cosmetic.SkullCapRenderer.gameObject.SetActive(value: false);
+		}
 		if (Student.Yandere.PickUp != null && Student.Yandere.PickUp.BodyBags > 0)
 		{
 			Student.Yandere.PickUp.BodyBags--;

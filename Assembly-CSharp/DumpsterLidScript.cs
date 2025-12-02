@@ -96,7 +96,10 @@ public class DumpsterLidScript : MonoBehaviour
 			}
 			if (base.transform.position.z > DisposalSpot - 0.05f && base.transform.position.z < DisposalSpot + 0.05f)
 			{
-				FallChecker.SetActive(Prompt.Yandere.RoofPush);
+				if (Prompt.Yandere.RoofPush)
+				{
+					FallChecker.SetActive(value: true);
+				}
 			}
 			else
 			{

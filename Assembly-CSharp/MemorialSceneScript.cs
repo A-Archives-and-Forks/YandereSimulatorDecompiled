@@ -6,6 +6,8 @@ public class MemorialSceneScript : MonoBehaviour
 
 	public CameraEffectsScript CameraEffects;
 
+	public PromptScript GymDoorPrompt;
+
 	public GameObject[] Canvases;
 
 	public UITexture[] Portraits;
@@ -214,6 +216,7 @@ public class MemorialSceneScript : MonoBehaviour
 			{
 				StudentManager.Students[1].transform.position = new Vector3(0f, 0f, 0f);
 			}
+			GymDoorPrompt.Wait = false;
 		}
 	}
 

@@ -46,6 +46,10 @@ public class ContainerScript : MonoBehaviour
 
 	public bool Open;
 
+	public bool Worn;
+
+	public int NumberOfBodyParts;
+
 	public int Contents;
 
 	public int ID;
@@ -103,6 +107,7 @@ public class ContainerScript : MonoBehaviour
 				BodyPart.gameObject.GetComponent<Rigidbody>().useGravity = false;
 				BodyPart.MyCollider.isTrigger = true;
 				BodyParts[BodyPart.GetComponent<BodyPartScript>().Type] = BodyPart;
+				NumberOfBodyParts++;
 			}
 			Contents++;
 			UpdatePrompts();
@@ -112,23 +117,7 @@ public class ContainerScript : MonoBehaviour
 			Prompt.Circle[3].fillAmount = 1f;
 			if (!Open)
 			{
-				MyAudio.clip = EquipBag;
-				MyAudio.Play();
-				base.transform.parent = Prompt.Yandere.Backpack;
-				base.transform.localPosition = Vector3.zero;
-				base.transform.localEulerAngles = Vector3.zero;
-				if (Prompt.Yandere.Container != null)
-				{
-					Prompt.Yandere.Container.Drop();
-				}
-				Prompt.Yandere.Container = this;
-				Prompt.Yandere.WeaponMenu.UpdateSprites();
-				Prompt.MyCollider.enabled = false;
-				Prompt.Hide();
-				Prompt.enabled = false;
-				Rigidbody component = GetComponent<Rigidbody>();
-				component.isKinematic = true;
-				component.useGravity = false;
+				Wear();
 			}
 			else
 			{
@@ -153,6 +142,7 @@ public class ContainerScript : MonoBehaviour
 						ID++;
 					}
 					BodyPart.Prompt.Circle[3].fillAmount = -1f;
+					NumberOfBodyParts--;
 				}
 				Contents--;
 				UpdatePrompts();
@@ -210,6 +200,7 @@ public class ContainerScript : MonoBehaviour
 		{
 			TrashCan.Worn = false;
 		}
+		Worn = false;
 	}
 
 	public void UpdatePrompts()
@@ -287,5 +278,28 @@ public class ContainerScript : MonoBehaviour
 			Prompt.Label[3].text = "     Wear";
 			Prompt.HideButton[3] = false;
 		}
+	}
+
+	public void Wear()
+	{
+		Debug.Log("Firing Wear().");
+		MyAudio.clip = EquipBag;
+		MyAudio.Play();
+		base.transform.parent = Prompt.Yandere.Backpack;
+		base.transform.localPosition = Vector3.zero;
+		base.transform.localEulerAngles = Vector3.zero;
+		if (Prompt.Yandere.Container != null)
+		{
+			Prompt.Yandere.Container.Drop();
+		}
+		Prompt.Yandere.Container = this;
+		Prompt.Yandere.WeaponMenu.UpdateSprites();
+		Prompt.MyCollider.enabled = false;
+		Prompt.Hide();
+		Prompt.enabled = false;
+		Rigidbody component = GetComponent<Rigidbody>();
+		component.isKinematic = true;
+		component.useGravity = false;
+		Worn = true;
 	}
 }

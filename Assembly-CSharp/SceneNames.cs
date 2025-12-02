@@ -125,4 +125,8 @@ public static class SceneNames
 	public const string SwordScene = "SwordScene";
 
 	public const string PostAmaiScene = "PostAmaiScene";
+
+	public const string WhipTitleScene = "HNSTitleScreen";
+
+	public const string WhipGameScene = "HNSGameplay";
 }

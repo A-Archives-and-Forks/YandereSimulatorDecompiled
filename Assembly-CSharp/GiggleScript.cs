@@ -75,6 +75,12 @@ public class GiggleScript : MonoBehaviour
 				}
 				return;
 			}
+			if (Student.SearchingForPhone)
+			{
+				Student.Yandere.NotificationManager.CustomText = Student.Name + " will ignore that sound.";
+				Student.Yandere.NotificationManager.DisplayNotification(NotificationType.Custom);
+				return;
+			}
 			if (Student.Clock.Period == 3 && Student.BusyAtLunch)
 			{
 				StudentIsBusy = true;
@@ -169,6 +175,10 @@ public class GiggleScript : MonoBehaviour
 						if (Student.Male)
 						{
 							Student.Bento.transform.localPosition = new Vector3(0f, 0.4266666f, -0.075f);
+							if (Student.Club == ClubType.Delinquent)
+							{
+								Student.Bento.transform.localPosition += new Vector3(0f, 0.0498334f, -0.07956f);
+							}
 						}
 						else
 						{

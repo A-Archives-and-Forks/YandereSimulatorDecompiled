@@ -229,7 +229,7 @@ public class NoteLockerScript : MonoBehaviour
 			}
 			if (!Student.Male)
 			{
-				if (Student.Rival)
+				if (Student.Rival && !Student.StudentManager.Eighties)
 				{
 					AudioClip audioClip = NoteFind[Student.StudentID - 10];
 					Yandere.Subtitle.Speaker = Student;
@@ -264,7 +264,7 @@ public class NoteLockerScript : MonoBehaviour
 				}
 				if (!Student.Male)
 				{
-					if (Student.Rival)
+					if (Student.Rival && !Student.StudentManager.Eighties)
 					{
 						AudioClip audioClip2 = NoteFail[Student.StudentID - 10];
 						Yandere.Subtitle.Speaker = Student;
@@ -293,7 +293,7 @@ public class NoteLockerScript : MonoBehaviour
 				}
 				if (!Student.Male)
 				{
-					if (Student.Rival)
+					if (Student.Rival && !Student.StudentManager.Eighties)
 					{
 						AudioClip audioClip3 = NoteSuccess[Student.StudentID - 10];
 						Yandere.Subtitle.Speaker = Student;

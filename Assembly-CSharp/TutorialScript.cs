@@ -260,7 +260,10 @@ public class TutorialScript : MonoBehaviour
 		}
 		for (int i = 1; i < ObjectsToDisable.Length; i++)
 		{
-			ObjectsToDisable[i].gameObject.SetActive(value: false);
+			if (ObjectsToDisable[i] != null)
+			{
+				ObjectsToDisable[i].gameObject.SetActive(value: false);
+			}
 		}
 		Blocker[0].SetActive(value: true);
 	}
@@ -511,6 +514,7 @@ public class TutorialScript : MonoBehaviour
 						}
 						else if (Phase == 6)
 						{
+							Knife.Prompt.WaitTimer = 0f;
 							if (Yandere.Armed || Yandere.Weapon[1] != null)
 							{
 								FadeInstructions = true;

@@ -1207,6 +1207,11 @@ public class PauseScreenScript : MonoBehaviour
 						PhoneIcons[9].color = new Color(1f, 1f, 1f, 0.5f);
 						Reason = "You cannot save the game while a student is alarmed.";
 					}
+					if (Yandere.StudentManager.Students[i].Vomiting)
+					{
+						PhoneIcons[9].color = new Color(1f, 1f, 1f, 0.5f);
+						Reason = "You cannot save the game while a student is vomiting.";
+					}
 					if (Yandere.StudentManager.Students[i].Fleeing)
 					{
 						PhoneIcons[9].color = new Color(1f, 1f, 1f, 0.5f);
@@ -1250,6 +1255,11 @@ public class PauseScreenScript : MonoBehaviour
 						PhoneIcons[9].color = new Color(1f, 1f, 1f, 0.5f);
 						Reason = "You cannot save the game while a student is posing for a photograph.";
 					}
+					if (Yandere.WoodChipper.Bucket != null)
+					{
+						PhoneIcons[9].color = new Color(1f, 1f, 1f, 0.5f);
+						Reason = "You cannot save the game while a bucket is attached to a woodchipper.";
+					}
 					if (Yandere.StudentManager.Students[i].SearchingForPhone)
 					{
 						PhoneIcons[9].color = new Color(1f, 1f, 1f, 0.5f);
@@ -1264,6 +1274,11 @@ public class PauseScreenScript : MonoBehaviour
 					{
 						PhoneIcons[9].color = new Color(1f, 1f, 1f, 0.5f);
 						Reason = "You cannot save the game while a student is tranquilized and sleeping on the ground.";
+					}
+					if (Yandere.StudentManager.MissionMode)
+					{
+						PhoneIcons[9].color = new Color(1f, 1f, 1f, 0.5f);
+						Reason = "You cannot save the game during Mission Mode.";
 					}
 				}
 			}
@@ -1307,7 +1322,7 @@ public class PauseScreenScript : MonoBehaviour
 				PhoneIcons[9].color = new Color(1f, 1f, 1f, 0.5f);
 				Reason = "You cannot save the game while bloody clothing is present at school.";
 			}
-			if (Yandere.StudentManager.Police.LimbParent.childCount > 0)
+			if (Yandere.StudentManager.Police.LimbParent.childCount > 0 || Yandere.StudentManager.Container.NumberOfBodyParts > 0)
 			{
 				PhoneIcons[9].color = new Color(1f, 1f, 1f, 0.5f);
 				Reason = "You cannot save the game while dismembered limbs are present at school.";

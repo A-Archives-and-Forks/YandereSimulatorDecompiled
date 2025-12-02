@@ -24,13 +24,15 @@ public class HomeTalkScript : MonoBehaviour
 
 	public string[] Speaker;
 
+	public float MinimumDistance = 1f;
+
 	public int ID;
 
 	private void Update()
 	{
 		if (!Talking)
 		{
-			if (Vector3.Distance(HomeYandere.transform.position, base.transform.position) < 1f)
+			if (Vector3.Distance(HomeYandere.transform.position, base.transform.position) < MinimumDistance)
 			{
 				Label.alpha = Mathf.MoveTowards(Label.alpha, 1f, Time.deltaTime * 10f);
 				if (Label.alpha == 1f && Input.GetButtonDown(InputNames.Xbox_A))

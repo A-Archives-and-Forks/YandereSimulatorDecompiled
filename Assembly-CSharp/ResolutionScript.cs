@@ -223,6 +223,10 @@ public class ResolutionScript : MonoBehaviour
 			{
 				SceneManager.LoadScene("LoadingScene");
 			}
+			else if (Input.GetButton(InputNames.Xbox_Back))
+			{
+				SceneManager.LoadScene("GenocideScene");
+			}
 		}
 		else
 		{

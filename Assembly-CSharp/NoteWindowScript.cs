@@ -263,6 +263,10 @@ public class NoteWindowScript : MonoBehaviour
 							NoteLocker.Success = true;
 						}
 					}
+					if (NoteLocker.Student.Bullied && NoteSubject == NoteSubjectType.Bullying)
+					{
+						NoteLocker.Success = true;
+					}
 					if (NoteLocker.Student.StudentID == Yandere.StudentManager.RivalID || (Yandere.StudentManager.MissionMode && NoteLocker.Student.StudentID > 10 && NoteLocker.Student.StudentID < 21))
 					{
 						if (DateGlobals.Weekday == DayOfWeek.Friday && TimeID == 17f)
@@ -346,7 +350,7 @@ public class NoteWindowScript : MonoBehaviour
 							NoteLocker.Success = true;
 						}
 					}
-					else if ((NoteLocker.Student.Persona == PersonaType.LandlineUser || NoteLocker.Student.Club == ClubType.Council) && (NoteSubject == NoteSubjectType.Bullying || NoteSubject == NoteSubjectType.FightingEvil || NoteSubject == NoteSubjectType.SuspiciousActivity))
+					else if ((NoteLocker.Student.Persona == PersonaType.LandlineUser || NoteLocker.Student.Club == ClubType.Council || NoteLocker.Student.Persona == PersonaType.Dangerous) && (NoteSubject == NoteSubjectType.Bullying || NoteSubject == NoteSubjectType.FightingEvil || NoteSubject == NoteSubjectType.SuspiciousActivity))
 					{
 						NoteLocker.Success = true;
 					}

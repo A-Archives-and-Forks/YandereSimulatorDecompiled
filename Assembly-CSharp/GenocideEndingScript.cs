@@ -70,11 +70,19 @@ public class GenocideEndingScript : MonoBehaviour
 
 	public GameObject[] RivalHair;
 
+	public GameObject BlindfoldAndGag;
+
 	public GameObject Blindfold;
+
+	public GameObject SenpaiJaw;
+
+	public GameObject Book;
 
 	public GameObject Hood;
 
 	public GameObject Jaw;
+
+	public GameObject GenocideCutscene;
 
 	public Font Arial;
 
@@ -151,12 +159,25 @@ public class GenocideEndingScript : MonoBehaviour
 			return;
 		}
 		Debug.Log("We're here for the Genocide Ending.");
+		if (!GameGlobals.DarkEnding)
+		{
+			RenderSettings.ambientLight = new Color(0.6514058f, 0.3515327f, 0.2422812f, 1f);
+			Senpai.transform.parent.position = new Vector3(0f, 10f, 2.86f);
+			Senpai.transform.parent.eulerAngles = new Vector3(0f, 0f, 0f);
+			BlindfoldAndGag.SetActive(value: false);
+			GenocideCutscene.SetActive(value: true);
+			base.gameObject.SetActive(value: false);
+			Book.SetActive(value: true);
+			SenpaiJaw.name = "jaw";
+			return;
+		}
+		SpeechPhase = 10;
+		GenocideCutscene.SetActive(value: false);
 		Senpai["kidnapTorture_01"].speed = 0.9f;
 		SenpaiRopes.SetActive(value: true);
 		OsanaRopes.SetActive(value: false);
 		Senpai.transform.parent.gameObject.SetActive(value: true);
 		Osana.SetActive(value: false);
-		GameGlobals.DarkEnding = true;
 		if (GameGlobals.Eighties)
 		{
 			if (GameGlobals.CustomMode && GameGlobals.FemaleSenpai)

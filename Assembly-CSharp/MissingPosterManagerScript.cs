@@ -8,6 +8,11 @@ public class MissingPosterManagerScript : MonoBehaviour
 
 	private void Start()
 	{
+		if (GameGlobals.EightiesTutorial)
+		{
+			Object.Destroy(base.gameObject);
+			return;
+		}
 		bool eighties = GameGlobals.Eighties;
 		bool customMode = GameGlobals.CustomMode;
 		string text = "";

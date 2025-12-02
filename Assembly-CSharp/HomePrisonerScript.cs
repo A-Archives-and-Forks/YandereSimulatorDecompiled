@@ -68,6 +68,12 @@ public class HomePrisonerScript : MonoBehaviour
 
 	public int ID = 1;
 
+	public AudioClip MaleFirstTorture;
+
+	public AudioClip MaleUnder50Torture;
+
+	public AudioClip MaleOver50Torture;
+
 	public AudioClip FirstTorture;
 
 	public AudioClip Under50Torture;
@@ -96,6 +102,14 @@ public class HomePrisonerScript : MonoBehaviour
 
 	public AudioClip[] Banter;
 
+	public AudioClip[] MaleFullSanityBanter;
+
+	public AudioClip[] MaleHighSanityBanter;
+
+	public AudioClip[] MaleLowSanityBanter;
+
+	public AudioClip[] MaleNoSanityBanter;
+
 	public float BanterTimer;
 
 	public bool Initialized;
@@ -122,6 +136,18 @@ public class HomePrisonerScript : MonoBehaviour
 
 	public void Start()
 	{
+		if (StudentGlobals.Prisoner1 > 0)
+		{
+			Debug.Log("There's at least one prisoner in the basement.");
+			Debug.Log("It's Student #" + StudentGlobals.Prisoner1);
+			if (Prisoner.JSON.Students[StudentGlobals.Prisoner1].Gender == 1)
+			{
+				Debug.Log("It's a male student.");
+				MaleVoiceLines();
+			}
+			Sanity = StudentGlobals.GetStudentSanity(StudentGlobals.Prisoner1);
+			Health = StudentGlobals.GetStudentHealth(StudentGlobals.Prisoner1);
+		}
 		if (PrisonerManager.StudentID > 0)
 		{
 			Sanity = StudentGlobals.GetStudentSanity(PrisonerManager.StudentID);
@@ -465,6 +491,11 @@ public class HomePrisonerScript : MonoBehaviour
 			}
 			return;
 		}
+		if (Timer == 0f && PrisonerManager.Prisoners[PrisonerManager.ChosenPrisoner].Male)
+		{
+			Debug.Log("This is a male.");
+			MaleTortureLines();
+		}
 		TortureDestination.Translate(Vector3.forward * (Time.deltaTime * 0.02f));
 		Jukebox.volume -= Time.deltaTime * 0.05f;
 		Timer += Time.deltaTime;
@@ -637,5 +668,20 @@ public class HomePrisonerScript : MonoBehaviour
 			HomeCamera.PromptBar.Label[2].text = "";
 		}
 		HomeCamera.PromptBar.UpdateButtons();
+	}
+
+	private void MaleVoiceLines()
+	{
+		FullSanityBanter = MaleFullSanityBanter;
+		HighSanityBanter = MaleHighSanityBanter;
+		LowSanityBanter = MaleLowSanityBanter;
+		NoSanityBanter = MaleNoSanityBanter;
+	}
+
+	private void MaleTortureLines()
+	{
+		FirstTorture = MaleFirstTorture;
+		Under50Torture = MaleUnder50Torture;
+		Over50Torture = MaleOver50Torture;
 	}
 }

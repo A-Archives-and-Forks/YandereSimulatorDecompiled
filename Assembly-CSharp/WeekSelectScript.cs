@@ -70,6 +70,10 @@ public class WeekSelectScript : MonoBehaviour
 
 	public int[] SuitorIDs;
 
+	public AudioSource Jukebox;
+
+	public AudioClip ModernMusic;
+
 	public int CurrentWeek;
 
 	public Vector3[] StartingPosition;
@@ -108,6 +112,8 @@ public class WeekSelectScript : MonoBehaviour
 			ChangeFont(Stats.transform);
 			ChangeFont(base.transform);
 			SuitorIDs = ModernSuitors;
+			Jukebox.clip = ModernMusic;
+			Jukebox.Play();
 			return;
 		}
 		if (GameGlobals.CustomMode)
@@ -144,6 +150,7 @@ public class WeekSelectScript : MonoBehaviour
 			else
 			{
 				Darkness.alpha = Mathf.MoveTowards(Darkness.alpha, 1f, Time.deltaTime);
+				Jukebox.volume -= Time.deltaTime;
 				if (Darkness.alpha == 1f)
 				{
 					for (int i = 1; i < 11; i++)

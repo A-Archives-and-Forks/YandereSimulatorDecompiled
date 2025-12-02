@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class HomeInteractionScript : MonoBehaviour
@@ -54,6 +55,12 @@ public class HomeInteractionScript : MonoBehaviour
 		if ((DisableInEighties && GameGlobals.Eighties) || (ID == 7 && GameGlobals.VtuberID > 0))
 		{
 			base.gameObject.SetActive(value: false);
+			Label.alpha = 0f;
+			Label.enabled = false;
+			base.enabled = false;
+		}
+		if (DateGlobals.Weekday == DayOfWeek.Sunday && ID == 4)
+		{
 			Label.alpha = 0f;
 			Label.enabled = false;
 			base.enabled = false;

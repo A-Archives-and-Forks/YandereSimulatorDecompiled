@@ -22,6 +22,10 @@ public class BakeSaleScript : MonoBehaviour
 
 	public Texture Apology;
 
+	public Renderer[] WallPoster;
+
+	public Renderer[] WallPoster2;
+
 	public Renderer[] Poster;
 
 	public bool[] TrayPlaced;
@@ -45,6 +49,7 @@ public class BakeSaleScript : MonoBehaviour
 		if (StudentManager.Students[21] == null)
 		{
 			Poster[1].materials[1].mainTexture = AmaiPoster;
+			Poster[10].materials[1].mainTexture = AmaiPoster;
 		}
 		if (StudentManager.Students[22] == null)
 		{
@@ -68,6 +73,14 @@ public class BakeSaleScript : MonoBehaviour
 			{
 				Poster[i].materials[1].mainTexture = Apology;
 			}
+		}
+		for (int j = 0; j < WallPoster.Length; j++)
+		{
+			WallPoster[j].material.mainTexture = Poster[j].materials[1].mainTexture;
+		}
+		for (int k = 0; k < WallPoster2.Length; k++)
+		{
+			WallPoster2[k].material.mainTexture = Poster[k].materials[1].mainTexture;
 		}
 	}
 

@@ -728,7 +728,7 @@ public class BeatEmUpScript : MonoBehaviour
 			return;
 		}
 		CutsceneID++;
-		if (Input.GetButtonDown(InputNames.Xbox_A))
+		if (Input.GetButtonDown(InputNames.Xbox_A) && CutsceneID < DialogueClips.Length)
 		{
 			SetAnimationTime(CutsceneID);
 		}

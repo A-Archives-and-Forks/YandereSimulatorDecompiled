@@ -1076,7 +1076,7 @@ public static class NGUIText
 		{
 			char c = text[j];
 			bool flag4 = IsSpace(c);
-			if (c > '\u2fff')
+			if (c > '⿿')
 			{
 				flag3 = true;
 			}

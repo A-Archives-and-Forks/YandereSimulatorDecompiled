@@ -65,6 +65,8 @@ public class NewSettingsScript : MonoBehaviour
 
 	public Projector TitleScreenProjector;
 
+	public Projector KnifeProjector;
+
 	public Renderer[] OsanaRenderer;
 
 	public Material FlowerMaterial;
@@ -94,10 +96,12 @@ public class NewSettingsScript : MonoBehaviour
 			if (GameGlobals.CensorBlood)
 			{
 				TitleScreenProjector.material = FlowerMaterial;
+				KnifeProjector.material = FlowerMaterial;
 			}
 			else
 			{
 				TitleScreenProjector.material = BloodMaterial;
+				KnifeProjector.material = BloodMaterial;
 			}
 		}
 	}
@@ -770,27 +774,41 @@ public class NewSettingsScript : MonoBehaviour
 					UpdateLabels();
 				}
 			}
-			else if (Selection == 3 && (NewTitleScreen.InputManager.TappedRight || NewTitleScreen.InputManager.TappedLeft))
+			else if (Selection == 3)
 			{
-				GameGlobals.CensorBlood = !GameGlobals.CensorBlood;
+				if (NewTitleScreen.InputManager.TappedRight || NewTitleScreen.InputManager.TappedLeft)
+				{
+					GameGlobals.CensorBlood = !GameGlobals.CensorBlood;
+					if (SchoolScene)
+					{
+						StudentManager.Yandere.WeaponManager.ChangeBloodTexture();
+						StudentManager.BloodParent.ChangeBloodTexture();
+						StudentManager.ChangeAllBloodTextures();
+						StudentManager.Yandere.Bloodiness += 0f;
+					}
+					else if (GameGlobals.CensorBlood)
+					{
+						Debug.Log("Now censoring blood at the title screen.");
+						OsanaRenderer[0].materials[5].mainTexture = FlowerMaterial.mainTexture;
+						TitleScreenProjector.material = FlowerMaterial;
+						KnifeProjector.material = FlowerMaterial;
+					}
+					else
+					{
+						Debug.Log("Now uncensoring blood at the title screen.");
+						OsanaRenderer[0].materials[5].mainTexture = BloodMaterial.mainTexture;
+						TitleScreenProjector.material = BloodMaterial;
+						KnifeProjector.material = BloodMaterial;
+					}
+					UpdateLabels();
+				}
+			}
+			else if (Selection == 4 && (NewTitleScreen.InputManager.TappedRight || NewTitleScreen.InputManager.TappedLeft))
+			{
+				GameGlobals.TVHeads = !GameGlobals.TVHeads;
 				if (SchoolScene)
 				{
-					StudentManager.Yandere.WeaponManager.ChangeBloodTexture();
-					StudentManager.BloodParent.ChangeBloodTexture();
-					StudentManager.ChangeAllBloodTextures();
-					StudentManager.Yandere.Bloodiness += 0f;
-				}
-				else if (GameGlobals.CensorBlood)
-				{
-					Debug.Log("Now censoring blood at the title screen.");
-					OsanaRenderer[0].materials[5].mainTexture = FlowerMaterial.mainTexture;
-					TitleScreenProjector.material = FlowerMaterial;
-				}
-				else
-				{
-					Debug.Log("Now uncensoring blood at the title screen.");
-					OsanaRenderer[0].materials[5].mainTexture = BloodMaterial.mainTexture;
-					TitleScreenProjector.material = BloodMaterial;
+					StudentManager.TVHeads();
 				}
 				UpdateLabels();
 			}
@@ -1091,6 +1109,7 @@ public class NewSettingsScript : MonoBehaviour
 		Labels[33].text = (GameGlobals.CensorKillingAnims ? "Yes" : "No");
 		Labels[34].text = (GameGlobals.CensorPanties ? "Yes" : "No");
 		Labels[35].text = (GameGlobals.CensorBlood ? "Yes" : "No");
+		Labels[47].text = (GameGlobals.TVHeads ? "Yes" : "No");
 		Labels[36].text = (OptionGlobals.DisableStatic ? "Yes" : "No");
 		Labels[37].text = (OptionGlobals.DisableDisplacement ? "Yes" : "No");
 		Labels[38].text = (OptionGlobals.DisableAbberation ? "Yes" : "No");

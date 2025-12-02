@@ -260,9 +260,6 @@ public class WorkbenchScript : MonoBehaviour
 					if (Prompt.Yandere.StudentManager.Tutorial.AlternateTimeline)
 					{
 						Debug.Log("We're in the alternate timeline!");
-						Prompt.Hide();
-						Prompt.enabled = false;
-						base.enabled = false;
 					}
 				}
 				else if (Input.GetButtonDown(InputNames.Xbox_X) && PromptBar.Label[2].text != "")

@@ -35,6 +35,8 @@ public class PoliceScript : MonoBehaviour
 
 	public UIPanel Panel;
 
+	public GameObject GenocideCutscene;
+
 	public GameObject HeartbeatCamera;
 
 	public GameObject DetectionCamera;
@@ -474,11 +476,6 @@ public class PoliceScript : MonoBehaviour
 					if (GenocideEnding)
 					{
 						SceneManager.LoadScene("GenocideScene");
-						if (!GameGlobals.Debug)
-						{
-							PlayerPrefs.SetInt("Genocide", 1);
-							PlayerPrefs.SetInt("a", 1);
-						}
 					}
 				}
 			}

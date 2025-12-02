@@ -176,6 +176,10 @@ public class GazerEyesScript : MonoBehaviour
 
 	public void ElectrocuteStudent(StudentScript Target)
 	{
+		if (Target.Yandere.Noticed)
+		{
+			return;
+		}
 		Target.enabled = true;
 		Target.RemoveOfferHelpPrompt();
 		if (Target.Following)
@@ -301,6 +305,10 @@ public class GazerEyesScript : MonoBehaviour
 		if (!Target.Male)
 		{
 			Target.HorudaCollider.transform.localScale = Vector3.zero;
+		}
+		if (Target.HeadacheMedicinePrompt != null)
+		{
+			Target.HeadacheMedicinePrompt.GetComponent<GenericEightiesTaskScript>().Disable();
 		}
 	}
 }

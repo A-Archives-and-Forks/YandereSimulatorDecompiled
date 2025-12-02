@@ -498,6 +498,10 @@ public class DebugMenuScript : MonoBehaviour
 						}
 						for (int i = 1; i < 26; i++)
 						{
+							if (ID == 1)
+							{
+								Debug.Log("Should be learning all topics now...");
+							}
 							StudentManager.SetTopicLearnedByStudent(i, ID, boolean: true);
 						}
 					}
@@ -759,21 +763,33 @@ public class DebugMenuScript : MonoBehaviour
 						}
 						Window.SetActive(value: false);
 					}
-					else if (!Input.GetKeyDown(KeyCode.J))
+					else if (Input.GetKeyDown(KeyCode.J))
 					{
-						if (Input.GetKeyDown(KeyCode.V))
-						{
-							WaitingForSabotage = true;
-							Window.SetActive(value: false);
-						}
-						else if (Input.GetKeyDown(KeyCode.N))
-						{
-							ElectrocutionKit[0].transform.position = Yandere.transform.position;
-							ElectrocutionKit[1].transform.position = Yandere.transform.position;
-							ElectrocutionKit[2].transform.position = Yandere.transform.position;
-							ElectrocutionKit[3].transform.position = Yandere.transform.position;
-							ElectrocutionKit[3].SetActive(value: true);
-						}
+						StudentManager.Students[88].gameObject.SetActive(value: false);
+						Sacrifice(21);
+						Sacrifice(26);
+						Sacrifice(31);
+						Sacrifice(36);
+						Sacrifice(41);
+						Sacrifice(46);
+						Sacrifice(51);
+						Sacrifice(56);
+						Sacrifice(61);
+						Sacrifice(66);
+						Sacrifice(71);
+					}
+					else if (Input.GetKeyDown(KeyCode.V))
+					{
+						WaitingForSabotage = true;
+						Window.SetActive(value: false);
+					}
+					else if (Input.GetKeyDown(KeyCode.N))
+					{
+						ElectrocutionKit[0].transform.position = Yandere.transform.position;
+						ElectrocutionKit[1].transform.position = Yandere.transform.position;
+						ElectrocutionKit[2].transform.position = Yandere.transform.position;
+						ElectrocutionKit[3].transform.position = Yandere.transform.position;
+						ElectrocutionKit[3].SetActive(value: true);
 					}
 				}
 				if (Input.GetKeyDown(KeyCode.Tab))
@@ -1103,5 +1119,12 @@ public class DebugMenuScript : MonoBehaviour
 			Mop.GetComponent<Rigidbody>().useGravity = true;
 		}
 		DebugInt++;
+	}
+
+	private void Sacrifice(int ID)
+	{
+		StudentManager.Students[ID].transform.position = new Vector3(12f, 1f, 26f);
+		StudentManager.Students[ID].Ragdoll.Sacrifice = true;
+		StudentManager.Students[ID].BecomeRagdoll();
 	}
 }

@@ -507,12 +507,19 @@ public class WeaponManagerScript : MonoBehaviour
 			if (Weapons[i].MyRenderer != null)
 			{
 				Material[] materials = Weapons[i].MyRenderer.materials;
-				foreach (Material obj in materials)
+				foreach (Material material in materials)
 				{
-					obj.shader = OverlayShader;
-					obj.SetTexture("_OverlayTex", value);
-					obj.SetFloat("_BlendAmount", 0f);
-					obj.SetColor("_TintColor", new Color(1f, 1f, 1f, 0f));
+					material.shader = OverlayShader;
+					material.SetTexture("_OverlayTex", value);
+					material.SetColor("_TintColor", new Color(1f, 1f, 1f, 0f));
+					if (Weapons[i].Bloody)
+					{
+						material.SetFloat("_BlendAmount", 1f);
+					}
+					else
+					{
+						material.SetFloat("_BlendAmount", 0f);
+					}
 				}
 			}
 			if (i == 2)
@@ -522,7 +529,6 @@ public class WeaponManagerScript : MonoBehaviour
 			}
 			if (Weapons[i].Blood != null)
 			{
-				Debug.Log("Weapon.Blood.material.mainTexture is supposed to be getting set to TransPixel now.");
 				Weapons[i].Blood.material = Yandere.StudentManager.TransPixelMat;
 			}
 		}

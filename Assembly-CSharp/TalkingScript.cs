@@ -515,6 +515,11 @@ public class TalkingScript : MonoBehaviour
 					S.CharacterAnimation.CrossFade(S.TaskAnims[S.TaskPhase]);
 					S.CurrentAnim = S.TaskAnims[S.TaskPhase];
 					S.TalkTimer = S.Subtitle.GetClipLength(S.StudentID, S.TaskPhase);
+					if (S.StudentID == 12)
+					{
+						Debug.Log("Amai is speaking. Attempting to zero out her blendshapes.");
+						S.Cosmetic.ResetBlendshapes();
+					}
 				}
 				else
 				{
@@ -1806,8 +1811,9 @@ public class TalkingScript : MonoBehaviour
 			{
 				if (S.Club == ClubType.Bully)
 				{
+					Debug.Log("A bully is now talking about Gema.");
 					S.CharacterAnimation.CrossFade("f02_embar_00");
-					S.Subtitle.UpdateLabel(SubtitleType.TaskInquiry, S.StudentID - 80, 10f);
+					S.Subtitle.UpdateLabel(SubtitleType.TaskInquiry, S.StudentID, S.Subtitle.TaskInquiryClips[S.StudentID].length);
 				}
 				else if (S.StudentID == 10)
 				{
@@ -1824,12 +1830,13 @@ public class TalkingScript : MonoBehaviour
 				else
 				{
 					S.CharacterAnimation.CrossFade(S.ThinkAnim);
-					S.Subtitle.UpdateLabel(SubtitleType.TaskInquiry, S.StudentID, 10f);
+					S.Subtitle.UpdateLabel(SubtitleType.TaskInquiry, S.StudentID, S.Subtitle.TaskInquiryClips[S.StudentID].length);
 					if (S.RivalFriendID > 0)
 					{
 						S.Yandere.PauseScreen.SocialMedia.BlogKnown[S.RivalFriendID] = true;
 					}
 				}
+				S.TalkTimer = S.Subtitle.TaskInquiryClips[S.StudentID].length;
 			}
 			else if (Input.GetButtonDown(InputNames.Xbox_A))
 			{
@@ -2248,6 +2255,9 @@ public class TalkingScript : MonoBehaviour
 					Debug.Log("''Darkness'' is 0.");
 					if (!GameGlobals.BeatEmUpSuccess)
 					{
+						S.Yandere.SetAnimationLayers();
+						S.StudentManager.UpdateAllAnimLayers();
+						AstarPath.active.Scan();
 						S.DialogueWheel.End();
 						Timer = 0f;
 					}
@@ -2366,7 +2376,7 @@ public class TalkingScript : MonoBehaviour
 			RejectGossipLine = "Hey! She's my friend! Don't say anything weird about her!";
 			RejectGossip = true;
 		}
-		else if (S.StudentID > 5 && S.StudentID < 11 && S.DialogueWheel.Victim < 11)
+		else if (S.StudentID > 5 && S.StudentID < 11 && S.DialogueWheel.Victim > 5 && S.DialogueWheel.Victim < 11)
 		{
 			RejectGossipLine = "Hey! He's my friend! Don't say anything weird about him!";
 			RejectGossip = true;
@@ -2465,7 +2475,7 @@ public class TalkingScript : MonoBehaviour
 
 	private void LateUpdate()
 	{
-		if (!S.Talking || !(S.Yandere.TalkTimer <= 0f) || (!S.Male && S.Club == ClubType.Delinquent))
+		if (!S.Talking || !(S.Yandere.TalkTimer <= 0f) || (!S.Male && S.Club == ClubType.Delinquent) || S.StudentID == 11 || S.StudentID == 12)
 		{
 			return;
 		}

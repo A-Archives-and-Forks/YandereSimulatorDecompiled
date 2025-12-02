@@ -92,9 +92,13 @@ public class HomeDarknessScript : MonoBehaviour
 					{
 						SceneManager.LoadScene("YanvaniaTitleScene");
 					}
-					else
+					else if (HomeVideoGames.ID == 2)
 					{
 						SceneManager.LoadScene("MiyukiTitleScene");
+					}
+					else if (HomeVideoGames.ID == 3)
+					{
+						SceneManager.LoadScene("HNSTitleScreen");
 					}
 				}
 				else if (HomeCamera.ID == 9 || ReadingManga)
@@ -255,7 +259,6 @@ public class HomeDarknessScript : MonoBehaviour
 				}
 				else if (HomeExit.ID == 6)
 				{
-					Debug.Log("HomeDarknessScript is now trying to teleport Ryoba out of her bedroom.");
 					HomeCamera.Destination = HomeCamera.OutOfRoomDestinations[2];
 					HomeCamera.LastChangePoint = Vector3.zero;
 					HomeCamera.TooClose = false;

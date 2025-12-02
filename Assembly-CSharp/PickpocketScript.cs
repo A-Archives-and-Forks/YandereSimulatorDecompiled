@@ -168,7 +168,11 @@ public class PickpocketScript : MonoBehaviour
 					Punish();
 				}
 			}
-			if (!Student.Alive || Student.Tranquil)
+			if (Student.Alive && !Student.Tranquil)
+			{
+				return;
+			}
+			if (!Prompt.Yandere.Inventory.ShedKey)
 			{
 				base.transform.position = new Vector3(Student.transform.position.x, Student.transform.position.y + 1f, Student.transform.position.z);
 				Prompt.gameObject.GetComponent<BoxCollider>().isTrigger = false;
@@ -182,6 +186,12 @@ public class PickpocketScript : MonoBehaviour
 					Prompt.Yandere.NotificationManager.DisplayNotification(NotificationType.Custom);
 					base.transform.position = new Vector3(-63f, 1f, -26.5f);
 				}
+			}
+			else
+			{
+				Prompt.Hide();
+				Prompt.enabled = false;
+				base.gameObject.SetActive(value: false);
 			}
 		}
 		else if (Prompt.Circle[3].fillAmount == 0f)

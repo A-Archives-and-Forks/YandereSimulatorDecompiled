@@ -16,7 +16,7 @@ public class ElectrifiedPuddleScript : MonoBehaviour
 				{
 					Debug.Log(component.Name + " is currently chasing the player, so the electricity won't affect them.");
 				}
-				if (!component.Electrified && component.Yandere.Pursuer != component)
+				if (!component.Electrified && component.Yandere.Pursuer != component && component.MurderSuicidePhase == 0)
 				{
 					component.Yandere.GazerEyes.ElectrocuteStudent(component);
 					if (PowerSwitch != null)

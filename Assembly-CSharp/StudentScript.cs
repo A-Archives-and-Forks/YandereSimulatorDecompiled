@@ -412,6 +412,8 @@ public class StudentScript : MonoBehaviour
 
 	public Collider NotFaceCollider;
 
+	public Collider TVFaceCollider;
+
 	public Collider PantyCollider;
 
 	public Collider SkirtCollider;
@@ -556,6 +558,10 @@ public class StudentScript : MonoBehaviour
 
 	public GameObject Pencil;
 
+	public GameObject TVArms;
+
+	public GameObject TVHead;
+
 	public GameObject Weapon;
 
 	public GameObject Bento;
@@ -667,6 +673,8 @@ public class StudentScript : MonoBehaviour
 	public bool VisitSenpaiDesk;
 
 	public bool YandereInnocent;
+
+	public bool AlreadyCounted;
 
 	public bool GetNewAnimation = true;
 
@@ -2431,7 +2439,7 @@ public class StudentScript : MonoBehaviour
 			{
 				CameraAnims = EvilAnims;
 			}
-			else if (Persona == PersonaType.SocialButterfly || Persona == PersonaType.Lovestruck || Persona == PersonaType.PhoneAddict || Persona == PersonaType.Sleuth)
+			else if (Persona == PersonaType.SocialButterfly || Persona == PersonaType.Lovestruck || Persona == PersonaType.PhoneAddict || Persona == PersonaType.Sleuth || Persona == PersonaType.Protective)
 			{
 				CameraAnims = SocialAnims;
 			}
@@ -2799,6 +2807,12 @@ public class StudentScript : MonoBehaviour
 					OriginalWalkAnim = "f02_gentleWalk_00";
 					IdleAnim = OriginalIdleAnim;
 					WalkAnim = OriginalWalkAnim;
+					TaskAnims[0] = "f02_amaiTask_00";
+					TaskAnims[1] = "f02_amaiTask_01";
+					TaskAnims[2] = "f02_amaiTask_02";
+					TaskAnims[3] = "f02_amaiTask_03";
+					TaskAnims[4] = "f02_amaiTask_04";
+					TaskAnims[5] = "f02_amaiTask_05";
 					Subtitle.EightiesClubDialogue.UpdateDialogue(1);
 					Subtitle.EightiesClubDialogue.UpdateDialogue(1);
 					if (StudentManager.MissionMode)
@@ -5668,8 +5682,9 @@ public class StudentScript : MonoBehaviour
 						{
 							base.transform.position = StudentManager.SpawnPositions[StudentID].position;
 							Spawned = true;
-							if (!StudentManager.Eighties && StudentID == 10 && StudentManager.Students[11] == null)
+							if (!StudentManager.Eighties && StudentID == 10 && StudentManager.Students[11] == null && !StudentManager.YandereLate)
 							{
+								Debug.Log("Raibaru ran this code.");
 								base.transform.position = new Vector3(-4f, 0f, -96f);
 								Physics.SyncTransforms();
 							}
@@ -6425,12 +6440,9 @@ public class StudentScript : MonoBehaviour
 							{
 								if (CuriosityPhase == 0)
 								{
-									if (Sleepy)
+									if (!Distracted && (Sleepy || Sedated || Headache || (StudentManager.CameFromLoad && !Headache && RelaxAnim == HeadacheSitAnim)))
 									{
-										Distracted = true;
-									}
-									if ((Sleepy && TakingUpAHeadacheSpot) || (Sedated && TakingUpAHeadacheSpot))
-									{
+										Debug.Log(Name + " should now be ''Distracted.''");
 										RelaxAnim = HeadacheSitAnim;
 										Distracted = true;
 									}
@@ -8946,13 +8958,23 @@ public class StudentScript : MonoBehaviour
 							}
 							else if (Actions[Phase] == StudentActionType.Sleep)
 							{
-								if (Male)
+								Debug.Log(Name + " is running this code right now.");
+								if (TakingUpAHeadacheSpot)
 								{
-									CharacterAnimation.CrossFade("infirmaryRest_00");
+									Debug.Log("1");
+									CharacterAnimation.CrossFade(HeadacheAnim);
 								}
 								else
 								{
-									CharacterAnimation.CrossFade("f02_infirmaryRest_00");
+									Debug.Log("2");
+									if (Male)
+									{
+										CharacterAnimation.CrossFade("infirmaryRest_00");
+									}
+									else
+									{
+										CharacterAnimation.CrossFade("f02_infirmaryRest_00");
+									}
 								}
 								Distracted = true;
 							}
@@ -11670,6 +11692,10 @@ public class StudentScript : MonoBehaviour
 										StudentManager.OpenCurtain = true;
 										HorudaCollider.gameObject.SetActive(value: false);
 									}
+									if (Club == ClubType.Delinquent)
+									{
+										Blind = true;
+									}
 									LiquidProjector.enabled = false;
 									Bloody = false;
 									BathePhase++;
@@ -11856,6 +11882,10 @@ public class StudentScript : MonoBehaviour
 								if (CurrentAction == StudentActionType.PhotoShoot || CurrentAction == StudentActionType.GravurePose)
 								{
 									Hurry = false;
+								}
+								if (Club == ClubType.Delinquent)
+								{
+									Blind = false;
 								}
 							}
 						}
@@ -12279,7 +12309,7 @@ public class StudentScript : MonoBehaviour
 						}
 						else
 						{
-							if (!Male && !Broken.Done)
+							if (!Broken.Done)
 							{
 								Pathfinding.canSearch = true;
 								Pathfinding.canMove = true;
@@ -12332,13 +12362,10 @@ public class StudentScript : MonoBehaviour
 									}
 									Pathfinding.canSearch = false;
 									Pathfinding.canMove = false;
-									if (!Male)
-									{
-										Debug.Log("Broken is: " + Broken);
-										Debug.Log("Broken.Subtitle is: " + Broken.Subtitle);
-										Broken.Subtitle.text = string.Empty;
-										Broken.Done = true;
-									}
+									Debug.Log("Broken is: " + Broken);
+									Debug.Log("Broken.Subtitle is: " + Broken.Subtitle);
+									Broken.Subtitle.text = string.Empty;
+									Broken.Done = true;
 									MyController.radius = 0f;
 									if (!AttackWillFail)
 									{
@@ -12686,12 +12713,9 @@ public class StudentScript : MonoBehaviour
 											StudentManager.MurderTakingPlace = false;
 											Ragdoll.MurderSuicide = true;
 											MurderSuicide = true;
-											if (!Male)
-											{
-												Broken.HairPhysics[0].enabled = true;
-												Broken.HairPhysics[1].enabled = true;
-												Broken.enabled = false;
-											}
+											Broken.HairPhysics[0].enabled = true;
+											Broken.HairPhysics[1].enabled = true;
+											Broken.enabled = false;
 											Hunting = false;
 											if (StudentID > 10 && StudentID < 21)
 											{
@@ -18718,6 +18742,10 @@ public class StudentScript : MonoBehaviour
 			RightEye.localScale = new Vector3(1f - EyeShrink * 0.5f, 1f - EyeShrink * 0.5f, RightEye.localScale.z);
 			PreviousEyeShrink = EyeShrink;
 		}
+		if (StudentManager.TVHeadsActive)
+		{
+			Head.localScale = new Vector3(0f, 1f, 0f);
+		}
 		if (!Male)
 		{
 			if (Shy)
@@ -20560,13 +20588,13 @@ public class StudentScript : MonoBehaviour
 		{
 			if (Yandere.Pursuer == this)
 			{
-				Debug.Log("This teacher is now pursuing Yandere-chan.");
+				Debug.Log("A teacher (" + Name + ") is now pursuing Yandere-chan.");
 			}
 			if (WitnessedMurder)
 			{
 				if (Yandere.Pursuer == this)
 				{
-					Debug.Log("A teacher is now reacting to the sight of murder.");
+					Debug.Log("A teacher (" + Name + ") is now reacting to the sight of murder.");
 					Subtitle.UpdateLabel(SubtitleType.TeacherMurderReaction, 3, 3f);
 					Pathfinding.target = Yandere.transform;
 					Pathfinding.speed = 5f;
@@ -21048,32 +21076,47 @@ public class StudentScript : MonoBehaviour
 			}
 			else if (scheduleBlock.destination == "InfirmaryBed")
 			{
-				Debug.Log("Student #" + StudentID + " is now trying to assign themself to an infirmary bed.");
+				Debug.Log("Student #" + StudentID + ", " + Name + ", is now trying to assign themself to an infirmary bed.");
 				Debug.Log("StudentManager.SedatedStudents is currently: " + StudentManager.SedatedStudents);
-				if (StudentManager.SedatedStudents < 4)
+				if (RestSpot == null)
 				{
-					Debug.Log("Number of Sedated Students is currently: " + StudentManager.SedatedStudents);
-					if (RestSpot == null)
+					Debug.Log("This student doesn't have a Rest Spot.");
+					if (StudentManager.SedatedStudents < 4)
 					{
-						RestSpot = StudentManager.RestSpots[StudentManager.SedatedStudents];
-						StudentManager.SedatedStudents++;
+						if (RestSpot == null)
+						{
+							RestSpot = StudentManager.RestSpots[StudentManager.SedatedStudents];
+							if (!AlreadyCounted)
+							{
+								Debug.Log("We are now counting " + Name + " as a Sedated Student and incrementing StudentManager.SedatedStudents.");
+								StudentManager.SedatedStudents++;
+								AlreadyCounted = true;
+								Debug.Log("StudentManager.SedatedStudents is now " + StudentManager.SedatedStudents);
+							}
+						}
+						Destinations[ID] = RestSpot;
 					}
-					Destinations[ID] = RestSpot;
-				}
-				else if (StudentManager.HeadacheStudents < 4)
-				{
-					Debug.Log("Wait. Number of Sedated Students is too high. Someone will have to go sit in the infirmary seat, instead.");
-					Destinations[ID] = StudentManager.InfirmarySeats[StudentManager.HeadacheStudents];
-					if (!TakingUpAHeadacheSpot)
+					else if (StudentManager.HeadacheStudents < 4)
 					{
-						StudentManager.HeadacheStudents++;
-						TakingUpAHeadacheSpot = true;
+						Debug.Log("Wait. Number of Sedated Students is too high. Someone will have to go sit in the infirmary seat, instead.");
+						Destinations[ID] = StudentManager.InfirmarySeats[StudentManager.HeadacheStudents];
+						if (!TakingUpAHeadacheSpot)
+						{
+							StudentManager.HeadacheStudents++;
+							TakingUpAHeadacheSpot = true;
+							RelaxAnim = HeadacheSitAnim;
+						}
+					}
+					else
+					{
+						Debug.Log("Wait. Number of Headache Students is too high. This student will just have to sit in their classroom seat, instead.");
+						Destinations[ID] = Seat;
 					}
 				}
 				else
 				{
-					Debug.Log("Wait. Number of Headache Students is too high. This student will just have to sit in their classroom stead, instead.");
-					Destinations[ID] = Seat;
+					Debug.Log("Wait, this student *already* knows where their Rest Spot is supposed to be.");
+					Destinations[ID] = RestSpot;
 				}
 			}
 			else if (scheduleBlock.destination == "InfirmarySeat")
@@ -21155,7 +21198,7 @@ public class StudentScript : MonoBehaviour
 			}
 			else if (scheduleBlock.destination == "Guard")
 			{
-				Debug.Log("A student has been instructed to Guard!");
+				Debug.Log("Student #" + StudentID + ", " + Name + ", has been instructed to Guard!");
 				if (StudentID == 20 || Rival)
 				{
 					Debug.Log("The character who needs to Guard someone is a rival!");
@@ -21163,7 +21206,7 @@ public class StudentScript : MonoBehaviour
 				}
 				else if (StudentManager.Students[StudentManager.RivalID] != null && StudentManager.RivalGuardSpots[StudentID] != null)
 				{
-					Debug.Log("A rival is present at school, and a ''RivalGuardSpot'' has been defined for this character!");
+					Debug.Log("A rival is present at school, and a ''RivalGuardSpot'' has been defined for Student #" + StudentID + ", " + Name + ",!");
 					if (StudentManager.CustomMode)
 					{
 						StudentManager.RivalGuardSpots[0].parent = StudentManager.Students[StudentManager.RivalID].transform;
@@ -21714,6 +21757,10 @@ public class StudentScript : MonoBehaviour
 			{
 				SetOutlineColor(new Color(10f, 0f, 0f, 1f));
 			}
+			else if (!Alive)
+			{
+				SetOutlineColor(new Color(1f, 0.5f, 0f, 1f));
+			}
 			else
 			{
 				TurnOutlinesGreen();
@@ -22006,6 +22053,7 @@ public class StudentScript : MonoBehaviour
 			CharacterAnimation.cullingType = AnimationCullingType.AlwaysAnimate;
 			Ragdoll.AllColliders[10].isTrigger = false;
 			NotFaceCollider.enabled = false;
+			TVFaceCollider.enabled = false;
 			FaceCollider.enabled = false;
 			MyController.enabled = false;
 			emission.enabled = false;
@@ -23666,20 +23714,14 @@ public class StudentScript : MonoBehaviour
 		if (HuntTarget != this)
 		{
 			DistanceToDestination = 100f;
-			if (!Male)
-			{
-				Broken.Hunting = true;
-			}
+			Broken.Hunting = true;
 			TargetDistance = 1f;
 			Routine = false;
 			Hunting = true;
 		}
 		else
 		{
-			if (!Male)
-			{
-				Broken.Done = true;
-			}
+			Broken.Done = true;
 			Routine = false;
 			Suicide = true;
 		}
@@ -26361,6 +26403,10 @@ public class StudentScript : MonoBehaviour
 		if (Male)
 		{
 			Bento.transform.localPosition = new Vector3(0f, 0.4266666f, -0.075f);
+			if (Club == ClubType.Delinquent)
+			{
+				Bento.transform.localPosition += new Vector3(0f, 0.0498334f, -0.07956f);
+			}
 		}
 		else
 		{
@@ -26802,6 +26848,7 @@ public class StudentScript : MonoBehaviour
 
 	public void GoSitInInfirmary()
 	{
+		Debug.Log(Name + " has just fired ''GoSitInInfirmary()''");
 		Pathfinding.canSearch = true;
 		Pathfinding.canMove = true;
 		ScheduleBlock obj = ScheduleBlocks[Phase];
@@ -26814,6 +26861,7 @@ public class StudentScript : MonoBehaviour
 		RelaxAnim = HeadacheSitAnim;
 		SeekingMedicine = false;
 		SitInInfirmary = true;
+		Distracted = true;
 		Routine = true;
 	}
 
@@ -27112,6 +27160,7 @@ public class StudentScript : MonoBehaviour
 
 	public void GoSleepInInfirmary()
 	{
+		Debug.Log("Student #" + StudentID + ", " + Name + ", has just been told to GoSleepInInfirmary()");
 		CharacterAnimation.cullingType = AnimationCullingType.BasedOnRenderers;
 		if (Male)
 		{

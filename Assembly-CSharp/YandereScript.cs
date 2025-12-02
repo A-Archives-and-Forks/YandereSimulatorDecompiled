@@ -9471,8 +9471,16 @@ public class YandereScript : MonoBehaviour
 		}
 		if (StudentManager.Eighties)
 		{
-			RestoreGentleEyes();
-			GymTexture = EightiesGymTexture;
+			if (StudentManager.CustomMode)
+			{
+				CustomUniform = GameObject.Find("CustomUniform").GetComponent<CustomUniformScript>();
+				GymTexture = CustomUniform.FemaleGymUniform;
+			}
+			else
+			{
+				RestoreGentleEyes();
+				GymTexture = EightiesGymTexture;
+			}
 		}
 		if (PantyAttacher != null)
 		{
@@ -9820,8 +9828,8 @@ public class YandereScript : MonoBehaviour
 
 	private void Crawl()
 	{
-		MyController.center = new Vector3(MyController.center.x, 0.25f, MyController.center.z);
-		MyController.height = 0.1f;
+		MyController.center = new Vector3(MyController.center.x, 0.33333f, MyController.center.z);
+		MyController.height = 0.5f;
 	}
 
 	public void Uncrouch()
@@ -10567,6 +10575,8 @@ public class YandereScript : MonoBehaviour
 		StudentManager.GloveID = 0;
 		Degloving = false;
 		Gloved = false;
+		Gloves.transform.position = base.transform.position + new Vector3(0f, 1f, 0f);
+		Physics.SyncTransforms();
 		Gloves = null;
 		ChangeSchoolwear();
 		CanMove = true;

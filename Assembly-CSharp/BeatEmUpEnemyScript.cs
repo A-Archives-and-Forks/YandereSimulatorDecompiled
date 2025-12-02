@@ -30,6 +30,10 @@ public class BeatEmUpEnemyScript : MonoBehaviour
 
 	public Renderer HairRenderer;
 
+	public GameObject EightiesHair;
+
+	public GameObject ModernHair;
+
 	public Transform WeaponParent;
 
 	public Transform RightHand;
@@ -130,11 +134,17 @@ public class BeatEmUpEnemyScript : MonoBehaviour
 		Health = MaxHealth;
 		if (GameGlobals.Eighties)
 		{
-			HairRenderer.material.color = new Color(0.2f, 0.2f, 0.2f, 1f);
+			EightiesHair.SetActive(value: true);
+			ModernHair.SetActive(value: false);
 			Name = "Rival Gang Member #" + EnemyID;
 			WeaponBagRenderer.enabled = false;
 			MyRenderer.SetActive(value: false);
 			BeltCoat.SetActive(value: true);
+		}
+		else
+		{
+			EightiesHair.SetActive(value: false);
+			ModernHair.SetActive(value: true);
 		}
 	}
 

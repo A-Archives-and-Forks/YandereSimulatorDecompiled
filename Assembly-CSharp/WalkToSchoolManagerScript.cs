@@ -141,6 +141,12 @@ public class WalkToSchoolManagerScript : MonoBehaviour
 
 	public GameObject Apron;
 
+	public Renderer HairRenderer;
+
+	public Texture BlondeHair;
+
+	public CharacterCustomizationScript CustomHair;
+
 	public string RivalName = "Osana";
 
 	public Transform headBone;
@@ -156,6 +162,17 @@ public class WalkToSchoolManagerScript : MonoBehaviour
 
 	private void Start()
 	{
+		if (GameGlobals.BlondeHair)
+		{
+			HairRenderer.material.mainTexture = BlondeHair;
+		}
+		if (PlayerGlobals.CustomHair > 0)
+		{
+			Debug.Log("Ayano should be using Custom Hair.");
+			CustomHair.gameObject.SetActive(value: true);
+			CustomHair.Start();
+			CustomHair.UpdateHair();
+		}
 		Application.targetFrameRate = 60;
 		if (GameGlobals.LoveSick)
 		{
@@ -221,6 +238,15 @@ public class WalkToSchoolManagerScript : MonoBehaviour
 		if (Input.GetKeyDown("8"))
 		{
 			GameGlobals.Eighties = false;
+			SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+		}
+		if (Input.GetKeyDown("c"))
+		{
+			PlayerGlobals.CustomHair = 1;
+			PlayerGlobals.CustomBack = 1;
+			PlayerGlobals.CustomMisc = 1;
+			PlayerGlobals.CustomBangs = 1;
+			PlayerGlobals.CustomLocks = 1;
 			SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 		}
 		for (int i = 1; i < 3; i++)

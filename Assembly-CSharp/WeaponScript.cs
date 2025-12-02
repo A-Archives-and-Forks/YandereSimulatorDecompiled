@@ -1039,6 +1039,7 @@ public class WeaponScript : MonoBehaviour
 
 	public void StainWithBlood()
 	{
+		Debug.Log("Now adding blood to: " + base.gameObject.name);
 		if (MyRenderer.materials.Length > 1)
 		{
 			MyRenderer.materials[0].SetFloat("_BlendAmount", 1f);
@@ -1053,6 +1054,7 @@ public class WeaponScript : MonoBehaviour
 
 	public void RemoveBlood()
 	{
+		Debug.Log("Now removing blood from: " + base.gameObject.name);
 		if (MyRenderer.materials.Length > 1)
 		{
 			MyRenderer.materials[0].SetFloat("_BlendAmount", 0f);
@@ -1094,14 +1096,16 @@ public class WeaponScript : MonoBehaviour
 			ReplaceBloodWithFlowers(BloodSpray[1]);
 			ReplaceBloodWithFlowers(ShortBloodSpray[0]);
 			ReplaceBloodWithFlowers(ShortBloodSpray[1]);
+			return;
 		}
-		else
-		{
-			BloodSpray[0].gameObject.GetComponent<ParticleSystemRenderer>().material.mainTexture = BloodTexture;
-			BloodSpray[1].gameObject.GetComponent<ParticleSystemRenderer>().material.mainTexture = BloodTexture;
-			ShortBloodSpray[0].gameObject.GetComponent<ParticleSystemRenderer>().material.mainTexture = BloodTexture;
-			ShortBloodSpray[1].gameObject.GetComponent<ParticleSystemRenderer>().material.mainTexture = BloodTexture;
-		}
+		BloodSpray[0].gameObject.GetComponent<ParticleSystemRenderer>().material.mainTexture = BloodTexture;
+		BloodSpray[0].startColor = new Color(0.5f, 0f, 0f, 1f);
+		BloodSpray[1].gameObject.GetComponent<ParticleSystemRenderer>().material.mainTexture = BloodTexture;
+		BloodSpray[1].startColor = new Color(0.5f, 0f, 0f, 1f);
+		ShortBloodSpray[0].gameObject.GetComponent<ParticleSystemRenderer>().material.mainTexture = BloodTexture;
+		ShortBloodSpray[0].startColor = new Color(0.5f, 0f, 0f, 1f);
+		ShortBloodSpray[1].gameObject.GetComponent<ParticleSystemRenderer>().material.mainTexture = BloodTexture;
+		ShortBloodSpray[1].startColor = new Color(0.5f, 0f, 0f, 1f);
 	}
 
 	public void ReplaceBloodWithFlowers(ParticleSystem ps)

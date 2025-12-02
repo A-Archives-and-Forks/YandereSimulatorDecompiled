@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class SkinnedMeshUpdater : MonoBehaviour
 {
+	public ChinaDressScript ChinaDress;
+
 	public SkinnedMeshRenderer MyRenderer;
 
 	public GameObject TransformEffect;
@@ -25,6 +27,8 @@ public class SkinnedMeshUpdater : MonoBehaviour
 
 	public Texture[] Faces;
 
+	public bool Cosplaying;
+
 	public float Timer;
 
 	public int ID;
@@ -36,11 +40,15 @@ public class SkinnedMeshUpdater : MonoBehaviour
 
 	public void Update()
 	{
-		if (Prompt.Circle[0].fillAmount == 0f)
+		if (Prompt.Circle[0].fillAmount != 0f)
+		{
+			return;
+		}
+		Prompt.Circle[0].fillAmount = 1f;
+		if (!ChinaDress.Chinese)
 		{
 			UnityEngine.Object.Instantiate(TransformEffect, Prompt.Yandere.Hips.position, Quaternion.identity);
 			Prompt.Yandere.CharacterAnimation.Play(Prompt.Yandere.IdleAnim);
-			Prompt.Yandere.CanMove = false;
 			Prompt.Yandere.Egg = true;
 			BreastR.name = "RightBreast";
 			BreastL.name = "LeftBreast";
@@ -52,16 +60,15 @@ public class SkinnedMeshUpdater : MonoBehaviour
 			}
 			Prompt.Yandere.Hairstyle = 120 + ID;
 			Prompt.Yandere.UpdateHair();
+			ChinaDress.Disable();
 			GlassesCheck();
 			UpdateSkin();
+			Cosplaying = true;
 		}
-		if (Timer > 0f)
+		else
 		{
-			Timer = Mathf.MoveTowards(Timer, 0f, Time.deltaTime);
-			if (Timer == 0f)
-			{
-				Prompt.Yandere.CanMove = true;
-			}
+			Prompt.Yandere.NotificationManager.CustomText = "Can't Cosplay While Wearing Dress";
+			Prompt.Yandere.NotificationManager.DisplayNotification(NotificationType.Custom);
 		}
 	}
 

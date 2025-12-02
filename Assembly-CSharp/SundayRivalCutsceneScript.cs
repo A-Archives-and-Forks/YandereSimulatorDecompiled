@@ -35,6 +35,8 @@ public class SundayRivalCutsceneScript : MonoBehaviour
 
 	public AudioSource Vibration;
 
+	public Animator CameraAnim;
+
 	public UISprite SkipCircle;
 
 	public UILabel ShrineLabel;
@@ -131,6 +133,9 @@ public class SundayRivalCutsceneScript : MonoBehaviour
 					SkipCircle.transform.parent.gameObject.SetActive(value: false);
 					Phase = 5;
 					Timer = 0f;
+					HomeYandere.gameObject.SetActive(value: false);
+					Smartphone.gameObject.SetActive(value: false);
+					CameraAnim.enabled = false;
 				}
 			}
 			else
