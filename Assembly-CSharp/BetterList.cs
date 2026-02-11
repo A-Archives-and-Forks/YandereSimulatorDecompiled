@@ -120,9 +120,7 @@ public class BetterList<T>
 		}
 		for (int i = 0; i < size; i++)
 		{
-			ref readonly T reference = ref buffer[i];
-			object obj = item;
-			if (reference.Equals(obj))
+			if (buffer[i].Equals(item))
 			{
 				return true;
 			}
@@ -138,9 +136,7 @@ public class BetterList<T>
 		}
 		for (int i = 0; i < size; i++)
 		{
-			ref readonly T reference = ref buffer[i];
-			object obj = item;
-			if (reference.Equals(obj))
+			if (buffer[i].Equals(item))
 			{
 				return i;
 			}

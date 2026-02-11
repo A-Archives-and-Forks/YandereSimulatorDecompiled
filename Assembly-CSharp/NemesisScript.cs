@@ -33,6 +33,8 @@ public class NemesisScript : MonoBehaviour
 
 	public bool Chasing;
 
+	public bool Dodging;
+
 	public bool InView;
 
 	public bool Dying;
@@ -154,6 +156,7 @@ public class NemesisScript : MonoBehaviour
 		{
 			Difficulty = 1;
 		}
+		Debug.Log("Nemesis' Difficulty level is currently set to " + Difficulty + ".");
 		Student.StudentManager = GameObject.Find("StudentManager").GetComponent<StudentManagerScript>();
 		Student.WitnessCamera = GameObject.Find("WitnessCamera").GetComponent<WitnessCameraScript>();
 		Student.Police = GameObject.Find("Police").GetComponent<PoliceScript>();
@@ -273,7 +276,25 @@ public class NemesisScript : MonoBehaviour
 			}
 		}
 		Frame++;
-		if (!Dying && !Student.Dying)
+		if (Dodging)
+		{
+			if (Student.CharacterAnimation[Student.DodgeAnim].time >= Student.CharacterAnimation[Student.DodgeAnim].length)
+			{
+				Dodging = false;
+				Student.Pathfinding.canSearch = true;
+				Student.Pathfinding.canMove = true;
+			}
+			else if (Student.CharacterAnimation[Student.DodgeAnim].time < 0.66666f)
+			{
+				Student.MyController.Move(base.transform.forward * -1f * Student.DodgeSpeed * Time.deltaTime);
+				Student.MyController.Move(Physics.gravity * 0.1f);
+				if (Student.DodgeSpeed > 0f)
+				{
+					Student.DodgeSpeed = Mathf.MoveTowards(Student.DodgeSpeed, 0f, Time.deltaTime * 3f);
+				}
+			}
+		}
+		else if (!Dying && !Student.Dying)
 		{
 			if (!Attacking)
 			{
@@ -325,41 +346,40 @@ public class NemesisScript : MonoBehaviour
 					{
 						Student.Pathfinding.speed = 5f;
 					}
-					if (Vector3.Distance(base.transform.position, Yandere.transform.position) < 1f)
+					if (Vector3.Distance(base.transform.position, Yandere.transform.position) < 1f && (InView || Chasing))
 					{
-						if (InView || Chasing)
-						{
-							Student.CharacterAnimation.CrossFade("f02_knifeLowSanityA_00");
-							Yandere.CharacterAnimation.CrossFade("f02_knifeLowSanityB_00");
-							AudioSource.PlayClipAtPoint(YandereDeath, base.transform.position);
-							Student.Pathfinding.canSearch = false;
-							Student.Pathfinding.canMove = false;
-							Knife.SetActive(value: true);
-							Attacking = true;
-							OriginalYPosition = Yandere.transform.position.y;
-							Yandere.StudentManager.YandereDying = true;
-							Yandere.StudentManager.StopMoving();
-							GetComponent<AudioSource>().Play();
-							Yandere.YandereVision = false;
-							Yandere.FollowHips = true;
-							Yandere.Laughing = false;
-							Yandere.CanMove = false;
-							Yandere.EyeShrink = 0.5f;
-							Yandere.StopAiming();
-							Yandere.EmptyHands();
-						}
+						Student.CharacterAnimation.CrossFade("f02_knifeLowSanityA_00");
+						Yandere.CharacterAnimation.CrossFade("f02_knifeLowSanityB_00");
+						AudioSource.PlayClipAtPoint(YandereDeath, base.transform.position);
+						Student.Pathfinding.canSearch = false;
+						Student.Pathfinding.canMove = false;
+						Knife.SetActive(value: true);
+						Attacking = true;
+						OriginalYPosition = Yandere.transform.position.y;
+						Yandere.StudentManager.YandereDying = true;
+						Yandere.StudentManager.StopMoving();
+						GetComponent<AudioSource>().Play();
+						Yandere.YandereVision = false;
+						Yandere.FollowHips = true;
+						Yandere.Laughing = false;
+						Yandere.CanMove = false;
+						Yandere.EyeShrink = 0.5f;
+						Yandere.StopAiming();
+						Yandere.EmptyHands();
 					}
-					else if (Vector3.Distance(base.transform.position, MissionMode.LastKnownPosition.position) < 1f)
+					if (!Attacking && Vector3.Distance(base.transform.position, MissionMode.LastKnownPosition.position) < 1f)
 					{
+						Debug.Log("Nemesis is currently looking left and right for Ayano.");
 						Student.CharacterAnimation.CrossFade("f02_lookLeftRight_00");
 						Student.Pathfinding.speed = 0f;
 						ScanTimer += Time.deltaTime;
-						if (ScanTimer > 6f)
+						if (ScanTimer > 5f)
 						{
 							Vector3 vector = new Vector3(0f, 0f, -2.5f);
 							MissionMode.LastKnownPosition.position = ((MissionMode.LastKnownPosition.position == vector) ? Yandere.transform.position : vector);
 							Chasing = false;
 							UpdateLKP();
+							Debug.Log("Nemesis has stopped looking left/right for Ayano.");
 						}
 					}
 				}
@@ -406,8 +426,8 @@ public class NemesisScript : MonoBehaviour
 			Yandere.transform.position = new Vector3(Yandere.transform.position.x, OriginalYPosition, Yandere.transform.position.z);
 			Quaternion b = Quaternion.LookRotation(Yandere.transform.position - base.transform.position);
 			base.transform.rotation = Quaternion.Slerp(base.transform.rotation, b, Time.deltaTime * 10f);
-			Animation component2 = Student.Character.GetComponent<Animation>();
-			if (component2["f02_knifeLowSanityA_00"].time >= component2["f02_knifeLowSanityA_00"].length)
+			Animation characterAnimation = Student.CharacterAnimation;
+			if (characterAnimation["f02_knifeLowSanityA_00"].time >= characterAnimation["f02_knifeLowSanityA_00"].length)
 			{
 				if (MissionMode.enabled)
 				{
@@ -453,11 +473,11 @@ public class NemesisScript : MonoBehaviour
 	{
 		if (!Chasing)
 		{
-			Student.Character.GetComponent<Animation>().CrossFade(Student.WalkAnim);
+			Student.CharacterAnimation.CrossFade(Student.WalkAnim);
 		}
 		else
 		{
-			Student.Character.GetComponent<Animation>().CrossFade("f02_sithRun_00");
+			Student.CharacterAnimation.CrossFade("f02_sithRun_00");
 		}
 		if (Student.Pathfinding.speed == 0f)
 		{
@@ -476,10 +496,10 @@ public class NemesisScript : MonoBehaviour
 
 	private void SpecialEffect()
 	{
-		Animation component = Student.Character.GetComponent<Animation>();
+		Animation characterAnimation = Student.CharacterAnimation;
 		if (EffectPhase == 0)
 		{
-			if (component["f02_knifeLowSanityA_00"].time > 2.7666667f)
+			if (characterAnimation["f02_knifeLowSanityA_00"].time > 2.7666667f)
 			{
 				Object.Instantiate(BloodEffect, Knife.transform.position + Knife.transform.forward * 0.1f, Quaternion.identity);
 				EffectPhase++;
@@ -487,13 +507,13 @@ public class NemesisScript : MonoBehaviour
 		}
 		else if (EffectPhase == 1)
 		{
-			if (component["f02_knifeLowSanityA_00"].time > 3.5333333f)
+			if (characterAnimation["f02_knifeLowSanityA_00"].time > 3.5333333f)
 			{
 				Object.Instantiate(BloodEffect, Knife.transform.position + Knife.transform.forward * 0.1f, Quaternion.identity);
 				EffectPhase++;
 			}
 		}
-		else if (EffectPhase == 2 && component["f02_knifeLowSanityA_00"].time > 4.1666665f)
+		else if (EffectPhase == 2 && characterAnimation["f02_knifeLowSanityA_00"].time > 4.1666665f)
 		{
 			Object.Instantiate(BloodEffect, Knife.transform.position + Knife.transform.forward * 0.1f, Quaternion.identity);
 			EffectPhase++;

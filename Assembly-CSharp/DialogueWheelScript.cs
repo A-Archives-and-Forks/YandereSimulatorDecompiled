@@ -585,6 +585,7 @@ public class DialogueWheelScript : MonoBehaviour
 						Social.Patience = Impatience.fillAmount;
 						Social.Student = Yandere.TargetStudent;
 						Social.Student.Blind = true;
+						Social.UpdateHairPhase = 2;
 						Social.UpdateButtons();
 						Social.enabled = true;
 						Social.Show = true;

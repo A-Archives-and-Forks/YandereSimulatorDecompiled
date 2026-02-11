@@ -797,6 +797,24 @@ public class ClockScript : MonoBehaviour
 	public void ChangePeriod()
 	{
 		StudentManager.UpdateInfatuatedTargetDistances();
+		if (!StudentManager.BakeSale.Poisoned)
+		{
+			return;
+		}
+		Debug.Log("People got sick at Amai's bake sale, so the bake sale shut down.");
+		StudentManager.BakeSale.enabled = false;
+		StudentManager.BakeSale.ShutDown = true;
+		int[] array = new int[6] { 12, 21, 22, 23, 24, 25 };
+		foreach (int num in array)
+		{
+			StudentScript studentScript = StudentManager.Students[num];
+			if (studentScript != null)
+			{
+				studentScript.GetDestinations();
+				studentScript.Pathfinding.target = studentScript.Destinations[studentScript.Phase];
+				studentScript.CurrentDestination = studentScript.Destinations[studentScript.Phase];
+			}
+		}
 	}
 
 	public void UpdateLaptopScreens()

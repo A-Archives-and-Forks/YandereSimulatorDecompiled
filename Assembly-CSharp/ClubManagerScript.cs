@@ -835,6 +835,7 @@ public class ClubManagerScript : MonoBehaviour
 			Debug.Log("Amai is at school, so the Cooking Club gains one extra member...");
 			ClubMembers++;
 		}
+		Debug.Log("After checking who is dead/dying/kidnapped/arrested/expelled/low rep, we count " + ClubMembers + " club members.");
 		if (TranqCase.VictimClubType == Check)
 		{
 			ClubMembers--;

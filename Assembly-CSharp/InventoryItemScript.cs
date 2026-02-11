@@ -6,6 +6,8 @@ public class InventoryItemScript : MonoBehaviour
 
 	public GameObject ObjectToDectivate;
 
+	public AudioSource MyAudio;
+
 	public int ID;
 
 	public void Update()
@@ -27,6 +29,10 @@ public class InventoryItemScript : MonoBehaviour
 			ObjectToDectivate.SetActive(value: false);
 			Prompt.enabled = false;
 			Prompt.Hide();
+			if (MyAudio != null)
+			{
+				MyAudio.Play();
+			}
 			base.enabled = false;
 		}
 		else

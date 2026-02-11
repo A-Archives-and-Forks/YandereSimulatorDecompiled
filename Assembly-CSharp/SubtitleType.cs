@@ -317,5 +317,6 @@ public enum SubtitleType
 	Shoving = 314,
 	Chasing = 315,
 	CouncilCorpseReaction = 316,
-	CouncilToCounselor = 317
+	CouncilToCounselor = 317,
+	CouncilNotice = 318
 }

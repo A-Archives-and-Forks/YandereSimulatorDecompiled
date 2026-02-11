@@ -631,6 +631,8 @@ public class YandereScript : MonoBehaviour
 
 	public bool BreakingGlass;
 
+	public bool BusyMurdering;
+
 	public bool CrushingPhone;
 
 	public bool Eavesdropping;
@@ -3909,7 +3911,7 @@ public class YandereScript : MonoBehaviour
 		{
 			UpdateODM();
 		}
-		if (Chased && !Sprayed && !Attacking && !Dumping && !Dropping && !StudentManager.PinningDown && !DelinquentFighting && !Struggling)
+		if (Chased && !Sprayed && !Attacking && !Dumping && !Dropping && !StudentManager.PinningDown && !DelinquentFighting && !Struggling && !BusyMurdering)
 		{
 			Debug.Log("Yandere is turning to face Pursuer.");
 			Shoved = false;
@@ -6378,8 +6380,8 @@ public class YandereScript : MonoBehaviour
 				}
 				else if (StudentManager.Week == 2 && TargetStudent.RivalFriendID > 0)
 				{
-					Subtitle.CustomText = "I want to talk to you about Amai...";
-					Subtitle.UpdateLabel(SubtitleType.Custom, 0, 5f);
+					Subtitle.UpdateLabel(SubtitleType.TaskInquiry, 1, 5f);
+					TalkTimer = 5f;
 				}
 			}
 			else
@@ -6513,9 +6515,8 @@ public class YandereScript : MonoBehaviour
 				Drown = false;
 				Sanity -= ((Panties == 10) ? 10f : 20f) * Numbness;
 			}
-			return;
 		}
-		if (RoofPush)
+		else if (RoofPush)
 		{
 			CameraTarget.position = Vector3.MoveTowards(CameraTarget.position, new Vector3(Hips.position.x, base.transform.position.y + 1f, Hips.position.z), Time.deltaTime * 10f);
 			MoveTowardsTarget(TargetStudent.transform.position - TargetStudent.transform.forward);
@@ -6563,13 +6564,12 @@ public class YandereScript : MonoBehaviour
 			{
 				EnableSplashCamera();
 			}
-			return;
 		}
-		if (TargetStudent == null)
+		else if (TargetStudent == null)
 		{
-			Debug.Log("An Invincible student (maybe Raibaru, maybe someone else) is countering an attack, but TargetStudent is null for some reason. Prevent this from being able to occur.");
+			Debug.Log("An Invincible student (probably Raibaru) is countering an attack, but TargetStudent is null for some reason. Preferably, you should figure out how to prevent this from being able to occur.");
 		}
-		if (TargetStudent.Teacher && !TargetStudent.Blind)
+		else if (TargetStudent.Teacher && !TargetStudent.Blind)
 		{
 			Debug.Log("Yandere-chan thinks she should play the ''got countered by teacher'' animation now.");
 			CharacterAnimation["f02_teacherCounterA_00"].time = TargetStudent.CharacterAnimation["f02_teacherCounterB_00"].time;
@@ -6773,6 +6773,7 @@ public class YandereScript : MonoBehaviour
 				{
 					EquippedWeapon.Drop();
 				}
+				TargetStudent = null;
 			}
 		}
 	}

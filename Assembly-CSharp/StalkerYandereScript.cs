@@ -141,6 +141,8 @@ public class StalkerYandereScript : MonoBehaviour
 
 	public int LockerPhase;
 
+	public int BagsToBurn;
+
 	public int ClimbPhase;
 
 	public int Pebbles;
@@ -157,6 +159,8 @@ public class StalkerYandereScript : MonoBehaviour
 
 	public GameObject RyobaHair;
 
+	public Collider CheckpointCollider;
+
 	public Material Transparent;
 
 	public Texture BlondePony;
@@ -170,6 +174,8 @@ public class StalkerYandereScript : MonoBehaviour
 	public AudioSource MyAudio;
 
 	public GameObject Pebble;
+
+	public bool CheckForCheckpoint;
 
 	public bool UpdateBlendshapes;
 
@@ -395,6 +401,7 @@ public class StalkerYandereScript : MonoBehaviour
 				CustomHair.gameObject.SetActive(value: false);
 			}
 		}
+		BagsToBurn = DateGlobals.Week;
 	}
 
 	private void Update()
@@ -682,91 +689,90 @@ public class StalkerYandereScript : MonoBehaviour
 		}
 		if (Street)
 		{
-			if (!(PauseScreen != null) || !CanMove)
+			if (PauseScreen != null && CanMove)
 			{
-				return;
-			}
-			if (!PauseScreen.activeInHierarchy)
-			{
-				if (Input.GetKeyDown(KeyCode.Escape) || Input.GetButtonDown(InputNames.Xbox_Start))
+				if (!PauseScreen.activeInHierarchy)
 				{
-					PauseScreen.SetActive(value: true);
-					Time.timeScale = 0.0001f;
-				}
-			}
-			else if (PauseMenu.activeInHierarchy)
-			{
-				if (Input.GetKeyDown(KeyCode.Escape) || Input.GetButtonDown(InputNames.Xbox_Start))
-				{
-					PauseScreen.SetActive(value: false);
-					Time.timeScale = 1f;
-				}
-				else if (Input.GetButtonDown(InputNames.Xbox_X))
-				{
-					PauseMenu.SetActive(value: false);
-					AreYouSure.SetActive(value: true);
-				}
-				else if (Input.GetButtonDown(InputNames.Xbox_Y))
-				{
-					if (StreetManager.Sunlight.shadows != LightShadows.None)
+					if (Input.GetKeyDown(KeyCode.Escape) || Input.GetButtonDown(InputNames.Xbox_Start))
 					{
-						StreetManager.Sunlight.shadows = LightShadows.None;
-					}
-					else
-					{
-						StreetManager.Sunlight.shadows = LightShadows.Soft;
+						PauseScreen.SetActive(value: true);
+						Time.timeScale = 0.0001f;
 					}
 				}
-				if (DebugEnabled)
+				else if (PauseMenu.activeInHierarchy)
 				{
-					if (Input.GetKeyDown(KeyCode.M))
+					if (Input.GetKeyDown(KeyCode.Escape) || Input.GetButtonDown(InputNames.Xbox_Start))
 					{
-						PlayerGlobals.Money = 10000f;
-						StreetManager.Clock.UpdateMoneyLabel();
+						PauseScreen.SetActive(value: false);
+						Time.timeScale = 1f;
 					}
-					if (Input.GetKeyDown(KeyCode.N))
+					else if (Input.GetButtonDown(InputNames.Xbox_X))
 					{
-						HomeGlobals.Night = !HomeGlobals.Night;
-						Application.LoadLevel(Application.loadedLevel);
+						PauseMenu.SetActive(value: false);
+						AreYouSure.SetActive(value: true);
 					}
-					if (Input.GetKeyDown(KeyCode.Y))
+					else if (Input.GetButtonDown(InputNames.Xbox_Y))
 					{
-						GameGlobals.IntroducedAbduction = false;
-						GameGlobals.IntroducedRansom = false;
-						GameGlobals.MetBarber = false;
-						GameGlobals.YakuzaPhase = 1;
-						PlayerGlobals.FakeID = false;
-						for (int j = 11; j < 21; j++)
+						if (StreetManager.Sunlight.shadows != LightShadows.None)
 						{
-							StudentGlobals.SetStudentKidnapped(j, value: false);
-							StudentGlobals.SetStudentMissing(j, value: false);
-							StudentGlobals.SetStudentDead(j, value: false);
+							StreetManager.Sunlight.shadows = LightShadows.None;
 						}
-						PlayerGlobals.BoughtLockpick = false;
-						PlayerGlobals.FakeID = false;
-						PlayerGlobals.BoughtNarcotics = false;
-						PlayerGlobals.BoughtPoison = false;
-						PlayerGlobals.BoughtExplosive = false;
-						Application.LoadLevel(Application.loadedLevel);
+						else
+						{
+							StreetManager.Sunlight.shadows = LightShadows.Soft;
+						}
 					}
-				}
-				else if (Input.GetKeyDown(Letter[LetterID]))
-				{
-					LetterID++;
-					if (LetterID == Letter.Length)
+					if (DebugEnabled)
 					{
-						DebugEnabled = true;
+						if (Input.GetKeyDown(KeyCode.M))
+						{
+							PlayerGlobals.Money = 10000f;
+							StreetManager.Clock.UpdateMoneyLabel();
+						}
+						if (Input.GetKeyDown(KeyCode.N))
+						{
+							HomeGlobals.Night = !HomeGlobals.Night;
+							Application.LoadLevel(Application.loadedLevel);
+						}
+						if (Input.GetKeyDown(KeyCode.Y))
+						{
+							GameGlobals.IntroducedAbduction = false;
+							GameGlobals.IntroducedRansom = false;
+							GameGlobals.MetBarber = false;
+							GameGlobals.YakuzaPhase = 1;
+							PlayerGlobals.FakeID = false;
+							for (int j = 11; j < 21; j++)
+							{
+								StudentGlobals.SetStudentKidnapped(j, value: false);
+								StudentGlobals.SetStudentMissing(j, value: false);
+								StudentGlobals.SetStudentDead(j, value: false);
+							}
+							PlayerGlobals.BoughtLockpick = false;
+							PlayerGlobals.FakeID = false;
+							PlayerGlobals.BoughtNarcotics = false;
+							PlayerGlobals.BoughtPoison = false;
+							PlayerGlobals.BoughtExplosive = false;
+							Application.LoadLevel(Application.loadedLevel);
+						}
+					}
+					else if (Input.GetKeyDown(Letter[LetterID]))
+					{
+						LetterID++;
+						if (LetterID == Letter.Length)
+						{
+							DebugEnabled = true;
+						}
 					}
 				}
-			}
-			else if (Input.GetButtonDown(InputNames.Xbox_A))
-			{
-				SceneManager.LoadScene("NewTitleScene");
-			}
-			else if (Input.GetButtonDown(InputNames.Xbox_B))
-			{
-				PauseMenu.SetActive(value: true);
-				AreYouSure.SetActive(value: false);
+				else if (Input.GetButtonDown(InputNames.Xbox_A))
+				{
+					SceneManager.LoadScene("NewTitleScene");
+				}
+				else if (Input.GetButtonDown(InputNames.Xbox_B))
+				{
+					PauseMenu.SetActive(value: true);
+					AreYouSure.SetActive(value: false);
+				}
 			}
 		}
 		else if (PausePanel != null && PausePanel.enabled && CanMove)
@@ -779,6 +785,12 @@ public class StalkerYandereScript : MonoBehaviour
 			{
 				SceneManager.LoadScene("HomeScene");
 			}
+		}
+		if (CheckForCheckpoint && Asylum && BagsToBurn == 1 && CheckpointCollider.bounds.Contains(base.transform.position))
+		{
+			GameGlobals.Checkpoint = true;
+			CheckForCheckpoint = false;
+			Debug.Log("Player reached checkpoint!");
 		}
 	}
 

@@ -41,7 +41,6 @@ public class CleaningManagerScript : MonoBehaviour
 		bool flag = false;
 		if (StudentManager.Week == 2 && StudentManager.BakeSale.gameObject.activeInHierarchy)
 		{
-			Debug.Log("Student #" + StudentID + " acknowledges that the bake sale is happening.");
 			switch (StudentID)
 			{
 			case 12:
@@ -50,7 +49,6 @@ public class CleaningManagerScript : MonoBehaviour
 			case 23:
 			case 24:
 			case 25:
-				Debug.Log("Student #" + StudentID + " should be changing their cleaning routine as a result of the bake sale.");
 				flag = true;
 				break;
 			}
@@ -378,7 +376,6 @@ public class CleaningManagerScript : MonoBehaviour
 		}
 		else
 		{
-			Debug.Log("Student #" + StudentID + " is now changing their Cleaning Routine because the Bake Sale is happening.");
 			switch (StudentID)
 			{
 			case 12:

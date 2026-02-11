@@ -55,6 +55,8 @@ public class RivalMorningEventManagerScript : MonoBehaviour
 
 	public bool HintGiven;
 
+	public bool Eighties;
+
 	public bool Finished;
 
 	public bool NoFriend;
@@ -94,12 +96,13 @@ public class RivalMorningEventManagerScript : MonoBehaviour
 	private void Start()
 	{
 		EventSubtitle.transform.localScale = Vector3.zero;
+		Eighties = GameGlobals.Eighties;
 		Spy.Prompt.enabled = true;
 		if (DateGlobals.Weekday == DayOfWeek.Sunday)
 		{
 			DateGlobals.Weekday = DayOfWeek.Monday;
 		}
-		if (DateGlobals.Weekday != EventDay || HomeGlobals.LateForSchool || StudentManager.YandereLate || DatingGlobals.SuitorProgress == 2 || StudentGlobals.MemorialStudents > 0 || GameGlobals.RivalEliminationID > 0 || StudentGlobals.StudentSlave == RivalID || GameGlobals.AlphabetMode || MissionModeGlobals.MissionMode || DateGlobals.Week != Week || GameGlobals.Eighties || StudentManager.RecordingVideo)
+		if (DateGlobals.Weekday != EventDay || HomeGlobals.LateForSchool || StudentManager.YandereLate || DatingGlobals.SuitorProgress == 2 || StudentGlobals.MemorialStudents > 0 || GameGlobals.RivalEliminationID > 0 || StudentGlobals.StudentSlave == RivalID || GameGlobals.AlphabetMode || MissionModeGlobals.MissionMode || DateGlobals.Week != Week || Eighties || StudentManager.RecordingVideo)
 		{
 			Spy.Prompt.enabled = false;
 			base.enabled = false;
@@ -119,7 +122,7 @@ public class RivalMorningEventManagerScript : MonoBehaviour
 				num += (float)SpeechText[i].Length * 0.1f;
 			}
 		}
-		if (!GameGlobals.Eighties && Week == 2 && GameGlobals.RivalEliminationID == 0 && base.enabled)
+		if (!Eighties && Week == 2 && GameGlobals.RivalEliminationID == 0 && base.enabled)
 		{
 			if (EventDay == DayOfWeek.Thursday)
 			{
@@ -184,10 +187,6 @@ public class RivalMorningEventManagerScript : MonoBehaviour
 						Friend.Routine = false;
 						Friend.InEvent = true;
 						Friend.Spawned = true;
-					}
-					else
-					{
-						Debug.Log("This script will not attempt to do anything to Raibaru.");
 					}
 					Senpai = StudentManager.Students[1];
 					Rival = StudentManager.Students[RivalID];
@@ -335,6 +334,19 @@ public class RivalMorningEventManagerScript : MonoBehaviour
 				Senpai.EventBook.SetActive(value: false);
 				Rival.EventBook.SetActive(value: true);
 				Transfer = false;
+			}
+			if (!Eighties && RivalID == 12 && EventDay == DayOfWeek.Tuesday)
+			{
+				if (Timer > 99f)
+				{
+					Rival.Notebook.SetActive(value: false);
+					Rival.Pencil.SetActive(value: false);
+				}
+				else if (Timer > 63.5f)
+				{
+					Rival.Notebook.SetActive(value: true);
+					Rival.Pencil.SetActive(value: true);
+				}
 			}
 			if (Clock.Period > 1)
 			{
@@ -500,6 +512,11 @@ public class RivalMorningEventManagerScript : MonoBehaviour
 		if (HideBlendshapes)
 		{
 			Rival.Cosmetic.EyeTypeCheck();
+		}
+		if (Rival != null && Rival.Notebook != null)
+		{
+			Rival.Notebook.SetActive(value: false);
+			Rival.Pencil.SetActive(value: false);
 		}
 	}
 

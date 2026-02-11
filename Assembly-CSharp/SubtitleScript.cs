@@ -660,6 +660,8 @@ public class SubtitleScript : MonoBehaviour
 
 	public string[] CouncilToCounselors;
 
+	public string[] CouncilNotices;
+
 	public string[] HmmReactions;
 
 	public string InfoNotice;
@@ -1146,6 +1148,8 @@ public class SubtitleScript : MonoBehaviour
 
 	public AudioClip[] CouncilCounselorClips;
 
+	public AudioClip[] CouncilNoticeClips;
+
 	public AudioClip[] SlaveReactionClips;
 
 	private SubtitleTypeAndAudioClipArrayDictionary SubtitleClipArrays;
@@ -1289,6 +1293,10 @@ public class SubtitleScript : MonoBehaviour
 			CouncilCorpseReactions[2] = "Você morreu?!";
 			CouncilCorpseReactions[3] = "Oh, no! This is horrible!";
 			CouncilCorpseReactions[4] = "Damn! This is serious!";
+			CouncilNotices[1] = "That is...quite concerning.";
+			CouncilNotices[2] = "...um...que?";
+			CouncilNotices[3] = "That, uh...doesn't seem right...";
+			CouncilNotices[4] = "...the heck are you...doin'?";
 			StrictReport[1] = "The faculty must be informed!";
 			StrictReport[2] = "I've discovered a dead body! Come with me!";
 			StrictReport[3] = "...no...impossible...";
@@ -1303,23 +1311,18 @@ public class SubtitleScript : MonoBehaviour
 			EdgyReport[3] = "What the hell?! What's going on here?!";
 			LovestruckMurderReports[0] = "Senpai! Ryoba from class 2-1 just killed someone!";
 			WeaponBloodApologies[0] = "It's not what it looks like! It's a costume and prop for an upcoming play.";
-			for (int k = 1; k < 5; k++)
-			{
-				ShoveClips[k] = LongestSilence;
-				ChaseClips[k] = LongestSilence;
-				SprayClips[k] = LongestSilence;
-				BreakUpClips[k] = LongestSilence;
-				CouncilCorpseClips[k] = LongestSilence;
-				CouncilCounselorClips[k] = LongestSilence;
-				HmmClips[k] = LongestSilence;
-			}
-			for (int k = 1; k < 4; k++)
-			{
-				StrictReportClips[k] = LongestSilence;
-				CasualReportClips[k] = LongestSilence;
-				GraceReportClips[k] = LongestSilence;
-				EdgyReportClips[k] = LongestSilence;
-			}
+			ShoveClips = EightiesClubDialogue.ShoveClips;
+			ChaseClips = EightiesClubDialogue.ChaseClips;
+			SprayClips = EightiesClubDialogue.SprayClips;
+			BreakUpClips = EightiesClubDialogue.BreakUpClips;
+			CouncilCorpseClips = EightiesClubDialogue.CouncilCorpseClips;
+			CouncilCounselorClips = EightiesClubDialogue.CouncilCounselorClips;
+			CouncilNoticeClips = EightiesClubDialogue.CouncilNoticeClips;
+			HmmClips = EightiesClubDialogue.HmmClips;
+			StrictReportClips = EightiesClubDialogue.StrictReportClips;
+			CasualReportClips = EightiesClubDialogue.CasualReportClips;
+			GraceReportClips = EightiesClubDialogue.GraceReportClips;
+			EdgyReportClips = EightiesClubDialogue.EdgyReportClips;
 			SenpaiRivalDeathReactions[0] = "...huh? ...are you okay?! What's wrong?! Hey!! Do you need any help?!";
 			SenpaiRivalDeathReactions[1] = "Huh?! What happened?!";
 			SenpaiRivalDeathReactions[2] = "Oh my god!! No!! Please, say something!! Answer me!! Wake up, please, wake up!! Don't do this!! Oh, god!! This can't be happening!! NO!! ...no...";
@@ -2183,6 +2186,10 @@ public class SubtitleScript : MonoBehaviour
 				new AudioClipArrayWrapper(CouncilCounselorClips)
 			},
 			{
+				SubtitleType.CouncilNotice,
+				new AudioClipArrayWrapper(CouncilNoticeClips)
+			},
+			{
 				SubtitleType.HmmReaction,
 				new AudioClipArrayWrapper(HmmClips)
 			},
@@ -2339,6 +2346,7 @@ public class SubtitleScript : MonoBehaviour
 			Label.text = GetRandomString(WetBloodReactions);
 			break;
 		case SubtitleType.InsanityReaction:
+			Debug.Log("subtitleType == SubtitleType.InsanityReaction");
 			Label.text = GetRandomString(InsanityReactions);
 			break;
 		case SubtitleType.LewdReaction:
@@ -2714,6 +2722,10 @@ public class SubtitleScript : MonoBehaviour
 			break;
 		case SubtitleType.CouncilToCounselor:
 			Label.text = CouncilToCounselors[ID];
+			PlayVoice(subtitleType, ID);
+			break;
+		case SubtitleType.CouncilNotice:
+			Label.text = CouncilNotices[ID];
 			PlayVoice(subtitleType, ID);
 			break;
 		case SubtitleType.LonerMurderReaction:

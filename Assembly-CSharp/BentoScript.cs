@@ -33,7 +33,7 @@ public class BentoScript : MonoBehaviour
 				Yandere = Prompt.Yandere;
 			}
 		}
-		else if (Yandere.Inventory.EmeticPoisons > 0 || Yandere.Inventory.LethalPoisons > 0 || Yandere.Inventory.SedativePoisons > 0)
+		else if (Yandere.Inventory.EmeticPoisons > 0 || Yandere.Inventory.LethalPoisons > 0 || Yandere.Inventory.SedativePoisons > 0 || Yandere.Inventory.HeadachePoisons > 0)
 		{
 			Prompt.enabled = true;
 			if (Yandere.Inventory.EmeticPoisons > 0)
@@ -131,6 +131,43 @@ public class BentoScript : MonoBehaviour
 					Yandere.PoisonType = 3;
 					base.enabled = false;
 					Poison = 3;
+					_ = ID;
+					_ = 1;
+					Prompt.Hide();
+					Prompt.enabled = false;
+					Prompt.Yandere.StudentManager.UpdateAllBentos();
+					BeingPoisoned = true;
+				}
+				else
+				{
+					Prompt.Yandere.NotificationManager.CustomText = "No! Someone is watching!";
+					Prompt.Yandere.NotificationManager.DisplayNotification(NotificationType.Custom);
+				}
+			}
+			if (Yandere.Inventory.HeadachePoisons > 0)
+			{
+				Prompt.HideButton[3] = false;
+			}
+			else
+			{
+				Prompt.HideButton[3] = true;
+			}
+			if (Prompt.Circle[3].fillAmount == 0f)
+			{
+				Prompt.Circle[3].fillAmount = 1f;
+				Prompt.Yandere.StudentManager.CanAnyoneSeeYandere();
+				if (!Prompt.Yandere.StudentManager.YandereVisible)
+				{
+					StudentManager.Students[ID].MyBento.Tampered = true;
+					StudentManager.Students[ID].MyBento.Headache = true;
+					Yandere.CharacterAnimation.CrossFade("f02_poisoning_00");
+					Yandere.PoisonSpot = PoisonSpot;
+					Yandere.Inventory.HeadachePoisons--;
+					Yandere.Poisoning = true;
+					Yandere.CanMove = false;
+					Yandere.PoisonType = 4;
+					base.enabled = false;
+					Poison = 4;
 					_ = ID;
 					_ = 1;
 					Prompt.Hide();

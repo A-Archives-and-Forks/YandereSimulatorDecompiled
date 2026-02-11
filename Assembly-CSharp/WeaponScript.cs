@@ -605,17 +605,24 @@ public class WeaponScript : MonoBehaviour
 			Yandere.PauseScreen.Schemes.UpdateInstructions();
 		}
 		Prompt.Circle[3].fillAmount = 1f;
-		if (Yandere.ImmunityTimer == 0f && Yandere.Chasers == 0)
+		if (Yandere.ImmunityTimer == 0f)
 		{
-			if (Prompt.Suspicious)
+			if (Yandere.Chasers == 0)
 			{
-				Yandere.TheftTimer = 0.1f;
+				if (Prompt.Suspicious)
+				{
+					Yandere.TheftTimer = 0.1f;
+				}
+				SuspicionCheck();
+				if (Suspicious)
+				{
+					Yandere.WeaponTimer = 0.1f;
+				}
 			}
-			SuspicionCheck();
-			if (Suspicious)
-			{
-				Yandere.WeaponTimer = 0.1f;
-			}
+		}
+		else
+		{
+			Debug.Log("Yandere is currently immune to suspicion.");
 		}
 		if (!Yandere.Gloved)
 		{

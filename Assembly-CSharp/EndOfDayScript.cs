@@ -351,6 +351,27 @@ public class EndOfDayScript : MonoBehaviour
 		{
 			StudentManager.Students[1].TaroApron.newRenderer.enabled = false;
 		}
+		if (!Counselor.Lecturing)
+		{
+			Debug.Log("Let's check to see if the player has a weapon bag on their back.");
+			if (Yandere.Container != null)
+			{
+				Debug.Log("The player was wearing a weapon bag on their back!");
+				if (Yandere.Container.TrashCan.ConcealedWeapon != null)
+				{
+					Debug.Log("The container had a weapon in it!");
+					WeaponScript concealedWeapon = Yandere.Container.TrashCan.ConcealedWeapon;
+					int fingerprintID = concealedWeapon.FingerprintID;
+					concealedWeapon.Equip();
+					Yandere.EmptyHands();
+					concealedWeapon.FingerprintID = fingerprintID;
+				}
+			}
+		}
+		else
+		{
+			Debug.Log("We're loading into the ''Counselor lectures the rival'' cutscene, so we're not going to check for a weapon bag on the player's back.");
+		}
 	}
 
 	private void Update()
@@ -1473,6 +1494,7 @@ public class EndOfDayScript : MonoBehaviour
 		}
 		else if (Phase == 17)
 		{
+			Debug.Log("Phase 17 - checking whether or not any clubs need to be shut down.");
 			ClubLimit = ClubArray.Length;
 			if (!GameGlobals.Eighties)
 			{
@@ -1489,6 +1511,7 @@ public class EndOfDayScript : MonoBehaviour
 				}
 				if (!ClubGlobals.GetClubClosed(ClubArray[ClubID]))
 				{
+					Debug.Log("Right now, we're checking the " + ClubNames[ClubID].ToString() + ".");
 					ClubManager.CheckClub(ClubArray[ClubID]);
 					if (ClubManager.ClubMembers < 5)
 					{

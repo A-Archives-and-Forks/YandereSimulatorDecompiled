@@ -1,3 +1,4 @@
+using System.Collections;
 using System.IO;
 using UnityEngine;
 
@@ -53,11 +54,10 @@ public class ScreenshotTestScript : MonoBehaviour
 			if (!GameGlobals.CustomMode)
 			{
 				MaleSenpaiAnim.Play("jokichiPose_00");
+				return;
 			}
-			else
-			{
-				MaleSenpaiAnim.Play(SenpaiCosmetic.PortraitPoses[JSON.Misc.PortraitPoses[1]]);
-			}
+			StartCoroutine(GrabCustomTexturesAsync());
+			MaleSenpaiAnim.Play(SenpaiCosmetic.PortraitPoses[JSON.Misc.PortraitPoses[1]]);
 		}
 	}
 
@@ -87,5 +87,19 @@ public class ScreenshotTestScript : MonoBehaviour
 		RenderTexture.active = null;
 		byte[] bytes = texture2D.EncodeToPNG();
 		File.WriteAllBytes(Application.streamingAssetsPath + "/" + PortraitName + ".png", bytes);
+	}
+
+	public IEnumerator GrabCustomTexturesAsync()
+	{
+		WWW NewTexture = new WWW("file:///" + Application.streamingAssetsPath + "/CustomMode/Textures/PortraitBG.png");
+		yield return NewTexture;
+		if (NewTexture.error == null)
+		{
+			BG.mainTexture = NewTexture.texture;
+		}
+		if (NewTexture.error != null)
+		{
+			Debug.Log("Well, the texture wasn't null!");
+		}
 	}
 }

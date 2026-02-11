@@ -35,6 +35,8 @@ public class OsanaPoolEventScript : MonoBehaviour
 
 	public GameObject Weight;
 
+	public bool OsanaDrowned;
+
 	public bool Murdering;
 
 	public float StinkTimer;
@@ -167,7 +169,10 @@ public class OsanaPoolEventScript : MonoBehaviour
 		{
 			if (Rival.DistanceToDestination < 0.5f)
 			{
-				AudioClipPlayer.Play(SpeechClip[1], Rival.transform.position + Vector3.up * 1.5f, 5f, 10f, out VoiceClip, Yandere.transform.position.y);
+				if (!OsanaDrowned)
+				{
+					AudioClipPlayer.Play(SpeechClip[1], Rival.transform.position + Vector3.up * 1.5f, 5f, 10f, out VoiceClip, Yandere.transform.position.y);
+				}
 				EventSubtitle.text = SpeechText[1];
 				Rival.CharacterAnimation["f02_" + EventAnim[1]].time = 0f;
 				Rival.CharacterAnimation.Play("f02_" + EventAnim[1]);
@@ -413,6 +418,7 @@ public class OsanaPoolEventScript : MonoBehaviour
 				Rival.BecomeRagdoll();
 				Rival.DeathType = DeathType.Drowning;
 				Yandere.Police.EndOfDay.PoolEvent = true;
+				OsanaDrowned = true;
 			}
 		}
 		if (Clock.HourTime > 14f || Rival.Alarmed || Rival.Attacked || Rival.Stop)

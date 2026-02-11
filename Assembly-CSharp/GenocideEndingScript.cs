@@ -76,6 +76,8 @@ public class GenocideEndingScript : MonoBehaviour
 
 	public GameObject SenpaiJaw;
 
+	public GameObject Plaza;
+
 	public GameObject Book;
 
 	public GameObject Hood;
@@ -114,6 +116,7 @@ public class GenocideEndingScript : MonoBehaviour
 			OsanaRopes.SetActive(value: false);
 			Senpai.transform.parent.gameObject.SetActive(value: true);
 			Osana.SetActive(value: false);
+			Plaza.SetActive(value: false);
 			EightiesEnding = true;
 			FadeSpeed = 0.1f;
 			return;
@@ -130,6 +133,7 @@ public class GenocideEndingScript : MonoBehaviour
 			SpeechText[10] = "...huh? ...what is this? ...why am I tied to a...chair?! Why are you doing this?! This isn't funny! Lemme go! Lemme go right now!";
 			MyAudio.clip = OsanaClip;
 			MyAudio.Play();
+			Plaza.SetActive(value: false);
 			SpeechPhase = 10;
 			TimeLimit = 9f;
 			Delay = 10f;
@@ -178,6 +182,7 @@ public class GenocideEndingScript : MonoBehaviour
 		OsanaRopes.SetActive(value: false);
 		Senpai.transform.parent.gameObject.SetActive(value: true);
 		Osana.SetActive(value: false);
+		Plaza.SetActive(value: false);
 		if (GameGlobals.Eighties)
 		{
 			if (GameGlobals.CustomMode && GameGlobals.FemaleSenpai)

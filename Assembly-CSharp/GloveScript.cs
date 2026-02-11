@@ -22,7 +22,12 @@ public class GloveScript : MonoBehaviour
 
 	private void Start()
 	{
-		Physics.IgnoreCollision(GameObject.Find("YandereChan").GetComponent<YandereScript>().GetComponent<Collider>(), MyCollider);
+		YandereScript yandereScript = Prompt.Yandere;
+		if (yandereScript == null)
+		{
+			yandereScript = GameObject.Find("YandereChan").GetComponent<YandereScript>();
+		}
+		Physics.IgnoreCollision(yandereScript.GetComponent<Collider>(), MyCollider);
 		if (base.transform.position.y > 1000f)
 		{
 			base.transform.position = new Vector3(12f, 0f, 28f);
@@ -48,6 +53,11 @@ public class GloveScript : MonoBehaviour
 			else if (Prompt.Yandere.Schoolwear == 2)
 			{
 				Prompt.Yandere.NotificationManager.CustomText = "Can't combine this with a swimsuit!";
+				Prompt.Yandere.NotificationManager.DisplayNotification(NotificationType.Custom);
+			}
+			else if (Prompt.Yandere.Schoolwear == 0)
+			{
+				Prompt.Yandere.NotificationManager.CustomText = "Can't wear gloves while wearing a towel!";
 				Prompt.Yandere.NotificationManager.DisplayNotification(NotificationType.Custom);
 			}
 			else

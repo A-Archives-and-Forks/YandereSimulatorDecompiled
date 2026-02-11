@@ -40,6 +40,8 @@ public class HomeVideoGamesScript : MonoBehaviour
 			GameTitles[2].text = "Space Witch";
 			GameTitles[1].text = "??????????";
 			GameTitles[1].color = new Color(1f, 1f, 1f, 0.5f);
+			GameTitles[3].text = "??????????";
+			GameTitles[3].color = new Color(1f, 1f, 1f, 0.5f);
 		}
 		else
 		{

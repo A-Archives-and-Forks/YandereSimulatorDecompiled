@@ -107,65 +107,72 @@ public class RadioScript : MonoBehaviour
 			Prompt.enabled = false;
 			Prompt.Hide();
 		}
-		if (!Delinquent || !((Prompt.Yandere.transform.position - base.transform.position).sqrMagnitude < 121f))
+		if (!Delinquent)
 		{
 			return;
 		}
-		Proximity = 0;
-		for (ID = 1; ID < 6; ID++)
+		if ((Prompt.Yandere.transform.position - base.transform.position).sqrMagnitude < 121f)
 		{
-			if (StudentManager.Students[75 + ID] != null && Vector3.Distance(base.transform.position, StudentManager.Students[75 + ID].transform.position) < 1.1f)
+			Proximity = 0;
+			for (ID = 1; ID < 6; ID++)
 			{
-				if (!StudentManager.Students[75 + ID].Alarmed && !StudentManager.Students[75 + ID].Threatened && StudentManager.Students[75 + ID].Alive)
+				if (StudentManager.Students[75 + ID] != null && Vector3.Distance(base.transform.position, StudentManager.Students[75 + ID].transform.position) < 1.1f)
 				{
-					Proximity++;
-				}
-				else
-				{
-					Proximity = -100;
-					ID = 5;
-					MyAudio.Stop();
-					Jukebox.ClubDip = 0f;
+					if (!StudentManager.Students[75 + ID].Alarmed && !StudentManager.Students[75 + ID].Threatened && StudentManager.Students[75 + ID].Alive)
+					{
+						Proximity++;
+					}
+					else
+					{
+						Proximity = -100;
+						ID = 5;
+						MyAudio.Stop();
+						Jukebox.ClubDip = 0f;
+					}
 				}
 			}
-		}
-		if (Prompt.Yandere.Talking && Prompt.Yandere.StudentManager.DialogueWheel.ClubLeader)
-		{
-			MyAudio.volume = 0f;
-		}
-		else
-		{
-			MyAudio.volume = 0.1f;
-		}
-		if (Proximity > 0)
-		{
-			if (!MyAudio.isPlaying)
+			if (Prompt.Yandere.Talking && Prompt.Yandere.StudentManager.DialogueWheel.ClubLeader)
 			{
-				MyAudio.Play();
+				MyAudio.volume = 0f;
 			}
-			float num = Vector3.Distance(Prompt.Yandere.transform.position, base.transform.position);
-			if (num < 11f)
+			else
 			{
-				Jukebox.ClubDip = Mathf.MoveTowards(Jukebox.ClubDip, (10f - num) * 0.2f * Jukebox.Volume, Time.deltaTime);
-				if (Jukebox.ClubDip < 0f)
+				MyAudio.volume = 0.1f;
+			}
+			if (Proximity > 0)
+			{
+				if (!MyAudio.isPlaying)
 				{
-					Jukebox.ClubDip = 0f;
+					MyAudio.Play();
 				}
-				if (Jukebox.ClubDip > Jukebox.Volume)
+				float num = Vector3.Distance(Prompt.Yandere.transform.position, base.transform.position);
+				if (num < 11f)
 				{
-					Jukebox.ClubDip = Jukebox.Volume;
+					Jukebox.ClubDip = Mathf.MoveTowards(Jukebox.ClubDip, (10f - num) * 0.2f * Jukebox.Volume, Time.deltaTime);
+					if (Jukebox.ClubDip < 0f)
+					{
+						Jukebox.ClubDip = 0f;
+					}
+					if (Jukebox.ClubDip > Jukebox.Volume)
+					{
+						Jukebox.ClubDip = Jukebox.Volume;
+					}
 				}
 			}
+			else if (MyAudio.isPlaying)
+			{
+				MyAudio.Stop();
+				Jukebox.ClubDip = 0f;
+			}
+			if (Prompt.Yandere.Collapse)
+			{
+				MyAudio.Stop();
+				base.enabled = false;
+			}
 		}
-		else if (MyAudio.isPlaying)
+		if (StudentManager.Police.EndOfDay.Counselor.ExpelledDelinquents)
 		{
-			MyAudio.Stop();
-			Jukebox.ClubDip = 0f;
-		}
-		if (Prompt.Yandere.Collapse)
-		{
-			MyAudio.Stop();
-			base.enabled = false;
+			base.transform.parent.gameObject.SetActive(value: false);
 		}
 	}
 

@@ -39,17 +39,25 @@ public class ModernRivalEventScript : MonoBehaviour
 
 	public float SpecialCaseTimer;
 
+	public float AudioTimer;
+
 	public float StartTimer;
 
 	public float TimeLimit;
 
 	public float StartTime;
 
+	public float WaitTimer;
+
 	public float Timer;
 
 	public bool DisableBlendshapes;
 
 	public bool AlreadyPopulated;
+
+	public bool SyncAnimToAudio;
+
+	public bool ClubClosed;
 
 	public bool ClubCheck;
 
@@ -69,6 +77,12 @@ public class ModernRivalEventScript : MonoBehaviour
 
 	public string[] AlternateDialogue;
 
+	public AudioClip[] AlternateAudio;
+
+	public AudioSourceScript TimeRespectingAudioSource;
+
+	public GameObject AudioSourceObject;
+
 	private void Start()
 	{
 		if (GameGlobals.Eighties || DateGlobals.Week != Week || DateGlobals.Weekday != Day)
@@ -83,6 +97,7 @@ public class ModernRivalEventScript : MonoBehaviour
 			for (int i = 1; i < AlternateEvent.Instructions.Length; i++)
 			{
 				AlternateEvent.Instructions[i].Dialogue = AlternateEvent.AlternateDialogue[i];
+				AlternateEvent.Instructions[i].Audio = AlternateEvent.AlternateAudio[i];
 				AlternateEvent.Instructions[i].Anim[0] = "f02_bulliedIdle_00";
 			}
 		}
@@ -144,7 +159,6 @@ public class ModernRivalEventScript : MonoBehaviour
 					{
 						return;
 					}
-					Debug.Log("The rival has set down her bookbag, so an event is ready to begin, but are all characters ready?");
 					int num = 0;
 					int num2 = 0;
 					for (int i = 0; i < Char.Length; i++)
@@ -183,7 +197,10 @@ public class ModernRivalEventScript : MonoBehaviour
 					}
 					Phase++;
 					TakeInstructions();
-					CheckForDeaths();
+					if (!ClubClosed)
+					{
+						CheckForDeaths();
+					}
 				}
 			}
 			else if (StartCriteria == StartCriteriaType.Time && Clock.HourTime > StartTime)
@@ -224,6 +241,11 @@ public class ModernRivalEventScript : MonoBehaviour
 			}
 			return;
 		}
+		if (SyncAnimToAudio && TimeRespectingAudioSource != null)
+		{
+			Char[0].CharacterAnimation[Instructions[1].Anim[0]].time = TimeRespectingAudioSource.MyAudioSource.time;
+			Char[1].CharacterAnimation[Instructions[1].Anim[1]].time = TimeRespectingAudioSource.MyAudioSource.time;
+		}
 		if (NextCriteria == NextCriteriaType.TimeLimit)
 		{
 			Timer += Time.deltaTime;
@@ -259,6 +281,21 @@ public class ModernRivalEventScript : MonoBehaviour
 			{
 				Phase++;
 				TakeInstructions();
+			}
+		}
+		else if (NextCriteria == NextCriteriaType.AudioFinished)
+		{
+			AudioTimer += Time.deltaTime;
+			if (AudioTimer > Instructions[Phase].Audio.length)
+			{
+				WaitTimer += Time.deltaTime;
+				if (WaitTimer > 0.5f)
+				{
+					AudioTimer = 0f;
+					WaitTimer = 0f;
+					Phase++;
+					TakeInstructions();
+				}
 			}
 		}
 		UpdateSubtitle();
@@ -335,8 +372,7 @@ public class ModernRivalEventScript : MonoBehaviour
 		}
 		if (Instructions[Phase].Audio != null)
 		{
-			Debug.Log("Phase is " + Phase + ". The game thinks that we should be playing some audio right now.");
-			Char[0].SpawnTimeRespectingAudioSource(Instructions[Phase].Audio);
+			SpawnTimeRespectingAudioSource(Instructions[Phase].Audio);
 		}
 		if (num < 10f)
 		{
@@ -590,7 +626,7 @@ public class ModernRivalEventScript : MonoBehaviour
 		{
 			Char[0].PhoneCallScreen.SetActive(value: false);
 		}
-		if (EventID == RivalEventType.AmaiClubEvent)
+		else if (EventID == RivalEventType.AmaiClubEvent)
 		{
 			SendClubToBakeSale();
 		}
@@ -612,6 +648,10 @@ public class ModernRivalEventScript : MonoBehaviour
 				}
 				Char[0].GetDestinations();
 			}
+		}
+		else if (EventID == RivalEventType.AmaiTuesdayLunchEvent)
+		{
+			EventObject[0].SetActive(value: false);
 		}
 		else
 		{
@@ -661,6 +701,11 @@ public class ModernRivalEventScript : MonoBehaviour
 				{
 					StudentManager.UpdateStudents();
 				}
+				if (Char[i].Rival)
+				{
+					Debug.Log(Char[i]?.ToString() + " is a rival, so, as she is exiting this event, we're going to check to see if she needs to add ''Place Bag'' to her routine.");
+					Char[i].CheckIfWeNeedToPlaceBag();
+				}
 			}
 		}
 		EventSubtitle.text = string.Empty;
@@ -671,6 +716,10 @@ public class ModernRivalEventScript : MonoBehaviour
 		if (Week == 2 && Day == DayOfWeek.Thursday && StartTime == 16f)
 		{
 			StudentManager.RestoreScorchMarks = true;
+		}
+		if (TimeRespectingAudioSource != null)
+		{
+			UnityEngine.Object.Destroy(TimeRespectingAudioSource.gameObject);
 		}
 		base.enabled = false;
 	}
@@ -741,8 +790,8 @@ public class ModernRivalEventScript : MonoBehaviour
 
 	public void CheckForDeaths()
 	{
-		Debug.Log("Now checking to see if any of the characters involved in this event are dead.");
-		for (int i = 2; i <= 5; i++)
+		Debug.Log("The script named " + base.gameObject.name + " is now checking to see if any of the characters involved in this event are dead.");
+		for (int i = 2; i < CharIDs.Length; i++)
 		{
 			int num = CharIDs[i];
 			if (StudentManager.Students[num] == null)
@@ -751,9 +800,24 @@ public class ModernRivalEventScript : MonoBehaviour
 				int num2 = i * 2;
 				Instructions[num2].Dialogue = "";
 				Instructions[num2].TimeLimit = 0f;
-				Instructions[num2 + 1].Dialogue = "";
-				Instructions[num2 + 1].TimeLimit = 0f;
+				if (num2 + 1 < Instructions.Length)
+				{
+					Instructions[num2 + 1].Dialogue = "";
+					Instructions[num2 + 1].TimeLimit = 0f;
+				}
 			}
+		}
+	}
+
+	public void SpawnTimeRespectingAudioSource(AudioClip Clip, float AudioOffset = 0f, bool Follow = false)
+	{
+		GameObject gameObject = UnityEngine.Object.Instantiate(AudioSourceObject, Char[0].transform.position + new Vector3(0f, 1f, 0f), Quaternion.identity);
+		TimeRespectingAudioSource = gameObject.GetComponent<AudioSourceScript>();
+		TimeRespectingAudioSource.MyClip = Clip;
+		TimeRespectingAudioSource.Offset = AudioOffset;
+		if (Follow)
+		{
+			gameObject.transform.parent = base.transform;
 		}
 	}
 }

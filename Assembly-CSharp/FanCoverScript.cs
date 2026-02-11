@@ -54,7 +54,7 @@ public class FanCoverScript : MonoBehaviour
 
 	private void Start()
 	{
-		if (StudentManager.Eighties || StudentManager.Students[RivalID] == null)
+		if (StudentManager.Eighties || StudentManager.Students[RivalID] == null || StudentManager.Week > 1)
 		{
 			Prompt.Hide();
 			Prompt.enabled = false;
@@ -104,6 +104,7 @@ public class FanCoverScript : MonoBehaviour
 			Rival.OsanaHairPhysics[3].enabled = false;
 			Rival.OsanaHairPhysics[2].transform.parent = Rival.OsanaHairPhysics[0].transform.parent;
 			Rival.OsanaHairPhysics[3].transform.parent = Rival.OsanaHairPhysics[0].transform.parent;
+			Yandere.BusyMurdering = true;
 			Rival.Distracted = true;
 			Yandere.CanMove = false;
 			Rival.Meeting = false;
@@ -239,6 +240,7 @@ public class FanCoverScript : MonoBehaviour
 		{
 			Yandere.Blur.Size = Mathf.MoveTowards(Yandere.Blur.Size, 0f, Time.deltaTime);
 			Yandere.MurderousActionTimer = 0f;
+			Yandere.BusyMurdering = false;
 			OfferHelp.SetActive(value: false);
 			Yandere.CanMove = true;
 			Yandere.Blur.Size = 0f;

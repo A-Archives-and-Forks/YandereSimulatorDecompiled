@@ -267,7 +267,7 @@ public class JournalistScript : MonoBehaviour
 				}
 				for (int i = 0; i < Yandere.StudentManager.Police.Corpses; i++)
 				{
-					if (Yandere.StudentManager.Police.CorpseList[i] != null && !Yandere.StudentManager.Police.CorpseList[i].Concealed && Vector3.Distance(base.transform.position, Yandere.StudentManager.Police.CorpseList[i].transform.position) < 10f)
+					if (Yandere.StudentManager.Police.CorpseList[i] != null && !Yandere.StudentManager.Police.CorpseList[i].Concealed && Vector3.Distance(base.transform.position, Yandere.StudentManager.Police.CorpseList[i].transform.position) < 22f)
 					{
 						Corpse = Yandere.StudentManager.Police.CorpseList[i];
 						Freeze = true;
@@ -352,7 +352,7 @@ public class JournalistScript : MonoBehaviour
 
 	private void CheckBehavior()
 	{
-		if (Yandere.CanMove && !Yandere.Egg && !Yandere.Invisible && !Yandere.Noticed && (Yandere.Chased || Yandere.Chasers > 0 || Yandere.MurderousActionTimer > 0f || Yandere.PotentiallyMurderousTimer > 0f || (Yandere.Armed && Yandere.EquippedWeapon.Bloody) || (Yandere.Carrying && !Yandere.CurrentRagdoll.Concealed) || (Yandere.Dragging && !Yandere.CurrentRagdoll.Concealed) || (Yandere.Bloodiness + (float)Yandere.GloveBlood > 0f && !Yandere.Paint && Yandere.MyProjector.enabled) || (Yandere.PickUp != null && (bool)Yandere.PickUp.BodyPart && !Yandere.PickUp.Garbage)))
+		if (((Yandere.CanMove && !Yandere.Egg && !Yandere.Invisible && !Yandere.Noticed) || Yandere.Struggling) && (Yandere.Chased || Yandere.Struggling || Yandere.Chasers > 0 || Yandere.MurderousActionTimer > 0f || Yandere.PotentiallyMurderousTimer > 0f || (Yandere.Armed && Yandere.EquippedWeapon.Bloody) || (Yandere.Carrying && !Yandere.CurrentRagdoll.Concealed) || (Yandere.Dragging && !Yandere.CurrentRagdoll.Concealed) || (Yandere.Bloodiness + (float)Yandere.GloveBlood > 0f && !Yandere.Paint && Yandere.MyProjector.enabled) || (Yandere.PickUp != null && (bool)Yandere.PickUp.BodyPart && !Yandere.PickUp.Garbage)))
 		{
 			if (Yandere.Carrying)
 			{

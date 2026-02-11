@@ -2167,8 +2167,15 @@ public class CosmeticScript : MonoBehaviour
 			{
 				if (Hairstyle < FemaleHair.Length)
 				{
-					FemaleHair[Hairstyle].SetActive(value: true);
-					HairRenderer = FemaleHairRenderers[Hairstyle];
+					if (FemaleHair[Hairstyle] == null)
+					{
+						Debug.Log("Um, this character's hair was null...hairstyle ID was " + Hairstyle);
+					}
+					else
+					{
+						FemaleHair[Hairstyle].SetActive(value: true);
+						HairRenderer = FemaleHairRenderers[Hairstyle];
+					}
 					FaceTexture = HairRenderer.material.mainTexture;
 				}
 				SetFemaleUniform();

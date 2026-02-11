@@ -129,7 +129,7 @@ public class SmokeBombScript : MonoBehaviour
 
 	private void GoAway(StudentScript Student)
 	{
-		if (!Student.Chasing && !Student.WitnessedMurder && !Student.WitnessedCorpse && !Student.Fleeing && !Student.Yandere.Noticed && !Student.Hunting && !Student.Confessing && !Student.Wet && !Student.Lethal && !Student.Emetic && !Student.Sedated && !Student.Headache && !Student.Vomiting && Student.ClubActivityPhase < 16 && !Student.EventSpecialCase && !Student.RetreivingMedicine)
+		if (!Student.Chasing && !Student.WitnessedMurder && !Student.WitnessedCorpse && !Student.Fleeing && !Student.Yandere.Noticed && !Student.Hunting && !Student.Confessing && !Student.Wet && !Student.Lethal && !Student.Emetic && !Student.Sedated && !Student.Headache && !Student.Vomiting && Student.ClubActivityPhase < 16 && !Student.EventSpecialCase && !Student.RetrievingMedicine)
 		{
 			Debug.Log(Student.Name + " just smelled a stink bomb!");
 			if (Student.StudentManager.BakeSale.CurrentCustomer == Student)

@@ -8,6 +8,8 @@ public class CurtainScript : MonoBehaviour
 
 	public AudioSource MyAudio;
 
+	public Collider MyCollider;
+
 	public bool Animate;
 
 	public bool Open;
@@ -30,6 +32,7 @@ public class CurtainScript : MonoBehaviour
 		if (!Open)
 		{
 			Weight = Mathf.Lerp(Weight, 0f, Time.deltaTime * 10f);
+			MyCollider.enabled = true;
 			if (Weight < 0.01f)
 			{
 				Animate = false;
@@ -39,6 +42,7 @@ public class CurtainScript : MonoBehaviour
 		else
 		{
 			Weight = Mathf.Lerp(Weight, 100f, Time.deltaTime * 10f);
+			MyCollider.enabled = false;
 			if (Weight > 99.99f)
 			{
 				Animate = false;

@@ -56,6 +56,8 @@ public class SocialScript : MonoBehaviour
 
 	public bool[] Gifted;
 
+	public int UpdateHairPhase;
+
 	public int Multiplier;
 
 	public int StudentID;
@@ -111,6 +113,11 @@ public class SocialScript : MonoBehaviour
 				Student.CharacterAnimation[Student.IdleAnim].time += Time.unscaledDeltaTime;
 			}
 			Panel.alpha = Mathf.MoveTowards(Panel.alpha, 1f, Time.unscaledDeltaTime * 10f);
+			if (UpdateHairPhase > 0)
+			{
+				UpdateAllDynamicBones();
+				UpdateHairPhase--;
+			}
 			if (Complimenting)
 			{
 				if (InputManager.TappedDown)
@@ -327,6 +334,7 @@ public class SocialScript : MonoBehaviour
 					DialogueWheel.TopicInterface.UpdateTopicHighlight();
 					base.gameObject.SetActive(value: false);
 					Yandere.HUD.alpha = 1f;
+					UpdateHairPhase = 2;
 				}
 				else if (Selected == 3)
 				{
@@ -569,6 +577,23 @@ public class SocialScript : MonoBehaviour
 		else
 		{
 			Debug.Log("Yes, this student is now a friend.");
+		}
+	}
+
+	public void UpdateAllDynamicBones()
+	{
+		Debug.Log("SocialScript is firing UpdateAllDynamicBones()");
+		DynamicBone[] componentsInChildren = Student.Head.GetComponentsInChildren<DynamicBone>();
+		foreach (DynamicBone dynamicBone in componentsInChildren)
+		{
+			if (UpdateHairPhase == 2)
+			{
+				dynamicBone.enabled = false;
+			}
+			else
+			{
+				dynamicBone.enabled = true;
+			}
 		}
 	}
 }

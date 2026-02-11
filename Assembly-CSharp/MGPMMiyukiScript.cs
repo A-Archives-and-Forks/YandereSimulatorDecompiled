@@ -393,7 +393,7 @@ public class MGPMMiyukiScript : MonoBehaviour
 			if (Magic == 20f)
 			{
 				MagicLevel++;
-				if (MagicLevel > 3 && Health < 3)
+				if (MagicLevel > 3 && Health < 5)
 				{
 					Health++;
 					UpdateHearts();

@@ -347,8 +347,9 @@ public class DatingMinigameScript : MonoBehaviour
 				Suitor = StudentManager.Students[LoveManager.SuitorID];
 				Rival = StudentManager.Students[LoveManager.RivalID];
 			}
-			if (Rival.MeetTimer > 0f && Suitor.MeetTimer > 0f)
+			if ((Rival.MeetTimer > 0f && Suitor.MeetTimer > 0f) || (Suitor.MeetTimer > 0f && Rival.CurrentDestination == StudentManager.RomanceSpot && Rival.DistanceToDestination < 1f))
 			{
+				Debug.Log("Rival and Suitor are in position.");
 				if (!Eighties)
 				{
 					Prompt.enabled = true;

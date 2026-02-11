@@ -435,7 +435,6 @@ public class JukeboxScript : MonoBehaviour
 	{
 		if (!Yandere.PauseScreen.Show && !Yandere.EasterEggMenu.activeInHierarchy && Input.GetKeyDown(KeyCode.M))
 		{
-			Debug.Log("StartStopMusic() is being fired from here, specifically.");
 			StartStopMusic();
 		}
 		if (!Egg)
@@ -670,7 +669,6 @@ public class JukeboxScript : MonoBehaviour
 
 	public void StartStopMusic()
 	{
-		Debug.Log("StartStopMusic() has been fired.");
 		if (Custom.isPlaying)
 		{
 			Egg = false;

@@ -896,6 +896,11 @@ public class PickUpScript : MonoBehaviour
 		{
 			base.transform.position = Yandere.StudentManager.WeaponBoxSpot.parent.position + new Vector3(0f, 1f, 0f);
 		}
+		if (ConcealedBodyPart)
+		{
+			Debug.Log("A student was carrying a trash bag containing a body part to the incinerator, and dropped it. Re-enabling the trash bag's PickUpScript.");
+			base.enabled = true;
+		}
 	}
 
 	public void AddSelfToBloodyClothingArray()

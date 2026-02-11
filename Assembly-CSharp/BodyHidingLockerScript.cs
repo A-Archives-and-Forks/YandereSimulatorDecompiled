@@ -297,12 +297,15 @@ public class BodyHidingLockerScript : MonoBehaviour
 			}
 			else if (Freezer)
 			{
+				Debug.Log("A corpse is now being released from a freezer.");
 				Corpse.transform.parent = null;
 				Corpse.transform.position = Prompt.Yandere.transform.position;
 				Corpse.Student.Hips.position = Prompt.Yandere.transform.position + new Vector3(0f, 0.5f, 0f);
 				Corpse.transform.eulerAngles = new Vector3(0f, 0f, 0f);
 				Rotation = -52f;
 				Door.transform.localEulerAngles = new Vector3(-52f, 0f, 0f);
+				Corpse.NextPosition = new Vector3(0f, 0.5f, 0f);
+				Corpse.UpdateNextFrame = true;
 			}
 			Corpse.transform.localScale = new Vector3(1f, 1f, 1f);
 			Corpse.gameObject.SetActive(value: true);
@@ -310,6 +313,7 @@ public class BodyHidingLockerScript : MonoBehaviour
 			Corpse = null;
 			Outline.color = new Color(0f, 1f, 1f, 1f);
 			StudentID = 0;
+			Physics.SyncTransforms();
 		}
 	}
 

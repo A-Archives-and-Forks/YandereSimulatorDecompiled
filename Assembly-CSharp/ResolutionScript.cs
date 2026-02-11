@@ -35,6 +35,8 @@ public class ResolutionScript : MonoBehaviour
 
 	public float Alpha = 1f;
 
+	public bool Initialized;
+
 	public bool FullScreen;
 
 	public bool FadeOut;
@@ -79,7 +81,7 @@ public class ResolutionScript : MonoBehaviour
 		ResID = 0;
 		Cursor.visible = false;
 		Darkness.color = new Color(1f, 1f, 1f, 1f);
-		ResolutionLabel.text = Screen.width + " x " + Screen.height;
+		ResolutionLabel.text = 1280 + " x " + 720;
 		QualityLabel.text = Qualities[QualitySettings.GetQualityLevel()] ?? "";
 		if (!FullScreen)
 		{

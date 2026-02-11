@@ -31,8 +31,16 @@ public class FrameScript : MonoBehaviour
 		Prompt.Circle[0].fillAmount = 1f;
 		if (ID == 1)
 		{
-			if (Prompt.Yandere.PickUp != null && Prompt.Yandere.PickUp.Garbage)
+			if (Prompt.Yandere.PickUp != null && Prompt.Yandere.PickUp.Garbage && Prompt.Yandere.PickUp.ObjectType != SpawnedObjectType.TarpBag)
 			{
+				if (Prompt.Yandere.PickUp.ConcealedBodyPart)
+				{
+					Prompt.Yandere.NotificationManager.CustomText = "not a concealed body part!";
+					Prompt.Yandere.NotificationManager.DisplayNotification(NotificationType.Custom);
+					Prompt.Yandere.NotificationManager.CustomText = "No! Bring a bag containing garbage,";
+					Prompt.Yandere.NotificationManager.DisplayNotification(NotificationType.Custom);
+					return;
+				}
 				Prompt.Yandere.StudentManager.CanAnyoneSeeYandere();
 				if (!Prompt.Yandere.StudentManager.YandereVisible)
 				{

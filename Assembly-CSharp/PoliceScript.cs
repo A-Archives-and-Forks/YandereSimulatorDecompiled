@@ -211,6 +211,8 @@ public class PoliceScript : MonoBehaviour
 
 	public bool Suspended;
 
+	public string RivalName;
+
 	private void Start()
 	{
 		if (SchoolGlobals.SchoolAtmosphere > 0.5f)
@@ -623,6 +625,10 @@ public class PoliceScript : MonoBehaviour
 
 	private void DetermineResults()
 	{
+		if (RivalName == "")
+		{
+			RivalName = EndOfDay.RivalNames[StudentManager.Week];
+		}
 		if (Yandere.VtuberID > 0)
 		{
 			Protagonist = VtuberNames[Yandere.VtuberID];
@@ -874,9 +880,9 @@ public class PoliceScript : MonoBehaviour
 							}
 							else if (StudentManager.CommunalLocker.RivalPhone.StudentID == StudentManager.RivalID)
 							{
-								ResultsLabels[1].text = "Osana tells the faculty that her phone is missing.";
+								ResultsLabels[1].text = RivalName + " tells the faculty that her phone is missing.";
 								ResultsLabels[2].text = "Suspecting theft, the faculty check all students' belongings before they are allowed to leave school.";
-								ResultsLabels[3].text = "Osana's stolen phone is found on " + Protagonist + "'s person.";
+								ResultsLabels[3].text = RivalName + "'s stolen phone is found on " + Protagonist + "'s person.";
 								ResultsLabels[4].text = Protagonist + " is expelled from school for stealing from another student.";
 							}
 							else

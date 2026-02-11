@@ -356,9 +356,9 @@ public class HeartbrokenScript : MonoBehaviour
 		{
 			int num = 0;
 			WeaponScript[] weapons = Cursor.SnappedYandere.Weapons;
-			for (int i = 0; i < weapons.Length; i++)
+			foreach (WeaponScript weaponScript in weapons)
 			{
-				if (weapons[i] != null)
+				if (weaponScript != null && !weaponScript.Disposed)
 				{
 					num++;
 				}

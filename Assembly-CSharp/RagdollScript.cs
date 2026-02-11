@@ -92,6 +92,8 @@ public class RagdollScript : MonoBehaviour
 
 	public bool DroppedFromRooftop;
 
+	public bool GuaranteePosition;
+
 	public bool InsideIncinerator;
 
 	public bool InsideWoodchipper;
@@ -168,6 +170,8 @@ public class RagdollScript : MonoBehaviour
 
 	public bool Male;
 
+	public float GuaranteeTimer;
+
 	public float AnimStartTime;
 
 	public float RemoveTimer;
@@ -202,9 +206,11 @@ public class RagdollScript : MonoBehaviour
 
 	public bool UpdateNextFrame;
 
+	public Quaternion NextRotation;
+
 	public Vector3 NextPosition;
 
-	public Quaternion NextRotation;
+	public Vector3 Target;
 
 	public int Frames;
 
@@ -296,6 +302,15 @@ public class RagdollScript : MonoBehaviour
 			Student.Hips.localRotation = NextRotation;
 			Physics.SyncTransforms();
 			UpdateNextFrame = false;
+		}
+		if (GuaranteePosition)
+		{
+			Student.Hips.position = Target;
+			Physics.SyncTransforms();
+			if (GuaranteeTimer > 1f)
+			{
+				GuaranteePosition = false;
+			}
 		}
 		if (!Dragged && !Carried && !Settled && !Yandere.PK && !Yandere.StudentManager.NoGravity)
 		{
@@ -1031,6 +1046,10 @@ public class RagdollScript : MonoBehaviour
 			Yandere.Chased = false;
 			Yandere.CanMove = true;
 		}
+		if (Pushed)
+		{
+			Police.SuicideScene = false;
+		}
 		if (Dismembered)
 		{
 			return;
@@ -1065,6 +1084,10 @@ public class RagdollScript : MonoBehaviour
 				if (Yandere.StudentManager.NoGravity)
 				{
 					gameObject.GetComponent<Rigidbody>().useGravity = false;
+				}
+				if (Burned)
+				{
+					gameObject.GetComponent<Renderer>().material.color = new Color(0.1f, 0.1f, 0.1f, 1f);
 				}
 				switch (i)
 				{
@@ -1109,13 +1132,13 @@ public class RagdollScript : MonoBehaviour
 						{
 							if (!Male)
 							{
-								Student.Cosmetic.ClubAccessories[(int)Student.Club].transform.localPosition = new Vector3(0f, -1.5f, 0.01f);
-								Student.Cosmetic.ClubAccessories[(int)Student.Club].transform.localEulerAngles = Vector3.zero;
+								Student.Cosmetic.ClubAccessories[(int)Student.Club].transform.localPosition = new Vector3(0f, -0.1095f, -0.0175f);
+								Student.Cosmetic.ClubAccessories[(int)Student.Club].transform.localEulerAngles = new Vector3(-90f, 0f, 0f);
 							}
 							else
 							{
-								Student.Cosmetic.ClubAccessories[(int)Student.Club].transform.localPosition = new Vector3(0f, -1.42f, 0.005f);
-								Student.Cosmetic.ClubAccessories[(int)Student.Club].transform.localEulerAngles = Vector3.zero;
+								Student.Cosmetic.ClubAccessories[(int)Student.Club].transform.localPosition = new Vector3(0f, -0.1146f, -0.0222f);
+								Student.Cosmetic.ClubAccessories[(int)Student.Club].transform.localEulerAngles = new Vector3(-90f, 0f, 0f);
 							}
 						}
 					}

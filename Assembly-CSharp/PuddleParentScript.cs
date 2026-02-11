@@ -22,14 +22,11 @@ public class PuddleParentScript : MonoBehaviour
 		foreach (Transform item in base.transform)
 		{
 			BloodPoolScript component = item.GetComponent<BloodPoolScript>();
-			if (component != null)
+			if (component != null && PoolID < Type.Length - 1)
 			{
 				PoolID++;
-				if (PoolID < 100)
-				{
-					PuddlePositions[PoolID] = item.position;
-					PuddleRotations[PoolID] = item.eulerAngles;
-				}
+				PuddlePositions[PoolID] = item.position;
+				PuddleRotations[PoolID] = item.eulerAngles;
 				if (component.Gasoline)
 				{
 					Type[PoolID] = 1;
@@ -44,6 +41,7 @@ public class PuddleParentScript : MonoBehaviour
 
 	public void RestoreAllPuddles()
 	{
+		Debug.Log("Now firing RestoreAllPuddles().");
 		while (PoolID > 0)
 		{
 			GameObject gameObject = null;

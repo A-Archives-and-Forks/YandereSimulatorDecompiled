@@ -524,7 +524,7 @@ public class TalkingScript : MonoBehaviour
 				else
 				{
 					S.TaskPhase = 999;
-					S.Subtitle.UpdateLabel(SubtitleType.TaskRequirement, S.StudentID, 10f);
+					S.Subtitle.UpdateLabel(SubtitleType.TaskRequirement, S.StudentID, 12f);
 					S.Subtitle.Timer = 0f;
 					S.CharacterAnimation.CrossFade(S.TaskAnims[1]);
 					S.CurrentAnim = S.TaskAnims[1];
@@ -2475,8 +2475,20 @@ public class TalkingScript : MonoBehaviour
 
 	private void LateUpdate()
 	{
-		if (!S.Talking || !(S.Yandere.TalkTimer <= 0f) || (!S.Male && S.Club == ClubType.Delinquent) || S.StudentID == 11 || S.StudentID == 12)
+		if (!S.Talking || !(S.Yandere.TalkTimer <= 0f))
 		{
+			return;
+		}
+		if ((!S.Male && S.Club == ClubType.Delinquent) || S.StudentID == 11 || (S.StudentID == 12 && !S.DialogueWheel.ClubLeader))
+		{
+			if (S.Club == ClubType.Delinquent)
+			{
+				Debug.Log("This is a female delinquent, wearing a mask. No need for lip movement.");
+			}
+			else
+			{
+				Debug.Log("This is a rival who is NOT currently acting as a club leader.");
+			}
 			return;
 		}
 		if (S.Subtitle.CurrentClip != null && S.Subtitle.Speaker == S)
@@ -2492,6 +2504,7 @@ public class TalkingScript : MonoBehaviour
 		}
 		if (AudioData.MyAudioSource != null)
 		{
+			Debug.Log(S.Name + "'s jaw should be moving.");
 			S.Jaw.localEulerAngles += new Vector3(0f, 0f, AudioData.g[1].transform.position.y);
 			if (S.Jaw.localEulerAngles.z < 40f)
 			{

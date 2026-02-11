@@ -164,6 +164,8 @@ public static class GameGlobals
 
 	private const string Str_TVHeads = "TVHeads";
 
+	private const string Str_Checkpoint = "Checkpoint";
+
 	public static int Profile
 	{
 		get
@@ -1052,6 +1054,18 @@ public static class GameGlobals
 		}
 	}
 
+	public static bool Checkpoint
+	{
+		get
+		{
+			return GlobalsHelper.GetBool("Profile_" + Profile + "_Checkpoint");
+		}
+		set
+		{
+			GlobalsHelper.SetBool("Profile_" + Profile + "_Checkpoint", value);
+		}
+	}
+
 	public static int GetRivalEliminations(int elimID)
 	{
 		return PlayerPrefs.GetInt("Profile_" + Profile + "_RivalEliminations" + elimID);
@@ -1257,5 +1271,6 @@ public static class GameGlobals
 		Globals.Delete("Profile_" + Profile + "_PlaythroughID");
 		Globals.Delete("Profile_" + Profile + "_WhipGameUnlocked");
 		Globals.Delete("Profile_" + Profile + "_TVHeads");
+		Globals.Delete("Profile_" + Profile + "_Checkpoint");
 	}
 }

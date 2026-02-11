@@ -42,7 +42,7 @@ public class OsanaJokeScript : MonoBehaviour
 			if (Timer > 6.75f)
 			{
 				ReturnLabel.SetActive(value: true);
-				if (Input.GetKeyDown("e"))
+				if (Input.anyKeyDown)
 				{
 					SceneManager.LoadScene("NewTitleScene");
 				}
@@ -57,7 +57,7 @@ public class OsanaJokeScript : MonoBehaviour
 				}
 			}
 		}
-		else if (Input.GetKeyDown("f"))
+		else if (Input.GetButtonDown(InputNames.Xbox_X))
 		{
 			Rotation[0].enabled = false;
 			Rotation[1].enabled = false;
@@ -71,7 +71,7 @@ public class OsanaJokeScript : MonoBehaviour
 			Head.localScale = new Vector3(0f, 0f, 0f);
 			Jukebox.clip = BloodSplatterSFX;
 			Jukebox.Play();
-			Label.text = "";
+			Label.gameObject.SetActive(value: false);
 			Advance = true;
 		}
 	}

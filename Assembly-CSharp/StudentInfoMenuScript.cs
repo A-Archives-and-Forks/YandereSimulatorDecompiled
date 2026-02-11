@@ -498,6 +498,47 @@ public class StudentInfoMenuScript : MonoBehaviour
 			}
 			else if (StudentID == 1 || !StudentManager.Students[StudentID].Alive || StudentID == PauseScreen.Yandere.TargetStudent.StudentID || StudentGlobals.GetStudentKidnapped(StudentID) || StudentManager.Students[StudentID].Tranquil || StudentManager.Students[StudentID].Teacher || StudentManager.Students[StudentID].Slave || StudentGlobals.GetStudentDead(StudentID) || StudentManager.Students[StudentID].MyBento.Tampered || StudentID > 97)
 			{
+				Debug.Log("Invalid student.");
+				if (StudentID == 1)
+				{
+					Debug.Log("Invalid because Senpai.");
+				}
+				if (!StudentManager.Students[StudentID].Alive)
+				{
+					Debug.Log("Invalid because not alive.");
+				}
+				if (StudentID == PauseScreen.Yandere.TargetStudent.StudentID)
+				{
+					Debug.Log("Invalid because this is the student that the player is talking to.");
+				}
+				if (StudentGlobals.GetStudentKidnapped(StudentID))
+				{
+					Debug.Log("Invalid because kidnapped.");
+				}
+				if (StudentManager.Students[StudentID].Tranquil)
+				{
+					Debug.Log("Invalid because tranquilized.");
+				}
+				if (StudentManager.Students[StudentID].Teacher)
+				{
+					Debug.Log("Invalid because teacher.");
+				}
+				if (StudentManager.Students[StudentID].Slave)
+				{
+					Debug.Log("Invalid because mind-broken slave.");
+				}
+				if (StudentGlobals.GetStudentDead(StudentID))
+				{
+					Debug.Log("Invalid because dead.");
+				}
+				if (StudentManager.Students[StudentID].MyBento.Tampered)
+				{
+					Debug.Log("Invalid because their bento has been tampered with.");
+				}
+				if (StudentID > 97)
+				{
+					Debug.Log("Invalid because counselor/headmaster/Info-chan.");
+				}
 				if (StudentID > 1 && StudentManager.Students[StudentID] != null && StudentManager.Students[StudentID].InEvent)
 				{
 					BusyBlocker.position = Highlight.position;

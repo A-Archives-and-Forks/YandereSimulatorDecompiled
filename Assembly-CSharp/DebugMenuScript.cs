@@ -62,6 +62,12 @@ public class DebugMenuScript : MonoBehaviour
 
 	public GameObject MissionModeWindow;
 
+	public GameObject FreeFlyCamera;
+
+	public GameObject MainCamera;
+
+	public GameObject UICamera;
+
 	public GameObject Window;
 
 	public GameObject[] ElectrocutionKit;
@@ -306,15 +312,16 @@ public class DebugMenuScript : MonoBehaviour
 				}
 				else if (Input.GetKeyDown(KeyCode.C))
 				{
-					for (ID = 1; ID < 11; ID++)
+					if (FreeFlyCamera.transform.position == Vector3.zero)
 					{
-						CollectibleGlobals.SetTapeCollected(ID, value: true);
-						StudentManager.TapesCollected[ID] = true;
+						FreeFlyCamera.transform.position = MainCamera.transform.position;
+						FreeFlyCamera.transform.eulerAngles = MainCamera.transform.eulerAngles;
 					}
-					for (ID = 1; ID < 26; ID++)
-					{
-						StudentManager.SetTopicLearnedByStudent(ID, StudentManager.RivalID, boolean: true);
-					}
+					FreeFlyCamera.SetActive(value: true);
+					MainCamera.SetActive(value: false);
+					UICamera.SetActive(value: false);
+					Yandere.Invisible = true;
+					Yandere.CanMove = false;
 					Window.SetActive(value: false);
 				}
 				else if (Input.GetKeyDown(KeyCode.D))

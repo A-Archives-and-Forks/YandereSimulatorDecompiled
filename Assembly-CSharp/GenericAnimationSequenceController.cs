@@ -238,6 +238,16 @@ public class GenericAnimationSequenceController : MonoBehaviour
 
 	private float originalFixedDeltaTime = 0.02f;
 
+	public CosmeticScript Yandere;
+
+	public GameObject AyanoHair;
+
+	public GameObject RyobaHair;
+
+	public GameObject UICamera;
+
+	public UILabel Subtitle;
+
 	public bool Initiated;
 
 	public float Timer;
@@ -252,6 +262,15 @@ public class GenericAnimationSequenceController : MonoBehaviour
 		if (audioSource != null)
 		{
 			originalMainAudioPitch = audioSource.pitch;
+		}
+		if (GameGlobals.Eighties)
+		{
+			UICamera.SetActive(value: true);
+			debugSubtitleDisplay.gameObject.SetActive(value: false);
+			if (GameGlobals.CustomMode)
+			{
+				Debug.Log("We are now in Custom Mode.");
+			}
 		}
 	}
 
@@ -279,6 +298,7 @@ public class GenericAnimationSequenceController : MonoBehaviour
 				Debug.Log($"[GenericAnimationHandler][SFX] main audioSource on GameObject: {audioSource.gameObject.name}, pitch={audioSource.pitch}");
 			}
 		}
+		postProcessingProfile.depthOfField.enabled = OptionGlobals.DepthOfField;
 	}
 
 	private void OnDestroy()
@@ -294,12 +314,37 @@ public class GenericAnimationSequenceController : MonoBehaviour
 	private void Update()
 	{
 		Timer += Time.deltaTime;
-		if (!Initiated && Timer >= 1f)
+		if (!Initiated)
 		{
-			RenderSettings.ambientLight = new Color(0.6514058f, 0.3515327f, 0.2422812f, 1f);
-			int index = (currentSequenceIndex + 1) % sequenceCount;
-			PlaySequence(index);
-			Initiated = true;
+			if (Timer >= 1f)
+			{
+				RenderSettings.ambientLight = new Color(0.6514058f, 0.3515327f, 0.2422812f, 1f);
+				int index = (currentSequenceIndex + 1) % sequenceCount;
+				PlaySequence(index);
+				Initiated = true;
+				if (GameGlobals.Eighties)
+				{
+					AyanoHair.gameObject.SetActive(value: false);
+					RyobaHair.gameObject.SetActive(value: false);
+					Yandere.MyRenderer.materials[0].SetFloat("_BlendAmount", 0f);
+					Yandere.MyRenderer.materials[1].SetFloat("_BlendAmount", 0f);
+					Yandere.MyRenderer.materials[2].SetFloat("_BlendAmount", 0f);
+					if (!GameGlobals.CustomMode)
+					{
+						RyobaHair.gameObject.SetActive(value: true);
+						Yandere.MyRenderer.materials[0].mainTexture = Yandere.MyRenderer.materials[1].mainTexture;
+					}
+				}
+				else
+				{
+					AyanoHair.gameObject.SetActive(value: true);
+					RyobaHair.gameObject.SetActive(value: false);
+				}
+			}
+		}
+		else
+		{
+			Subtitle.text = debugSubtitleDisplay.text;
 		}
 		if (Timer > 11f)
 		{

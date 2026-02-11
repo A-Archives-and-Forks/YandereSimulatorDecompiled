@@ -278,6 +278,10 @@ public class FreezerKillScript : MonoBehaviour
 			if (studentScript != null && studentScript != Victim && FreezerRoomCollider.bounds.Contains(studentScript.transform.position))
 			{
 				studentScript.transform.position = new Vector3(24f, 8f, -3f);
+				if (studentScript.Investigating)
+				{
+					studentScript.StopInvestigating();
+				}
 			}
 		}
 		Physics.SyncTransforms();

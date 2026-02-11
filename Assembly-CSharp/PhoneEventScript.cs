@@ -47,6 +47,8 @@ public class PhoneEventScript : MonoBehaviour
 
 	public bool HintGiven;
 
+	public bool Spoken;
+
 	public int EventStudentID = 7;
 
 	public int EventFriendID = 34;
@@ -193,11 +195,12 @@ public class PhoneEventScript : MonoBehaviour
 					EventStudent.SmartPhone.transform.localPosition = new Vector3(0.025f, 0.0075f, 0.05f);
 					EventStudent.SmartPhone.transform.localEulerAngles = new Vector3(15f, -150f, 180f);
 				}
-				if (Timer > 2f && EventSubtitle.text == "")
+				if (Timer > 2f && !Spoken)
 				{
 					Debug.Log("Uh-oh...I should take this call in private...");
 					AudioClipPlayer.Play(EventClip[1], EventStudent.transform.position, 5f, 10f, out VoiceClip, out CurrentClipLength);
 					EventSubtitle.text = EventSpeech[1];
+					Spoken = true;
 				}
 				if (Timer > 5f)
 				{

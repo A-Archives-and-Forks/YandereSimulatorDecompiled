@@ -1247,6 +1247,8 @@ public class StudentManagerScript : MonoBehaviour
 
 	public Transform[] BakeSalePlateParents;
 
+	public Transform[] BakeSalePonderSpots;
+
 	public Transform[] BakeSalePrepSpots;
 
 	public Transform[] BakeSalePlates;
@@ -1548,7 +1550,7 @@ public class StudentManagerScript : MonoBehaviour
 			{
 				GardenBlockade.SetActive(value: true);
 			}
-			Patrols.List[71].localPosition = new Vector3(51.5f, 0f, 24f);
+			Patrols.List[71].localPosition = new Vector3(51.5f, 0f, 22.25f);
 			Patrols.List[71].localEulerAngles = new Vector3(0f, 90f, 0f);
 			Patrols.List[71].localScale = new Vector3(1.15f, 1.15f, 1.15f);
 			Patrols.List[72].localScale = new Vector3(0.985f, 1f, 1f);
@@ -1614,11 +1616,13 @@ public class StudentManagerScript : MonoBehaviour
 				}
 				else
 				{
-					Debug.Log("Student #" + StudentGlobals.StudentSlave + " was supposed to appear at school as a mind-broken slave today.");
+					Debug.Log("Student #" + studentSlave + " was supposed to appear at school as a mind-broken slave today.");
 					Debug.Log("The game tried to spawn her, but failed.");
 					Debug.Log("Setting StudentGlobals.StudentSlave to 0.");
 					StudentGlobals.StudentSlave = 0;
 				}
+				Debug.Log("Student #" + studentSlave + " is a mind-broken slave!");
+				MindBrokenSlave = Students[studentSlave];
 				SpawnID = 0;
 			}
 			if (StudentGlobals.FragileSlave > 0)
@@ -2395,6 +2399,21 @@ public class StudentManagerScript : MonoBehaviour
 								Students[num].SpeechLines.Stop();
 							}
 						}
+					}
+					if (Students[36] != null && Students[36].UpdateAppearance)
+					{
+						Debug.Log("When returning from a save, the game acknowledge that Gema's appearance needs to be updated.");
+						Students[36].UpdateGemaAppearance();
+					}
+					if (OsanaPoolEvent.OsanaDrowned)
+					{
+						Debug.Log("The game knows that this save was made after the player drowned Osana during her pool event.");
+						OsanaPoolEvent.enabled = false;
+						Students[11].CharacterAnimation.enabled = true;
+						Students[11].CharacterAnimation.Play("f02_" + OsanaPoolEvent.EventAnim[6]);
+						Students[11].OsanaHair.GetComponent<Animation>().Play("Hair_" + OsanaPoolEvent.EventAnim[6]);
+						Students[11].CharacterAnimation["f02_" + OsanaPoolEvent.EventAnim[6]].time = Students[11].CharacterAnimation["f02_" + OsanaPoolEvent.EventAnim[6]].length;
+						Students[11].OsanaHair.GetComponent<Animation>()["Hair_" + OsanaPoolEvent.EventAnim[6]].time = Students[11].OsanaHair.GetComponent<Animation>()["Hair_" + OsanaPoolEvent.EventAnim[6]].length;
 					}
 					if (GameGlobals.CensorBlood)
 					{
@@ -3941,6 +3960,8 @@ public class StudentManagerScript : MonoBehaviour
 					if (studentScript.Slave && (Yandere.Noticed || Police.DayOver))
 					{
 						Debug.Log("A mind-broken slave committed suicide.");
+						studentScript.transform.position = new Vector3(0f, 100f, 0f);
+						Physics.SyncTransforms();
 						studentScript.Broken.Subtitle.text = string.Empty;
 						studentScript.Broken.Done = true;
 						UnityEngine.Object.Destroy(studentScript.Broken);
@@ -5244,6 +5265,11 @@ public class StudentManagerScript : MonoBehaviour
 				if (!Students[ID].Alive)
 				{
 					Debug.Log(Students[ID].Name + " is confirmed to be dead. Transforming them into a ragdoll now.");
+					if (Students[ID].ClubAttire)
+					{
+						Students[ID].ClubAttire = false;
+						Students[ID].ChangeClubwear();
+					}
 					if (Students[ID].Rival)
 					{
 						Students[ID].MapMarker.gameObject.SetActive(value: false);
@@ -6470,10 +6496,10 @@ public class StudentManagerScript : MonoBehaviour
 			if (Students[i] != null)
 			{
 				Students[i].MyPlate = BakeSalePlates[Students[i].ClubMemberID];
+				CleaningManager.GetRole(i);
+				Students[i].CleaningSpot = CleaningManager.Spot;
+				Students[i].CleaningRole = CleaningManager.Role;
 			}
-			CleaningManager.GetRole(i);
-			Students[i].CleaningSpot = CleaningManager.Spot;
-			Students[i].CleaningRole = CleaningManager.Role;
 		}
 		for (int i = 1; i < 8; i++)
 		{

@@ -185,7 +185,7 @@ public class DynamicBone : MonoBehaviour
 		}
 	}
 
-	private void PreUpdate()
+	public void PreUpdate()
 	{
 		if (m_Weight > 0f && (!m_DistantDisable || !m_DistantDisabled))
 		{
@@ -451,7 +451,7 @@ public class DynamicBone : MonoBehaviour
 		}
 	}
 
-	private void InitTransforms()
+	public void InitTransforms()
 	{
 		for (int i = 0; i < m_Particles.Count; i++)
 		{

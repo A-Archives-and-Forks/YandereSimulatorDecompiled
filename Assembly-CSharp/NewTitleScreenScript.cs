@@ -356,7 +356,7 @@ public class NewTitleScreenScript : MonoBehaviour
 		{
 			DebugLog.text = "GameGlobals.Debug is: " + GameGlobals.Debug + " and QuickStart is: " + QuickStart;
 		}
-		if (Input.GetKeyDown("m"))
+		if (PikaID == 0 && LilID == 0 && AnoID == 0 && MeowlyID == 0 && Input.GetKeyDown("m"))
 		{
 			CurrentJukebox.volume = 0f;
 		}

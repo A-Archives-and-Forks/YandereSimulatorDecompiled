@@ -77,7 +77,7 @@ public class GenericBentoScript : MonoBehaviour
 			else if (Prompt.Circle[1].fillAmount == 0f)
 			{
 				Prompt.Yandere.Inventory.SedativePoisons--;
-				Prompt.Yandere.PoisonType = 4;
+				Prompt.Yandere.PoisonType = 3;
 				Tranquil = true;
 				ShutOff();
 			}
@@ -92,7 +92,7 @@ public class GenericBentoScript : MonoBehaviour
 			else if (Prompt.Circle[3].fillAmount == 0f)
 			{
 				Prompt.Yandere.Inventory.HeadachePoisons--;
-				Prompt.Yandere.PoisonType = 5;
+				Prompt.Yandere.PoisonType = 4;
 				Headache = true;
 				ShutOff();
 			}

@@ -7,6 +7,8 @@ public class AsylumIntroScript : MonoBehaviour
 
 	public StalkerYandereScript Yandere;
 
+	public Renderer SecondaryDarkness;
+
 	public RPG_Camera RPGCamera;
 
 	public Renderer Darkness;
@@ -24,6 +26,8 @@ public class AsylumIntroScript : MonoBehaviour
 	public int Phase;
 
 	public GameObject[] Bags;
+
+	public bool Skip;
 
 	public UIPanel SkipPanel;
 
@@ -51,6 +55,10 @@ public class AsylumIntroScript : MonoBehaviour
 		for (int num = 10 - DateGlobals.Week; num > 0; num--)
 		{
 			Bags[num].SetActive(value: false);
+		}
+		if (GameGlobals.Checkpoint)
+		{
+			Skip = true;
 		}
 	}
 
@@ -133,6 +141,20 @@ public class AsylumIntroScript : MonoBehaviour
 					Phase++;
 				}
 			}
+			if (Skip)
+			{
+				Debug.Log("Placing player at checkpoint.");
+				Yandere.transform.position = new Vector3(-20.928f, 3.82f, -17f);
+				Yandere.transform.eulerAngles = new Vector3(0f, 180f, 0f);
+				Yandere.CheckForCheckpoint = false;
+				Yandere.BagsToBurn = 1;
+				SecondaryDarkness.material.color = new Color(0f, 0f, 0f, 1f);
+				Physics.SyncTransforms();
+				for (int i = 1; i < Bags.Length - 1; i++)
+				{
+					Bags[i].SetActive(value: false);
+				}
+			}
 		}
 	}
 
@@ -171,12 +193,12 @@ public class AsylumIntroScript : MonoBehaviour
 		{
 			SkipPanel.alpha += Time.deltaTime;
 		}
-		if (Input.GetButton(InputNames.Xbox_X))
+		if (Input.GetButton(InputNames.Xbox_X) || Skip)
 		{
 			SkipPanel.alpha = 1f;
 			SkipTimer = 0f;
 			SkipCircle.fillAmount -= Time.deltaTime;
-			if (SkipCircle.fillAmount == 0f)
+			if (SkipCircle.fillAmount == 0f || Skip)
 			{
 				Phase = 2;
 				Speed = 100f;

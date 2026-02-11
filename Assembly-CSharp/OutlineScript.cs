@@ -1,3 +1,4 @@
+using System.Collections;
 using HighlightingSystem;
 using UnityEngine;
 
@@ -12,10 +13,23 @@ public class OutlineScript : MonoBehaviour
 	public void Awake()
 	{
 		h = GetComponent<Highlighter>();
-		if (h == null)
+		if (h == null && base.gameObject != null)
 		{
 			h = base.gameObject.AddComponent<Highlighter>();
 		}
+		if (h == null)
+		{
+			h.ConstantOnImmediate(color);
+		}
+		if (base.gameObject.activeInHierarchy)
+		{
+			StartCoroutine(UpdateOutline());
+		}
+	}
+
+	private IEnumerator UpdateOutline()
+	{
+		yield return new WaitForSeconds(5f);
 		h.ConstantOnImmediate(color);
 	}
 }

@@ -126,7 +126,7 @@ public class StalkerPromptScript : MonoBehaviour
 		}
 		if (ID == 1)
 		{
-			if (BagID > DateGlobals.Week)
+			if (BagID > DateGlobals.Week || (BagID > 1 && GameGlobals.Checkpoint))
 			{
 				base.gameObject.SetActive(value: false);
 			}
@@ -134,6 +134,10 @@ public class StalkerPromptScript : MonoBehaviour
 		else if (ID == 5)
 		{
 			BagsToBurn = DateGlobals.Week;
+			if (GameGlobals.Checkpoint)
+			{
+				BagsToBurn = 1;
+			}
 			BagsToBurnLabel.text = "BAGS TO BURN: " + BagsToBurn;
 			base.gameObject.SetActive(value: false);
 		}
@@ -646,5 +650,6 @@ public class StalkerPromptScript : MonoBehaviour
 		{
 			BagsToBurnLabel.text = "BAGS TO BURN: " + BagsToBurn;
 		}
+		Yandere.BagsToBurn = BagsToBurn;
 	}
 }

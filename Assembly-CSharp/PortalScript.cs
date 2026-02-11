@@ -173,7 +173,10 @@ public class PortalScript : MonoBehaviour
 					num++;
 				}
 			}
-			int num2 = Police.BloodyWeapons - Police.IncineratedWeapons;
+			WeaponManager.CountBloodyWeapons();
+			int num2 = WeaponManager.BloodyWeapons;
+			Debug.Log("Counting bloody weapons.");
+			Debug.Log("WeaponManager.BloodyWeapons is " + WeaponManager.BloodyWeapons + ".");
 			TrashCanScript[] trashCans = StudentManager.TrashCans;
 			foreach (TrashCanScript trashCanScript in trashCans)
 			{
@@ -672,6 +675,14 @@ public class PortalScript : MonoBehaviour
 	public void EndDay()
 	{
 		Debug.Log("Ending the day through the Portal script.");
+		if (StudentManager.MindBrokenSlave != null)
+		{
+			StudentScript mindBrokenSlave = StudentManager.MindBrokenSlave;
+			if (mindBrokenSlave.Alive)
+			{
+				mindBrokenSlave.StudentManager.MindBrokenSlave.BecomeRagdoll();
+			}
+		}
 		StudentManager.StopMoving();
 		Yandere.StopLaughing();
 		Yandere.EmptyHands();

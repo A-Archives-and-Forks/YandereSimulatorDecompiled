@@ -28,17 +28,21 @@ public class BakeSaleScript : MonoBehaviour
 
 	public Renderer[] Poster;
 
-	public bool[] TrayPlaced;
-
-	public float Timer;
+	public bool CustomerPresent;
 
 	public bool Poisoned;
+
+	public bool ShutDown;
 
 	public int RepToSubtract;
 
 	public int Money;
 
 	public int ID = 2;
+
+	public float Timer;
+
+	public bool[] TrayPlaced;
 
 	public void UpdatePosters()
 	{
@@ -91,12 +95,20 @@ public class BakeSaleScript : MonoBehaviour
 		{
 			return;
 		}
+		if (CurrentCustomer != null && Vector3.Distance(new Vector3(0f, 0f, -4f), CurrentCustomer.transform.position) < 2f)
+		{
+			CustomerPresent = true;
+		}
+		else
+		{
+			CustomerPresent = false;
+		}
 		Timer += Time.deltaTime;
 		if (!(Timer > 30f))
 		{
 			return;
 		}
-		if (StudentManager.Students[ID] != null)
+		if (StudentManager.Students[ID] != null && !StudentManager.Yandere.InClass)
 		{
 			while ((ID > 9 && ID < 26) || ID > 86 || StudentManager.Students[ID] == null)
 			{

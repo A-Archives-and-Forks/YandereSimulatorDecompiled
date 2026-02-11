@@ -55,6 +55,7 @@ public class CounselorDoorScript : MonoBehaviour
 				{
 					Prompt.Yandere.CharacterAnimation.CrossFade(Prompt.Yandere.IdleAnim);
 					Prompt.Yandere.Police.Darkness.enabled = true;
+					Prompt.Yandere.Invisible = true;
 					Prompt.Yandere.CanMove = false;
 					FadeOut = true;
 				}
@@ -107,6 +108,7 @@ public class CounselorDoorScript : MonoBehaviour
 			if (Darkness.color.a < 0.1f)
 			{
 				Darkness.color = new Color(0f, 0f, 0f, 0f);
+				Prompt.Yandere.Invisible = false;
 				FadeIn = false;
 			}
 		}

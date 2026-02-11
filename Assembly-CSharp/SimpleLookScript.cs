@@ -91,7 +91,7 @@ public class SimpleLookScript : MonoBehaviour
 			LookTimer = 0f;
 			WaveTimer = 0f;
 		}
-		if (Student.Routine)
+		if (Student.Routine && !Student.InEvent)
 		{
 			float num = 0f;
 			num = (Suitor ? Vector3.Distance(Student.transform.position, Yandere.transform.position) : Student.DistanceToPlayer);

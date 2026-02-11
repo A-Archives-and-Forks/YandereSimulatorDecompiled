@@ -219,6 +219,13 @@ public class YakuzaMenuScript : MonoBehaviour
 			{
 				RivalNames[i] = JSON.Students[i + 10].Name;
 			}
+			if (JSON.Misc.Misc[3])
+			{
+				Debug.Log("The Yakuza should already be fully unlocked!");
+				GameGlobals.IntroducedAbduction = true;
+				GameGlobals.IntroducedRansom = true;
+				GameGlobals.YakuzaPhase = 100;
+			}
 		}
 		WWW wWW = new WWW("file:///" + Application.streamingAssetsPath + "/Portraits" + text + "/Student_1.png");
 		for (int j = 1; j < 11; j++)

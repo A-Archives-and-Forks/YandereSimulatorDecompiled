@@ -176,139 +176,156 @@ public class GazerEyesScript : MonoBehaviour
 
 	public void ElectrocuteStudent(StudentScript Target)
 	{
-		if (Target.Yandere.Noticed)
+		if ((Target.Nemesis && Target.gameObject.GetComponent<NemesisScript>().Difficulty == 2) || (Target.Nemesis && Target.gameObject.GetComponent<NemesisScript>().Difficulty == 4))
 		{
-			return;
-		}
-		Target.enabled = true;
-		Target.RemoveOfferHelpPrompt();
-		if (Target.Following)
-		{
-			ParticleSystem.EmissionModule emission = Target.Hearts.emission;
-			emission.enabled = false;
-			Target.FollowCountdown.gameObject.SetActive(value: false);
-			Target.Yandere.Follower = null;
-			Target.Yandere.Followers--;
-			Target.Following = false;
-			Target.CurrentDestination = Target.Destinations[Target.Phase];
-			Target.Pathfinding.target = Target.Destinations[Target.Phase];
-			Target.Pathfinding.speed = 1f;
-		}
-		if (Target.Distracting)
-		{
-			if (Target.DistractionTarget != null)
-			{
-				Target.DistractionTarget.TargetedForDistraction = false;
-			}
-			Target.ResumeDistracting = false;
-			Target.Distracting = false;
-		}
-		if (Target.Vomiting)
-		{
-			Target.VomitEmitter.gameObject.SetActive(value: false);
-			Target.Vomiting = false;
-			Target.VomitPhase = 0;
-		}
-		if (Target.ReturningMisplacedWeapon)
-		{
-			Target.DropMisplacedWeapon();
-		}
-		if (Target.Investigating)
-		{
-			Target.StopInvestigating();
-		}
-		if (StudentManager.BloodReporter != null && StudentManager.BloodReporter.MyTeacher == Target)
-		{
-			StudentManager.BloodReporter.ReturnToNormal();
-		}
-		Target.Pathfinding.canSearch = false;
-		Target.Pathfinding.canMove = false;
-		Target.Routine = false;
-		Target.EmptyHands();
-		if (Target.StudentID == 1)
-		{
-			Debug.Log(Target.Name + " just ''dodged'' some electricity.");
 			Target.CharacterAnimation.CrossFade(Target.DodgeAnim);
+			Target.Pathfinding.canSearch = false;
+			Target.Pathfinding.canMove = false;
 			Target.DodgeSpeed = 2f;
-			Target.Dodging = true;
+			if (Target.Nemesis)
+			{
+				Target.gameObject.GetComponent<NemesisScript>().Dodging = true;
+			}
 		}
 		else
 		{
-			Debug.Log(Target.Name + " was just electrocuted.");
-			Target.CharacterAnimation[Target.ElectroAnim].speed = 0.85f;
-			Target.CharacterAnimation[Target.ElectroAnim].time = 2f;
-			Target.CharacterAnimation.CrossFade(Target.ElectroAnim);
+			if (Target.Yandere.Noticed)
+			{
+				return;
+			}
+			if (!Target.Nemesis)
+			{
+				Target.enabled = true;
+			}
+			Target.RemoveOfferHelpPrompt();
+			if (Target.Following)
+			{
+				ParticleSystem.EmissionModule emission = Target.Hearts.emission;
+				emission.enabled = false;
+				Target.FollowCountdown.gameObject.SetActive(value: false);
+				Target.Yandere.Follower = null;
+				Target.Yandere.Followers--;
+				Target.Following = false;
+				Target.CurrentDestination = Target.Destinations[Target.Phase];
+				Target.Pathfinding.target = Target.Destinations[Target.Phase];
+				Target.Pathfinding.speed = 1f;
+			}
+			if (Target.Distracting)
+			{
+				if (Target.DistractionTarget != null)
+				{
+					Target.DistractionTarget.TargetedForDistraction = false;
+				}
+				Target.ResumeDistracting = false;
+				Target.Distracting = false;
+			}
+			if (Target.Vomiting)
+			{
+				Target.VomitEmitter.gameObject.SetActive(value: false);
+				Target.Vomiting = false;
+				Target.VomitPhase = 0;
+			}
+			if (Target.ReturningMisplacedWeapon)
+			{
+				Target.DropMisplacedWeapon();
+			}
+			if (Target.Investigating)
+			{
+				Target.StopInvestigating();
+			}
+			if (StudentManager.BloodReporter != null && StudentManager.BloodReporter.MyTeacher == Target)
+			{
+				StudentManager.BloodReporter.ReturnToNormal();
+			}
+			Target.Pathfinding.canSearch = false;
+			Target.Pathfinding.canMove = false;
+			Target.Routine = false;
+			Target.EmptyHands();
+			if (Target.StudentID == 1)
+			{
+				Debug.Log(Target.Name + " just ''dodged'' some electricity.");
+				Target.CharacterAnimation.CrossFade(Target.DodgeAnim);
+				Target.DodgeSpeed = 2f;
+				Target.Dodging = true;
+			}
+			else
+			{
+				Debug.Log(Target.Name + " was just electrocuted.");
+				Target.CharacterAnimation[Target.ElectroAnim].speed = 0.85f;
+				Target.CharacterAnimation[Target.ElectroAnim].time = 2f;
+				Target.CharacterAnimation.CrossFade(Target.ElectroAnim);
+				if (!Target.Male)
+				{
+					Target.CharacterAnimation[Target.WetAnim].weight = 0f;
+					Target.CharacterAnimation[Target.ShyAnim].weight = 0f;
+				}
+				if (Target.Shoving)
+				{
+					Yandere.CannotRecover = false;
+				}
+				Target.SpecialRivalDeathReaction = false;
+				Target.InvestigatingBloodPool = false;
+				Target.SearchingForPhone = false;
+				Target.FocusOnYandere = false;
+				Target.SolvingPuzzle = false;
+				Target.EatingSnack = false;
+				Target.Confessing = false;
+				Target.Electrified = true;
+				Target.EndSearch = false;
+				Target.Stripping = false;
+				Target.Attacked = false;
+				Target.Vomiting = false;
+				Target.Fleeing = false;
+				Target.Shoving = false;
+				Target.Dying = true;
+				Target.Shy = false;
+				Target.Wet = false;
+				Target.Police.CorpseList[Target.Police.Corpses] = Target.Ragdoll;
+				Target.Police.Corpses++;
+				GameObjectUtils.SetLayerRecursively(Target.gameObject, 11);
+				Target.MapMarker.gameObject.layer = 10;
+				Target.tag = "Blood";
+				Target.Ragdoll.ElectrocutionAnimation = true;
+				Target.Ragdoll.Disturbing = true;
+				Target.SpawnAlarmDisc();
+				GameObject obj = Object.Instantiate(StudentManager.LightSwitch.Electricity, Target.transform.position, Quaternion.identity);
+				obj.transform.parent = Target.BoneSets.RightArm;
+				obj.transform.localPosition = Vector3.zero;
+				GameObject obj2 = Object.Instantiate(StudentManager.LightSwitch.Electricity, Target.transform.position, Quaternion.identity);
+				obj2.transform.parent = Target.BoneSets.LeftArm;
+				obj2.transform.localPosition = Vector3.zero;
+				GameObject obj3 = Object.Instantiate(StudentManager.LightSwitch.Electricity, Target.transform.position, Quaternion.identity);
+				obj3.transform.parent = Target.BoneSets.RightLeg;
+				obj3.transform.localPosition = Vector3.zero;
+				GameObject obj4 = Object.Instantiate(StudentManager.LightSwitch.Electricity, Target.transform.position, Quaternion.identity);
+				obj4.transform.parent = Target.BoneSets.LeftLeg;
+				obj4.transform.localPosition = Vector3.zero;
+				GameObject obj5 = Object.Instantiate(StudentManager.LightSwitch.Electricity, Target.transform.position, Quaternion.identity);
+				obj5.transform.parent = Target.BoneSets.Head;
+				obj5.transform.localPosition = Vector3.zero;
+				GameObject obj6 = Object.Instantiate(StudentManager.LightSwitch.Electricity, Target.transform.position, Quaternion.identity);
+				obj6.transform.parent = Target.Hips;
+				obj6.transform.localPosition = Vector3.zero;
+				AudioSource.PlayClipAtPoint(StudentManager.LightSwitch.Flick[2], Target.transform.position + Vector3.up);
+				if (Target.OsanaHairL != null)
+				{
+					Target.OsanaHairL.GetComponent<DynamicBone>().enabled = false;
+					Target.OsanaHairR.GetComponent<DynamicBone>().enabled = false;
+				}
+			}
+			if (Yandere.PotentiallyMurderousTimer > 0f)
+			{
+				Yandere.Sanity -= ((PlayerGlobals.PantiesEquipped == 10) ? 10f : 20f) * Yandere.Numbness;
+			}
+			Target.HipCollider.enabled = true;
 			if (!Target.Male)
 			{
-				Target.CharacterAnimation[Target.WetAnim].weight = 0f;
-				Target.CharacterAnimation[Target.ShyAnim].weight = 0f;
+				Target.HorudaCollider.transform.localScale = Vector3.zero;
 			}
-			if (Target.Shoving)
+			if (Target.HeadacheMedicinePrompt != null)
 			{
-				Yandere.CannotRecover = false;
+				Target.HeadacheMedicinePrompt.GetComponent<GenericEightiesTaskScript>().Disable();
 			}
-			Target.SpecialRivalDeathReaction = false;
-			Target.InvestigatingBloodPool = false;
-			Target.SearchingForPhone = false;
-			Target.FocusOnYandere = false;
-			Target.SolvingPuzzle = false;
-			Target.EatingSnack = false;
-			Target.Confessing = false;
-			Target.Electrified = true;
-			Target.EndSearch = false;
-			Target.Stripping = false;
-			Target.Attacked = false;
-			Target.Vomiting = false;
-			Target.Fleeing = false;
-			Target.Shoving = false;
-			Target.Dying = true;
-			Target.Shy = false;
-			Target.Wet = false;
-			Target.Police.CorpseList[Target.Police.Corpses] = Target.Ragdoll;
-			Target.Police.Corpses++;
-			GameObjectUtils.SetLayerRecursively(Target.gameObject, 11);
-			Target.MapMarker.gameObject.layer = 10;
-			Target.tag = "Blood";
-			Target.Ragdoll.ElectrocutionAnimation = true;
-			Target.Ragdoll.Disturbing = true;
-			Target.SpawnAlarmDisc();
-			GameObject obj = Object.Instantiate(StudentManager.LightSwitch.Electricity, Target.transform.position, Quaternion.identity);
-			obj.transform.parent = Target.BoneSets.RightArm;
-			obj.transform.localPosition = Vector3.zero;
-			GameObject obj2 = Object.Instantiate(StudentManager.LightSwitch.Electricity, Target.transform.position, Quaternion.identity);
-			obj2.transform.parent = Target.BoneSets.LeftArm;
-			obj2.transform.localPosition = Vector3.zero;
-			GameObject obj3 = Object.Instantiate(StudentManager.LightSwitch.Electricity, Target.transform.position, Quaternion.identity);
-			obj3.transform.parent = Target.BoneSets.RightLeg;
-			obj3.transform.localPosition = Vector3.zero;
-			GameObject obj4 = Object.Instantiate(StudentManager.LightSwitch.Electricity, Target.transform.position, Quaternion.identity);
-			obj4.transform.parent = Target.BoneSets.LeftLeg;
-			obj4.transform.localPosition = Vector3.zero;
-			GameObject obj5 = Object.Instantiate(StudentManager.LightSwitch.Electricity, Target.transform.position, Quaternion.identity);
-			obj5.transform.parent = Target.BoneSets.Head;
-			obj5.transform.localPosition = Vector3.zero;
-			GameObject obj6 = Object.Instantiate(StudentManager.LightSwitch.Electricity, Target.transform.position, Quaternion.identity);
-			obj6.transform.parent = Target.Hips;
-			obj6.transform.localPosition = Vector3.zero;
-			AudioSource.PlayClipAtPoint(StudentManager.LightSwitch.Flick[2], Target.transform.position + Vector3.up);
-			if (Target.OsanaHairL != null)
-			{
-				Target.OsanaHairL.GetComponent<DynamicBone>().enabled = false;
-				Target.OsanaHairR.GetComponent<DynamicBone>().enabled = false;
-			}
-		}
-		if (Yandere.PotentiallyMurderousTimer > 0f)
-		{
-			Yandere.Sanity -= ((PlayerGlobals.PantiesEquipped == 10) ? 10f : 20f) * Yandere.Numbness;
-		}
-		Target.HipCollider.enabled = true;
-		if (!Target.Male)
-		{
-			Target.HorudaCollider.transform.localScale = Vector3.zero;
-		}
-		if (Target.HeadacheMedicinePrompt != null)
-		{
-			Target.HeadacheMedicinePrompt.GetComponent<GenericEightiesTaskScript>().Disable();
 		}
 	}
 }
