@@ -58,6 +58,8 @@ public class StudentManagerScript : MonoBehaviour
 
 	public OpinionsLearnedScript TopicsDiscussed;
 
+	public ModernRivalEventScript CookingEvent;
+
 	public ClothingParentScript ClothingParent;
 
 	public CombatMinigameScript CombatMinigame;
@@ -87,6 +89,8 @@ public class StudentManagerScript : MonoBehaviour
 	public TranqDetectorScript TranqDetector;
 
 	public WitnessCameraScript WitnessCamera;
+
+	public ModernRivalEventScript CakeEvent;
 
 	public ConvoManagerScript ConvoManager;
 
@@ -386,6 +390,8 @@ public class StudentManagerScript : MonoBehaviour
 
 	public Transform[] TeacherGuardLocation;
 
+	public Transform[] CustomSunbatheSpots;
+
 	public Transform[] CorpseGuardLocation;
 
 	public Transform[] PossibleRandomSpots;
@@ -576,6 +582,8 @@ public class StudentManagerScript : MonoBehaviour
 
 	public Transform FastBatheSpot;
 
+	public Transform GarbageParent;
+
 	public Transform MaleBatheSpot;
 
 	public Transform MaleStalkSpot;
@@ -638,6 +646,8 @@ public class StudentManagerScript : MonoBehaviour
 
 	public GameObject StageClosureSigns;
 
+	public GameObject AnniversaryStuff;
+
 	public GameObject DelinquentVoices;
 
 	public GameObject LovestruckCamera;
@@ -653,6 +663,8 @@ public class StudentManagerScript : MonoBehaviour
 	public GameObject GardenBlockade;
 
 	public GameObject ModernCurtains;
+
+	public GameObject ProblemSolver;
 
 	public GameObject FPSDisplayBG;
 
@@ -674,6 +686,8 @@ public class StudentManagerScript : MonoBehaviour
 
 	public GameObject StudentChan;
 
+	public GameObject ClassProps;
+
 	public GameObject FPSDisplay;
 
 	public GameObject StudentKun;
@@ -683,6 +697,8 @@ public class StudentManagerScript : MonoBehaviour
 	public GameObject RivalChan;
 
 	public GameObject Canvases;
+
+	public GameObject Confetti;
 
 	public GameObject Medicine;
 
@@ -705,6 +721,8 @@ public class StudentManagerScript : MonoBehaviour
 	public int StudentsToReposition;
 
 	public int LowDetailThreshold;
+
+	public int SunbathingStudents;
 
 	public int FarAnimThreshold;
 
@@ -866,6 +884,8 @@ public class StudentManagerScript : MonoBehaviour
 
 	public bool YandereDying;
 
+	public bool Anniversary;
+
 	public bool FirstUpdate;
 
 	public bool MissionMode;
@@ -923,6 +943,8 @@ public class StudentManagerScript : MonoBehaviour
 	public bool Sans;
 
 	public bool Stop;
+
+	public bool Tarp;
 
 	public bool Egg;
 
@@ -998,6 +1020,8 @@ public class StudentManagerScript : MonoBehaviour
 	public BucketScript[] AllBuckets;
 
 	public OcclusionPortal BehindSchoolOccluder;
+
+	public OcclusionPortal InteriorOccluder;
 
 	public OcclusionPortal PlazaOccluder;
 
@@ -1577,6 +1601,20 @@ public class StudentManagerScript : MonoBehaviour
 			}
 			DatingMinigame.Start();
 		}
+		if (GameGlobals.Anniversary)
+		{
+			QualityManager.PermanentlyDisableAllParticles();
+			Police.Clock.SchoolBell.enabled = false;
+			Police.Clock.BloomFadeSpeed = 1f;
+			AnniversaryStuff.SetActive(value: true);
+			Yandere.PartyHat.SetActive(value: true);
+			Confetti.SetActive(value: true);
+			Anniversary = true;
+		}
+		else if (AnniversaryStuff != null)
+		{
+			AnniversaryStuff.SetActive(value: false);
+		}
 		if (ProblemID != -1)
 		{
 			if (ErrorLabel != null)
@@ -1883,7 +1921,7 @@ public class StudentManagerScript : MonoBehaviour
 				Cursor.lockState = CursorLockMode.Locked;
 				Cursor.visible = false;
 			}
-			if (Frame < 11)
+			if (Frame < 31)
 			{
 				Frame++;
 				if (!FirstUpdate)
@@ -2254,10 +2292,7 @@ public class StudentManagerScript : MonoBehaviour
 								studentScript.GetFoodTarget();
 								studentScript.ClubTimer = 0f;
 							}
-							if (studentScript.Meeting)
-							{
-								Debug.Log("And, as of now, " + studentScript.Name + "'s destination is " + studentScript.CurrentDestination?.ToString() + ".");
-							}
+							_ = studentScript.Meeting;
 							if (studentScript.Ragdoll.enabled)
 							{
 								studentScript.SpeechLines.Stop();
@@ -2283,10 +2318,7 @@ public class StudentManagerScript : MonoBehaviour
 						{
 							studentScript2.SetOriginalScheduleBlocks();
 							studentScript2.SetOriginalActions();
-							if (studentScript2.Meeting)
-							{
-								Debug.Log("Later, as of now, " + studentScript2.Name + "'s destination is " + studentScript2.CurrentDestination?.ToString() + ".");
-							}
+							_ = studentScript2.Meeting;
 						}
 					}
 					Eighties = GameGlobals.Eighties;
@@ -2379,10 +2411,11 @@ public class StudentManagerScript : MonoBehaviour
 				else if (Frame == 5)
 				{
 					TaskManager.UpdateTaskStatus();
+					int num = 0;
 					if (YandereLate && !LoadedSave)
 					{
 						Debug.Log("Yandere was late. Attempting to manually force delinquents and bullies to their seats.");
-						for (int num = 76; num < 81; num++)
+						for (num = 76; num < 81; num++)
 						{
 							if (Students[num] != null)
 							{
@@ -2390,7 +2423,7 @@ public class StudentManagerScript : MonoBehaviour
 								Students[num].transform.rotation = Hangouts.List[num].rotation;
 							}
 						}
-						for (int num = 81; num < 86; num++)
+						for (num = 81; num < 86; num++)
 						{
 							if (Students[num] != null)
 							{
@@ -2419,6 +2452,22 @@ public class StudentManagerScript : MonoBehaviour
 					{
 						ChangeAllBloodTextures();
 					}
+					if (GameGlobals.Anniversary)
+					{
+						Yandere.Jukebox.AnniversaryMusic();
+					}
+					if (Anniversary && Students[39] != null)
+					{
+						Students[39].gameObject.SetActive(value: false);
+					}
+				}
+				else if (Frame == 30 && CookingEvent.Done)
+				{
+					Debug.Log("This save file was made after Amai's Cooking Class event ended.");
+					CookingEvent.Offset = 1;
+					CookingEvent.DynamicPopulation = true;
+					CookingEvent.PopulateCharacterList();
+					CookingEvent.MakeStudentsPrepareFoodForever();
 				}
 			}
 			if ((double)Clock.HourTime > 16.9)
@@ -2567,6 +2616,7 @@ public class StudentManagerScript : MonoBehaviour
 					}
 					Yandere.CharacterAnimation.CrossFade("f02_pinDownPanic_00");
 				}
+				Yandere.PushAwayFromDefaultLayer();
 			}
 			if (PinPhase == 1)
 			{
@@ -2777,28 +2827,44 @@ public class StudentManagerScript : MonoBehaviour
 				}
 			}
 		}
+		Vector3 position = Yandere.transform.position;
 		if (PlazaOccluder != null)
 		{
-			if (Yandere.transform.position.z < -50f)
+			if (position.z < -50f)
 			{
-				PlazaPreview.SetActive(value: true);
-				PlazaOccluder.open = false;
+				if (!PlazaPreview.activeInHierarchy)
+				{
+					PlazaPreview.SetActive(value: true);
+					PlazaOccluder.open = false;
+					InteriorOccluder.open = false;
+					ClassProps.SetActive(value: false);
+				}
 			}
-			else
+			else if (PlazaPreview.activeInHierarchy)
 			{
 				PlazaPreview.SetActive(value: false);
 				PlazaOccluder.open = true;
+				InteriorOccluder.open = true;
+				ClassProps.SetActive(value: true);
 			}
 		}
 		if (BehindSchoolOccluder != null)
 		{
-			if (Yandere.transform.position.z > 58f)
+			if (position.z > 58f)
 			{
 				BehindSchoolOccluder.open = false;
 			}
 			else
 			{
 				BehindSchoolOccluder.open = true;
+			}
+		}
+		if (ProblemSolver != null)
+		{
+			bool flag2 = position.z < -18f;
+			if (ProblemSolver.activeSelf != flag2)
+			{
+				ProblemSolver.SetActive(flag2);
 			}
 		}
 		if (RepositionStudentsAfterRivalRises)
@@ -2942,24 +3008,20 @@ public class StudentManagerScript : MonoBehaviour
 			}
 			RepositionAfterPhotoshoot = false;
 		}
-		if (RepositionAfterPhotoshootLater && Clock.HourTime > 16f)
+		if (RepositionAfterPhotoshootLater && Clock.HourTime > 16f && Students[RivalID] != null && Students[RivalID].transform.position.y > 3.9f && Students[RivalID].transform.position.z > 71f)
 		{
-			Debug.Log("Waiting to re-position students...");
-			if (Students[RivalID] != null && Students[RivalID].transform.position.y > 3.9f && Students[RivalID].transform.position.z > 71f)
+			AvailableWitnesses = 0;
+			Weeks[9].StudentAvailability[86] = true;
+			Weeks[9].StudentAvailability[87] = true;
+			Weeks[9].StudentAvailability[88] = true;
+			Weeks[9].StudentAvailability[89] = true;
+			IdentifyAvailableWitnesses();
+			for (int num10 = 86; num10 < 90; num10++)
 			{
-				AvailableWitnesses = 0;
-				Weeks[9].StudentAvailability[86] = true;
-				Weeks[9].StudentAvailability[87] = true;
-				Weeks[9].StudentAvailability[88] = true;
-				Weeks[9].StudentAvailability[89] = true;
-				IdentifyAvailableWitnesses();
-				for (int num10 = 86; num10 < 90; num10++)
-				{
-					Students[num10].CurrentDestination = Students[num10].Destinations[Students[num10].Phase];
-					Students[num10].Pathfinding.target = Students[num10].Destinations[Students[num10].Phase];
-				}
-				RepositionAfterPhotoshootLater = false;
+				Students[num10].CurrentDestination = Students[num10].Destinations[Students[num10].Phase];
+				Students[num10].Pathfinding.target = Students[num10].Destinations[Students[num10].Phase];
 			}
+			RepositionAfterPhotoshootLater = false;
 		}
 		if (Yandere.Egg && !Nerfed)
 		{
@@ -4055,7 +4117,7 @@ public class StudentManagerScript : MonoBehaviour
 							studentScript.Ragdoll.EnableRigidbodies();
 						}
 					}
-					else if (studentScript.Alive)
+					else if (studentScript.Alive && !studentScript.InEvent)
 					{
 						studentScript.Pathfinding.canSearch = true;
 						studentScript.Pathfinding.canMove = true;
@@ -4693,6 +4755,10 @@ public class StudentManagerScript : MonoBehaviour
 				studentScript.TVHead.SetActive(TVHeadsActive);
 			}
 		}
+		if (TVHeadsActive && !Police.EndOfDay.VoidGoddess.TVHeadsAssigned)
+		{
+			Police.EndOfDay.VoidGoddess.AssignTVHeads();
+		}
 		QualityManager.UpdateOutlinesAndRimlight();
 		NotHighSchool.SetActive(TVHeadsActive);
 	}
@@ -5200,13 +5266,19 @@ public class StudentManagerScript : MonoBehaviour
 			Workbench.BodyBags[2].SetActive(value: true);
 		}
 		bool censorBlood = GameGlobals.CensorBlood;
+		bool censorCorpses = GameGlobals.CensorCorpses;
 		bool censorPanties = GameGlobals.CensorPanties;
-		bool censorKillingAnims = GameGlobals.CensorKillingAnims;
+		bool censorWeapons = GameGlobals.CensorWeapons;
+		bool blurKillingAnims = GameGlobals.BlurKillingAnims;
+		bool hideKillingAnims = GameGlobals.HideKillingAnims;
 		Debug.Log("Before loading, BagPlaced is: " + BagPlaced);
 		YanSave.LoadData("Profile_" + profile + "_Slot_" + num);
 		GameGlobals.CensorBlood = censorBlood;
+		GameGlobals.CensorCorpses = censorCorpses;
 		GameGlobals.CensorPanties = censorPanties;
-		GameGlobals.CensorKillingAnims = censorKillingAnims;
+		GameGlobals.CensorWeapons = censorWeapons;
+		GameGlobals.BlurKillingAnims = blurKillingAnims;
+		GameGlobals.HideKillingAnims = hideKillingAnims;
 		Debug.Log("And now, after loading, BagPlaced is: " + BagPlaced);
 		DialogueWheel.NoteLocker.NoteWindow.gameObject.SetActive(value: false);
 		Yandere.PauseScreen.PhotoGallery.gameObject.SetActive(value: false);
@@ -5254,7 +5326,6 @@ public class StudentManagerScript : MonoBehaviour
 				Students[ID].RiggedAccessoryOutlineID = 0;
 				if (Students[ID].Schoolwear != 1)
 				{
-					Debug.Log("At time of loading, " + Students[ID].Name + " needed to change clothing.");
 					Students[ID].ChangeSchoolwear();
 				}
 				if (Students[ID].WearingBikini)
@@ -5347,6 +5418,9 @@ public class StudentManagerScript : MonoBehaviour
 						}
 					}
 					Students[ID].SetOutlineColor(new Color(1f, 0.5f, 0f, 1f));
+					Students[ID].RightEye.localPosition = new Vector3(-0.0208873f, 0.0042227f, 0.033206f);
+					Students[ID].RightEye.localEulerAngles = new Vector3(-12.00287f, 90.00002f, 179.9951f);
+					Students[ID].RightEye.localScale = new Vector3(0.5f, 0.5f, 1f);
 				}
 				else
 				{
@@ -5596,7 +5670,6 @@ public class StudentManagerScript : MonoBehaviour
 		{
 			if (component.MorningEvents[l].Finished || MorningEventOver)
 			{
-				Debug.Log(component.MorningEvents[l].gameObject.name + " was finished when the save was created...");
 				component.MorningEvents[l].enabled = false;
 			}
 		}
@@ -5705,6 +5778,9 @@ public class StudentManagerScript : MonoBehaviour
 		}
 		SpawnedObjectManager.RespawnObjects();
 		LoadedSave = true;
+		Week = DateGlobals.Week;
+		RivalID = Week + 10;
+		Debug.Log("The Load() function believes that the current Rival ID should be: " + RivalID);
 		if (Students[RivalID] != null)
 		{
 			Debug.Log("Rival's Phase is: " + Students[RivalID].Phase);
@@ -5714,10 +5790,15 @@ public class StudentManagerScript : MonoBehaviour
 				Students[RivalID].PlaceBag();
 				GenericRivalBag.RestoreBentoStatus();
 			}
+			else
+			{
+				Debug.Log("Upon loading, the game recognizes that the rival has NOT yet placed her bookbag down at her desk.");
+				Debug.Log("Now commanding the rival to add ''PlaceBag'' to her routine.");
+				Students[RivalID].CheckIfWeNeedToPlaceBag();
+			}
 		}
 		FoodPlate.UpdateFood();
 		Yandere.Class.Poison.GetComponent<PoisonScript>().Start();
-		Week = DateGlobals.Week;
 		if (SecuritySystem.AlreadyShutDown)
 		{
 			SecuritySystem.ShutDown();
@@ -5745,6 +5826,9 @@ public class StudentManagerScript : MonoBehaviour
 		if (YandereSavePosition == Vector3.zero)
 		{
 			Debug.Log("YadereSavePosition was zero. Huh?");
+			Yandere.transform.position = new Vector3(4f, 12f, -32f);
+			Yandere.Sanity = 100f;
+			Physics.SyncTransforms();
 		}
 		else
 		{
@@ -5759,9 +5843,17 @@ public class StudentManagerScript : MonoBehaviour
 				Police.EndOfDay.GardenHoles[m].Carrots.SetActive(value: false);
 			}
 		}
+		if (!Eighties && Week == 1 && Students[11] != null)
+		{
+			OsanaPoolEvent.AttachHair();
+		}
 		if (BakeSaleHasBegun)
 		{
 			BakeSale.enabled = true;
+		}
+		if (CakeEvent.Done)
+		{
+			CakeEvent.EventObject[0].SetActive(value: true);
 		}
 		Debug.Log("We have now reached the end of StudentManager.Load()");
 	}
@@ -8327,11 +8419,9 @@ public class StudentManagerScript : MonoBehaviour
 
 	public void ChangeAllBloodTextures()
 	{
-		Debug.Log("StudentManager is firing ChangeAllBloodTextures() now.");
 		CensorBlood = GameGlobals.CensorBlood;
 		if (Yandere != null && Yandere.WeaponManager != null)
 		{
-			Debug.Log("Updating all Weapon Materials now.");
 			Yandere.WeaponManager.UpdateWeaponMaterials();
 		}
 		FoldedUniformScript[] array = UnityEngine.Object.FindObjectsOfType<FoldedUniformScript>();

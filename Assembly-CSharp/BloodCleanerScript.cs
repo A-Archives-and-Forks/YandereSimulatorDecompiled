@@ -66,18 +66,15 @@ public class BloodCleanerScript : MonoBehaviour
 				Transform child = BloodParent.GetChild(0);
 				if (child.GetComponent<BloodPoolScript>() != null)
 				{
-					if (!child.GetComponent<BloodPoolScript>().UnderInvestigation)
+					child.localScale = new Vector3(child.localScale.x - Time.deltaTime, child.localScale.y - Time.deltaTime, child.localScale.z);
+					Blood += Time.deltaTime;
+					if (Blood >= 100f)
 					{
-						child.localScale = new Vector3(child.localScale.x - Time.deltaTime, child.localScale.y - Time.deltaTime, child.localScale.z);
-						Blood += Time.deltaTime;
-						if (Blood >= 100f)
-						{
-							Lens.SetActive(value: true);
-						}
-						if (child.transform.localScale.x < 0.1f)
-						{
-							Object.Destroy(child.gameObject);
-						}
+						Lens.SetActive(value: true);
+					}
+					if (child.transform.localScale.x < 0.1f)
+					{
+						Object.Destroy(child.gameObject);
 					}
 				}
 				else

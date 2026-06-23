@@ -9,6 +9,8 @@ public class DisclaimerScript : MonoBehaviour
 
 	public bool Fade;
 
+	public int SceneID = 1;
+
 	private void Start()
 	{
 		Darkness.alpha = 1f;
@@ -18,26 +20,35 @@ public class DisclaimerScript : MonoBehaviour
 	{
 		if (!Fade)
 		{
-			Darkness.alpha = Mathf.MoveTowards(Darkness.alpha, 0f, Time.deltaTime);
-			if (Darkness.alpha < 0.0001f)
+			Darkness.alpha = Mathf.MoveTowards(Darkness.alpha, 0f, Time.deltaTime * 2f);
+			if (!(Darkness.alpha < 0.0001f))
 			{
-				if (Input.GetKeyDown(KeyCode.Escape))
-				{
-					Application.Quit();
-				}
-				else if (Input.anyKeyDown)
+				return;
+			}
+			if (Input.GetKeyDown(KeyCode.Escape))
+			{
+				Application.Quit();
+			}
+			else if (Input.anyKeyDown)
+			{
+				if (SceneID == 2)
 				{
 					Darkness.color = new Color(1f, 1f, 1f, 0f);
-					Fade = true;
 				}
+				Fade = true;
 			}
+			return;
 		}
-		else
+		Darkness.alpha = Mathf.MoveTowards(Darkness.alpha, 1f, Time.deltaTime * 2f);
+		if (Darkness.alpha > 0.999f)
 		{
-			Darkness.alpha = Mathf.MoveTowards(Darkness.alpha, 1f, Time.deltaTime);
-			if (Darkness.alpha > 0.999f)
+			GameGlobals.LastInputType = (int)InputDevice.Type;
+			if (SceneID == 1)
 			{
-				GameGlobals.LastInputType = (int)InputDevice.Type;
+				SceneManager.LoadScene("YouTubeWarningScene");
+			}
+			else
+			{
 				SceneManager.LoadScene("WelcomeScene");
 			}
 		}

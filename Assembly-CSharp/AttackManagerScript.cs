@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class AttackManagerScript : MonoBehaviour
 {
+	public GameObject DisclaimerCamera;
+
 	public GameObject BloodEffect;
 
 	public GameObject LargeBloodEffect;
@@ -27,7 +29,9 @@ public class AttackManagerScript : MonoBehaviour
 
 	public bool Stealth;
 
-	public bool Censor;
+	public bool Blur;
+
+	public bool Hide;
 
 	public bool Loop;
 
@@ -66,7 +70,8 @@ public class AttackManagerScript : MonoBehaviour
 
 	private void Start()
 	{
-		Censor = GameGlobals.CensorKillingAnims;
+		Blur = GameGlobals.BlurKillingAnims;
+		Hide = GameGlobals.HideKillingAnims;
 		OriginalBloodEffect = BloodEffect;
 		StainBluntWeapons = DifficultyGlobals.MustStrangle;
 		if (!GameGlobals.KokonaTutorial)
@@ -197,7 +202,10 @@ public class AttackManagerScript : MonoBehaviour
 		VictimAnim.CrossFade(VictimAnimName);
 		weapon.MyAudio.clip = weapon.GetClip(Yandere.Sanity / 100f, Stealth);
 		weapon.MyAudio.time = 0f;
-		weapon.MyAudio.Play();
+		if (!Hide)
+		{
+			weapon.MyAudio.Play();
+		}
 		if (weapon.Type == WeaponType.Knife)
 		{
 			Yandere.TargetStudent.Stabbed = true;
@@ -220,7 +228,7 @@ public class AttackManagerScript : MonoBehaviour
 		CheckForWalls();
 		VictimAnim.CrossFade(VictimAnimName);
 		Yandere.TargetStudent.FocusOnYandere = false;
-		if (Censor)
+		if (Blur)
 		{
 			if (AttackTimer == 0f)
 			{
@@ -235,6 +243,12 @@ public class AttackManagerScript : MonoBehaviour
 			{
 				Yandere.Blur.Size = Mathf.MoveTowards(Yandere.Blur.Size, 1f, Time.deltaTime * 32f);
 			}
+		}
+		if (Hide)
+		{
+			Debug.Log("Disclaimer Camera being set to ''true'' here.");
+			Yandere.MyListener.enabled = false;
+			DisclaimerCamera.SetActive(value: true);
 		}
 		WeaponScript equippedWeapon = Yandere.EquippedWeapon;
 		SanityType sanityType = Yandere.SanityType;
@@ -352,6 +366,11 @@ public class AttackManagerScript : MonoBehaviour
 			Time.timeScale = 1f;
 			Yandere.StudentManager.RestoreStudentVisionDistance();
 			Yandere.TargetStudent = null;
+			if (Hide)
+			{
+				Yandere.MyListener.enabled = true;
+				DisclaimerCamera.SetActive(value: false);
+			}
 		}
 		else if (Yandere.CanTranq && Yandere.transform.position.x > 13.25f)
 		{

@@ -120,6 +120,7 @@ public class OsanaThursdayAfterClassEventScript : MonoBehaviour
 						Friend.CurrentDestination = Friend.SketchPosition;
 						Friend.Pathfinding.target = Friend.SketchPosition;
 						Friend.Restless = true;
+						Friend.IgnoringThingsOnGround = true;
 					}
 				}
 			}

@@ -65,7 +65,7 @@ public class StringTrapScript : MonoBehaviour
 		}
 		if (component.Pathfinding.canMove && component.ClubActivityPhase < 16)
 		{
-			if (component.Club == ClubType.Council || (component != null && component.Teacher) || component.WillRemoveTripwire || component.GasWarned || (component.Follower != null && Vector3.Distance(component.transform.position, component.Follower.transform.position) < 5f))
+			if (component.Club == ClubType.Council || (component != null && component.Teacher) || component.WillRemoveTripwire || component.GasWarned || (!WaterCooler.Water && component.Follower != null && Vector3.Distance(component.transform.position, component.Follower.transform.position) < 5f))
 			{
 				WaterCooler.Yandere.NotificationManager.CustomText = component.Name + " dismantled tripwire trap!";
 				WaterCooler.Yandere.NotificationManager.DisplayNotification(NotificationType.Custom);

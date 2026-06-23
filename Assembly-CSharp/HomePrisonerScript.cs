@@ -8,6 +8,8 @@ public class HomePrisonerScript : MonoBehaviour
 
 	public PrisonerManagerScript PrisonerManager;
 
+	public PrisonerBanterScript AmaiBanter;
+
 	public InputManagerScript InputManager;
 
 	public HomePrisonerChanScript Prisoner;
@@ -147,6 +149,17 @@ public class HomePrisonerScript : MonoBehaviour
 			}
 			Sanity = StudentGlobals.GetStudentSanity(StudentGlobals.Prisoner1);
 			Health = StudentGlobals.GetStudentHealth(StudentGlobals.Prisoner1);
+			if (StudentGlobals.Prisoner1 == 12)
+			{
+				FullSanityBanterText = AmaiBanter.FullSanityBanterText;
+				HighSanityBanterText = AmaiBanter.HighSanityBanterText;
+				LowSanityBanterText = AmaiBanter.LowSanityBanterText;
+				NoSanityBanterText = AmaiBanter.NoSanityBanterText;
+				FullSanityBanter = AmaiBanter.FullSanityBanter;
+				HighSanityBanter = AmaiBanter.HighSanityBanter;
+				LowSanityBanter = AmaiBanter.LowSanityBanter;
+				NoSanityBanter = AmaiBanter.NoSanityBanter;
+			}
 		}
 		if (PrisonerManager.StudentID > 0)
 		{
@@ -170,7 +183,7 @@ public class HomePrisonerScript : MonoBehaviour
 		HealthTop.transform.localPosition = new Vector3(0f, -200f + Health / 100f * 400f, 0f);
 		for (int i = 1; i < Descriptions.Length - 1; i++)
 		{
-			Descriptions[i] = "If you torture your prisoner for " + Hours[i] + ", you will reduce their sanity by " + (SanityNumbers[i] + ClassGlobals.PsychologyGrade * 10) + "%, and " + Notes[i];
+			Descriptions[i] = "If you torture your prisoner for " + Hours[i] + ", you will reduce their sanity by " + (SanityNumbers[i] + ClassGlobals.PsychologyGrade * 5) + "%, and " + Notes[i];
 		}
 		if (Initialized)
 		{

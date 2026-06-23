@@ -1212,9 +1212,10 @@ public class DialogueWheelScript : MonoBehaviour
 			else if (Yandere.TargetStudent.StudentID == 36 && TaskManager.TaskStatus[36] == 1)
 			{
 				Yandere.TargetStudent.UpdateAppearance = true;
-				ScheduleBlock obj = Yandere.TargetStudent.ScheduleBlocks[Yandere.TargetStudent.Phase];
-				obj.destination = "LockerRoom";
-				obj.action = "UpdateAppearance";
+				ScheduleBlock scheduleBlock = null;
+				scheduleBlock = ((!Yandere.TargetStudent.Indoors) ? Yandere.TargetStudent.ScheduleBlocks[Yandere.TargetStudent.Phase + 1] : Yandere.TargetStudent.ScheduleBlocks[Yandere.TargetStudent.Phase]);
+				scheduleBlock.destination = "LockerRoom";
+				scheduleBlock.action = "UpdateAppearance";
 				Yandere.TargetStudent.GetDestinations();
 				Yandere.TargetStudent.TaskPhase = 5;
 			}

@@ -124,6 +124,8 @@ public class SubtitleScript : MonoBehaviour
 
 	public string[] RivalEavesdropReactions;
 
+	public string[] RivalMurderReactions;
+
 	public string[] PickpocketReactions;
 
 	public string[] RivalPickpocketReactions;
@@ -406,6 +408,8 @@ public class SubtitleScript : MonoBehaviour
 
 	public string[] RivalLostPhones;
 
+	public string[] Rival2LostPhones;
+
 	public string[] StudentMurderReports;
 
 	public string[] YandereWhimpers;
@@ -415,6 +419,8 @@ public class SubtitleScript : MonoBehaviour
 	public string[] SplashReactionsMale;
 
 	public string[] RivalSplashReactions;
+
+	public string[] Rival2SplashReactions;
 
 	public string[] LightSwitchReactions;
 
@@ -668,6 +674,8 @@ public class SubtitleScript : MonoBehaviour
 
 	public string CustomText;
 
+	public AudioClip CustomClip;
+
 	public int PreviousRandom;
 
 	public int RandomID;
@@ -756,6 +764,8 @@ public class SubtitleScript : MonoBehaviour
 
 	public AudioClip[] RivalLostPhoneClips;
 
+	public AudioClip[] Rival2LostPhoneClips;
+
 	public AudioClip[] PickpocketReactionClips;
 
 	public AudioClip[] RivalPickpocketReactionClips;
@@ -765,6 +775,8 @@ public class SubtitleScript : MonoBehaviour
 	public AudioClip[] SplashReactionMaleClips;
 
 	public AudioClip[] RivalSplashReactionClips;
+
+	public AudioClip[] Rival2SplashReactionClips;
 
 	public AudioClip[] DrownReactionClips;
 
@@ -1011,6 +1023,8 @@ public class SubtitleScript : MonoBehaviour
 	public AudioClip[] EventEavesdropClips;
 
 	public AudioClip[] RivalEavesdropClips;
+
+	public AudioClip[] RivalMurderClips;
 
 	public AudioClip[] DelinquentAnnoyClips;
 
@@ -1311,6 +1325,21 @@ public class SubtitleScript : MonoBehaviour
 			EdgyReport[3] = "What the hell?! What's going on here?!";
 			LovestruckMurderReports[0] = "Senpai! Ryoba from class 2-1 just killed someone!";
 			WeaponBloodApologies[0] = "It's not what it looks like! It's a costume and prop for an upcoming play.";
+			if (StudentManager.CustomMode)
+			{
+				Silence(EightiesClubDialogue.ShoveClips);
+				Silence(EightiesClubDialogue.ChaseClips);
+				Silence(EightiesClubDialogue.SprayClips);
+				Silence(EightiesClubDialogue.BreakUpClips);
+				Silence(EightiesClubDialogue.CouncilCorpseClips);
+				Silence(EightiesClubDialogue.CouncilCounselorClips);
+				Silence(EightiesClubDialogue.CouncilNoticeClips);
+				Silence(EightiesClubDialogue.HmmClips);
+				Silence(EightiesClubDialogue.StrictReportClips);
+				Silence(EightiesClubDialogue.CasualReportClips);
+				Silence(EightiesClubDialogue.GraceReportClips);
+				Silence(EightiesClubDialogue.EdgyReportClips);
+			}
 			ShoveClips = EightiesClubDialogue.ShoveClips;
 			ChaseClips = EightiesClubDialogue.ChaseClips;
 			SprayClips = EightiesClubDialogue.SprayClips;
@@ -1598,6 +1627,10 @@ public class SubtitleScript : MonoBehaviour
 				new AudioClipArrayWrapper(RivalEavesdropClips)
 			},
 			{
+				SubtitleType.RivalMurderReaction,
+				new AudioClipArrayWrapper(RivalMurderClips)
+			},
+			{
 				SubtitleType.GrudgeWarning,
 				new AudioClipArrayWrapper(GrudgeWarningClips)
 			},
@@ -1626,12 +1659,20 @@ public class SubtitleScript : MonoBehaviour
 				new AudioClipArrayWrapper(RivalLostPhoneClips)
 			},
 			{
+				SubtitleType.Rival2LostPhone,
+				new AudioClipArrayWrapper(Rival2LostPhoneClips)
+			},
+			{
 				SubtitleType.RivalPickpocketReaction,
 				new AudioClipArrayWrapper(RivalPickpocketReactionClips)
 			},
 			{
 				SubtitleType.RivalSplashReaction,
 				new AudioClipArrayWrapper(RivalSplashReactionClips)
+			},
+			{
+				SubtitleType.Rival2SplashReaction,
+				new AudioClipArrayWrapper(Rival2SplashReactionClips)
 			},
 			{
 				SubtitleType.SenpaiBloodReaction,
@@ -2425,6 +2466,10 @@ public class SubtitleScript : MonoBehaviour
 			Label.text = RivalEavesdropReactions[ID];
 			PlayVoice(subtitleType, ID);
 			break;
+		case SubtitleType.RivalMurderReaction:
+			Label.text = RivalMurderReactions[ID];
+			PlayVoice(subtitleType, ID);
+			break;
 		case SubtitleType.PickpocketReaction:
 			RandomID = Random.Range(0, PickpocketReactions.Length);
 			Label.text = PickpocketReactions[RandomID];
@@ -2708,6 +2753,10 @@ public class SubtitleScript : MonoBehaviour
 			break;
 		case SubtitleType.RivalLostPhone:
 			Label.text = RivalLostPhones[ID];
+			PlayVoice(subtitleType, ID);
+			break;
+		case SubtitleType.Rival2LostPhone:
+			Label.text = Rival2LostPhones[ID];
 			PlayVoice(subtitleType, ID);
 			break;
 		case SubtitleType.MurderReaction:
@@ -3144,6 +3193,12 @@ public class SubtitleScript : MonoBehaviour
 			if (subtitleType == SubtitleType.RivalSplashReaction)
 			{
 				Label.text = RivalSplashReactions[ID];
+				PlayVoice(subtitleType, ID);
+				break;
+			}
+			if (subtitleType == SubtitleType.Rival2SplashReaction)
+			{
+				Label.text = Rival2SplashReactions[ID];
 				PlayVoice(subtitleType, ID);
 				break;
 			}
@@ -3668,6 +3723,15 @@ public class SubtitleScript : MonoBehaviour
 				break;
 			case SubtitleType.Custom:
 				Label.text = CustomText;
+				if (Speaker != null)
+				{
+					PlayClip(CustomClip, Speaker.transform.position);
+				}
+				else
+				{
+					PlayClip(CustomClip, Yandere.transform.position);
+				}
+				CustomClip = null;
 				break;
 			}
 			break;
@@ -3981,6 +4045,7 @@ public class SubtitleScript : MonoBehaviour
 
 	private void PlayClip(AudioClip clip, Vector3 pos)
 	{
+		Debug.Log("PlayClip is being called.");
 		if (clip != null)
 		{
 			GameObject gameObject = new GameObject("TempAudio");

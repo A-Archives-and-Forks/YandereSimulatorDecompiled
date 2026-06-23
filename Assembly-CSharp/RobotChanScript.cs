@@ -212,7 +212,7 @@ public class RobotChanScript : MonoBehaviour
 			}
 			return;
 		}
-		if (TargetStudent.ClubActivityPhase >= 16 || TargetStudent.Shoving || TargetStudent.ChangingShoes || TargetStudent.Chasing || Prompt.Yandere.Pursuer == TargetStudent || TargetStudent.SeekingMedicine || TargetStudent.EndSearch || TargetStudent.Talking || TargetStudent.InEvent || (Prompt.Yandere.StudentManager.CombatMinigame.Delinquent == TargetStudent && Prompt.Yandere.StudentManager.CombatMinigame.Path == 5) || !TargetStudent.enabled || TargetStudent.BreakingUpFight || (TargetStudent.Cheer != null && TargetStudent.Cheer.enabled))
+		if (TargetStudent.ClubActivityPhase >= 16 || TargetStudent.Shoving || TargetStudent.ChangingShoes || TargetStudent.Chasing || Prompt.Yandere.Pursuer == TargetStudent || TargetStudent.SeekingMedicine || TargetStudent.EndSearch || TargetStudent.Talking || TargetStudent.InEvent || (Prompt.Yandere.StudentManager.CombatMinigame.Delinquent == TargetStudent && Prompt.Yandere.StudentManager.CombatMinigame.Path == 5) || !TargetStudent.enabled || TargetStudent.BreakingUpFight || (TargetStudent.Cheer != null && TargetStudent.Cheer.enabled) || TargetStudent.StudentManager.NEStairs.bounds.Contains(TargetStudent.transform.position) || TargetStudent.StudentManager.NWStairs.bounds.Contains(TargetStudent.transform.position) || TargetStudent.StudentManager.SEStairs.bounds.Contains(TargetStudent.transform.position) || TargetStudent.StudentManager.SWStairs.bounds.Contains(TargetStudent.transform.position))
 		{
 			MyAnim.CrossFade(IdleAnim);
 			Pathfinding.canSearch = false;

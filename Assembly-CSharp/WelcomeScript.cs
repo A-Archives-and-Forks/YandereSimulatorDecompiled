@@ -89,7 +89,7 @@ public class WelcomeScript : MonoBehaviour
 		Input.GetKeyDown(KeyCode.Y);
 		if (!Continue)
 		{
-			Darkness.color = new Color(Darkness.color.r, Darkness.color.g, Darkness.color.b, Darkness.color.a - Time.deltaTime);
+			Darkness.color = new Color(Darkness.color.r, Darkness.color.g, Darkness.color.b, Darkness.color.a - Time.deltaTime * 2f);
 			if (!(Darkness.color.a <= 0f))
 			{
 				return;
@@ -115,7 +115,7 @@ public class WelcomeScript : MonoBehaviour
 		}
 		else
 		{
-			Darkness.color = new Color(Darkness.color.r, Darkness.color.g, Darkness.color.b, Darkness.color.a + Time.deltaTime);
+			Darkness.color = new Color(Darkness.color.r, Darkness.color.g, Darkness.color.b, Darkness.color.a + Time.deltaTime * 2f);
 			if (Darkness.color.a >= 1f)
 			{
 				SceneManager.LoadScene("SponsorScene");

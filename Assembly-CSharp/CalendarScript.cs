@@ -142,6 +142,8 @@ public class CalendarScript : MonoBehaviour
 
 	private void Start()
 	{
+		_ = DateTime.Now;
+		GameGlobals.Checkpoint = false;
 		GameGlobals.InCutscene = false;
 		GameGlobals.AlphabetMode = false;
 		if (!GameGlobals.Eighties)
@@ -328,7 +330,15 @@ public class CalendarScript : MonoBehaviour
 		SkipConfirmationWindow.SetActive(value: false);
 		if (DateGlobals.Weekday == DayOfWeek.Sunday)
 		{
-			YanSave.SaveData("Profile_" + GameGlobals.Profile + "_Slot_" + 11);
+			if (PlayerPrefs.GetInt("JustMadeASaveFile") == 0)
+			{
+				YanSave.SaveData("Profile_" + GameGlobals.Profile + "_Slot_" + 11);
+			}
+			else
+			{
+				Debug.Log("Apparently, we just made a ''Reset Week'' save file a second ago, so we're not going to do it again.");
+			}
+			PlayerPrefs.SetInt("JustMadeASaveFile", 0);
 		}
 		CollectibleGlobals.SetGiftPurchased(1, value: false);
 		CollectibleGlobals.SetGiftPurchased(2, value: false);
@@ -382,6 +392,7 @@ public class CalendarScript : MonoBehaviour
 		{
 			GameGlobals.BlondeHair = true;
 		}
+		_ = DateTime.Now;
 	}
 
 	private void Update()
@@ -441,10 +452,7 @@ public class CalendarScript : MonoBehaviour
 							bool flag = false;
 							if ((DateGlobals.Week == 1 && DateGlobals.Weekday == DayOfWeek.Sunday) || DateGlobals.ForceSkip)
 							{
-								if (DateGlobals.ForceSkip)
-								{
-									Debug.Log("DateGlobals.ForceSkip was true.");
-								}
+								_ = DateGlobals.ForceSkip;
 								DateGlobals.ForceSkip = false;
 								SundayLabel.SetActive(value: false);
 								flag = true;
@@ -1176,6 +1184,9 @@ public class CalendarScript : MonoBehaviour
 
 	public void ResetSaveFile()
 	{
+		Debug.Log("We are now starting a completely fresh save file.");
+		DateTime now = DateTime.Now;
+		DateTime now2 = DateTime.Now;
 		int num = GameGlobals.Profile;
 		bool eighties = GameGlobals.Eighties;
 		bool debug = GameGlobals.Debug;
@@ -1187,7 +1198,13 @@ public class CalendarScript : MonoBehaviour
 		int yakuzaPhase = GameGlobals.YakuzaPhase;
 		bool forceCanonEliminations = GameGlobals.ForceCanonEliminations;
 		bool canBefriendCouncil = GameGlobals.CanBefriendCouncil;
+		DateTime now3 = DateTime.Now;
+		Debug.Log($"The first part of the operation took {(now3 - now2).TotalSeconds} seconds.");
+		DateTime now4 = DateTime.Now;
 		Globals.DeleteAll();
+		DateTime now5 = DateTime.Now;
+		Debug.Log($"Globals.DeleteAll() took {(now5 - now4).TotalSeconds} seconds.");
+		DateTime now6 = DateTime.Now;
 		if (eighties && num < 11)
 		{
 			num += 10;
@@ -1214,6 +1231,9 @@ public class CalendarScript : MonoBehaviour
 		}
 		GameGlobals.LoveSick = LoveSick;
 		DateGlobals.PassDays = 1;
+		DateTime now7 = DateTime.Now;
+		Debug.Log($"The second part of the operation took {(now7 - now6).TotalSeconds} seconds.");
+		DateTime now8 = DateTime.Now;
 		if (GameGlobals.Eighties)
 		{
 			for (int i = 1; i < 101; i++)
@@ -1225,10 +1245,21 @@ public class CalendarScript : MonoBehaviour
 		{
 			ConversationGlobals.SetTopicLearnedByStudent(j, 1, value: true);
 		}
+		DateTime now9 = DateTime.Now;
+		Debug.Log($"The third part of the operation took {(now9 - now8).TotalSeconds} seconds.");
+		DateTime now10 = DateTime.Now;
 		GameGlobals.CorkboardScene = true;
 		YanSave.SaveData("Profile_" + num + "_Slot_" + 11);
+		PlayerPrefs.SetInt("JustMadeASaveFile", 1);
 		GameGlobals.LastInputType = (int)InputDevice.Type;
+		DateTime now11 = DateTime.Now;
+		Debug.Log($"The fourth part of the operation took {(now11 - now10).TotalSeconds} seconds.");
+		DateTime now12 = DateTime.Now;
+		Debug.Log($"The entire process took {(now12 - now).TotalSeconds} seconds.");
+		DateTime now13 = DateTime.Now;
 		SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+		DateTime now14 = DateTime.Now;
+		Debug.Log($"Reloading the scene took {(now14 - now13).TotalSeconds} seconds.");
 	}
 
 	public void GetNumberOfCorpses()

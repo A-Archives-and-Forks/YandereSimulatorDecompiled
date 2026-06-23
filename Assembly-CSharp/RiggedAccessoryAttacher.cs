@@ -26,6 +26,8 @@ public class RiggedAccessoryAttacher : MonoBehaviour
 
 	public Material[] PantyMaterials;
 
+	public SkinnedMeshRenderer originalRenderer;
+
 	public SkinnedMeshRenderer newRenderer;
 
 	public SkinnedMeshRenderer[] newRenderers;
@@ -37,6 +39,8 @@ public class RiggedAccessoryAttacher : MonoBehaviour
 	public Material[] MaterialSet3;
 
 	public Material[] EightiesMaterials;
+
+	public bool CopyBlendshapes;
 
 	public bool MartialArtsClub;
 
@@ -250,6 +254,13 @@ public class RiggedAccessoryAttacher : MonoBehaviour
 			if (Student.Yandere != null && Student.Yandere.PauseScreen != null)
 			{
 				newRenderer.material.shader = Student.Yandere.PauseScreen.NewSettings.QualityManager.NewHairShader;
+			}
+		}
+		if (CopyBlendshapes)
+		{
+			for (int j = 0; j < originalRenderer.sharedMesh.blendShapeCount - 1; j++)
+			{
+				newRenderer.SetBlendShapeWeight(j, originalRenderer.GetBlendShapeWeight(j));
 			}
 		}
 	}

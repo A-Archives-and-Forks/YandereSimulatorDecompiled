@@ -5,5 +5,7 @@ public enum RivalEventType
 	AmaiPicnicEvent = 2,
 	AmaiPhoneEvent = 3,
 	AmaiMondayLunchEvent = 4,
-	AmaiTuesdayLunchEvent = 5
+	AmaiTuesdayLunchEvent = 5,
+	AmaiCookingEvent = 6,
+	AmaiCakeEvent = 7
 }

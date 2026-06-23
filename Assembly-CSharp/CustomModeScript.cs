@@ -223,6 +223,10 @@ public class CustomModeScript : MonoBehaviour
 
 	public int ColorID;
 
+	public int ChangeDestinationID;
+
+	public int ChangeActionID;
+
 	public int LocationID;
 
 	public int ActionID;
@@ -483,6 +487,8 @@ public class CustomModeScript : MonoBehaviour
 
 	private void Start()
 	{
+		SortStringsAlphabetically(Actions, ActionExplanations);
+		SortStringsAlphabetically(Destinations, DestinationExplanations);
 		PromptBar.SwapShiftForSpace();
 		AcknowledgeChallenges();
 		Cursor.visible = true;
@@ -815,7 +821,7 @@ public class CustomModeScript : MonoBehaviour
 			}
 			if (!Initializing)
 			{
-				if (!Zoom && !EditingOpinions)
+				if (!Zoom && EditingCosmetic)
 				{
 					if (Input.GetAxisRaw("Horizontal") > 0f || Input.GetKey("right") || Input.GetAxis(InputNames.Xbox_DpadX) > 0.5f)
 					{
@@ -1242,10 +1248,15 @@ public class CustomModeScript : MonoBehaviour
 									ColorWheel.r[0] = StudentKunCosmetic.MaleHairRenderers[int.Parse(JSON.Students[Selected].Hairstyle)];
 									ColorWheel.r[1] = StudentKunCosmetic.MaleHairRenderers[int.Parse(JSON.Students[Selected].Hairstyle)];
 								}
-								else
+								else if (Selected < 90)
 								{
 									ColorWheel.r[0] = StudentChanCosmetic.FemaleHairRenderers[int.Parse(JSON.Students[Selected].Hairstyle)];
 									ColorWheel.r[1] = StudentChanCosmetic.FemaleHairRenderers[int.Parse(JSON.Students[Selected].Hairstyle)];
+								}
+								else
+								{
+									ColorWheel.r[0] = StudentChanCosmetic.TeacherHairRenderers[int.Parse(JSON.Students[Selected].Hairstyle)];
+									ColorWheel.r[1] = StudentChanCosmetic.TeacherHairRenderers[int.Parse(JSON.Students[Selected].Hairstyle)];
 								}
 								ColorWheel.gameObject.SetActive(ColorID == Colors.Length - 1);
 								JSON.Students[Selected].Color = Colors[ColorID] ?? "";
@@ -1407,10 +1418,15 @@ public class CustomModeScript : MonoBehaviour
 									ColorWheel.r[0] = StudentKunCosmetic.MaleHairRenderers[int.Parse(JSON.Students[Selected].Hairstyle)];
 									ColorWheel.r[1] = StudentKunCosmetic.MaleHairRenderers[int.Parse(JSON.Students[Selected].Hairstyle)];
 								}
-								else
+								else if (Selected < 90)
 								{
 									ColorWheel.r[0] = StudentChanCosmetic.FemaleHairRenderers[int.Parse(JSON.Students[Selected].Hairstyle)];
 									ColorWheel.r[1] = StudentChanCosmetic.FemaleHairRenderers[int.Parse(JSON.Students[Selected].Hairstyle)];
+								}
+								else
+								{
+									ColorWheel.r[0] = StudentChanCosmetic.TeacherHairRenderers[int.Parse(JSON.Students[Selected].Hairstyle)];
+									ColorWheel.r[1] = StudentChanCosmetic.TeacherHairRenderers[int.Parse(JSON.Students[Selected].Hairstyle)];
 								}
 								ColorWheel.gameObject.SetActive(ColorID == Colors.Length - 1);
 								JSON.Students[Selected].Color = Colors[ColorID] ?? "";
@@ -1684,8 +1700,12 @@ public class CustomModeScript : MonoBehaviour
 							EditingCosmetic = true;
 							UpdateHeader();
 						}
-						else if (Input.GetButtonDown(InputNames.Xbox_RB))
+						else
 						{
+							if (!Input.GetButtonDown(InputNames.Xbox_RB))
+							{
+								return;
+							}
 							PromptBar.ClearButtons();
 							PromptBar.Label[0].text = "Like";
 							PromptBar.Label[1].text = "Dislike";
@@ -1700,6 +1720,10 @@ public class CustomModeScript : MonoBehaviour
 							{
 								StudentKunCosmetic.PelvisRoot.localEulerAngles = Vector3.zero;
 								StudentKunCosmetic.CharacterAnimation.Play(StudentKunCosmetic.PortraitPoses[JSON.Misc.PortraitPoses[Selected]]);
+								if (EyeTypeID > 0)
+								{
+									StudentKunCosmetic.EyeTypeCheck();
+								}
 								PortraitPoseNameLabel.text = StudentKunCosmetic.PortraitPoses[JSON.Misc.PortraitPoses[Selected]];
 								StudentKunCosmetic.CharacterAnimation.transform.localScale = new Vector3(0.94f, 0.94f, 0.94f);
 							}
@@ -2030,27 +2054,27 @@ public class CustomModeScript : MonoBehaviour
 								if (Row == 1)
 								{
 									JSON.Misc.Likes[Selected] -= 1f;
-									if (JSON.Misc.Likes[Selected] < -100f)
+									if (JSON.Misc.Likes[Selected] < -99f)
 									{
-										JSON.Misc.Likes[Selected] = -100f;
+										JSON.Misc.Likes[Selected] = -99f;
 									}
 									LikedLabel.text = JSON.Misc.Likes[Selected].ToString() ?? "";
 								}
 								else if (Row == 2)
 								{
 									JSON.Misc.Respects[Selected] -= 1f;
-									if (JSON.Misc.Respects[Selected] < -100f)
+									if (JSON.Misc.Respects[Selected] < -99f)
 									{
-										JSON.Misc.Respects[Selected] = -100f;
+										JSON.Misc.Respects[Selected] = -99f;
 									}
 									RespectedLabel.text = JSON.Misc.Respects[Selected].ToString() ?? "";
 								}
 								else if (Row == 3)
 								{
 									JSON.Misc.Fears[Selected] -= 1f;
-									if (JSON.Misc.Fears[Selected] < -100f)
+									if (JSON.Misc.Fears[Selected] < -99f)
 									{
-										JSON.Misc.Fears[Selected] = -100f;
+										JSON.Misc.Fears[Selected] = -99f;
 									}
 									FearedLabel.text = JSON.Misc.Fears[Selected].ToString() ?? "";
 								}
@@ -2088,7 +2112,6 @@ public class CustomModeScript : MonoBehaviour
 							PromptBar.Label[5].text = "Rotate";
 							PromptBar.UpdateButtons();
 							PromptBar.Show = true;
-							StudentKunCosmetic.PelvisRoot.localEulerAngles = Vector3.zero;
 							ReputationChart.gameObject.SetActive(value: false);
 							PortraitPreview.SetActive(value: false);
 							EditingReputation = false;
@@ -2100,6 +2123,7 @@ public class CustomModeScript : MonoBehaviour
 							PortraitShadow.alpha = 0.5f;
 							OpinionShadow.alpha = 0f;
 							DetailShadow.alpha = 0.5f;
+							PlayIdleAnim();
 							UpdateHeader();
 						}
 						else if (Input.GetButtonDown(InputNames.Xbox_RB))
@@ -2107,6 +2131,7 @@ public class CustomModeScript : MonoBehaviour
 							PromptBar.ClearButtons();
 							PromptBar.Label[0].text = "Next";
 							PromptBar.Label[1].text = "Previous";
+							PromptBar.Label[2].text = "Change All";
 							PromptBar.Label[3].text = "Randomize";
 							PromptBar.Label[4].text = "Change Row";
 							PromptBar.Label[5].text = "Change Column";
@@ -2259,6 +2284,29 @@ public class CustomModeScript : MonoBehaviour
 							RandomizeSchedule(Selected);
 							UpdateStudent();
 						}
+						else if (Input.GetButtonDown(InputNames.Xbox_X))
+						{
+							if (Column == 2)
+							{
+								ChangeActionID++;
+								if (ChangeActionID >= Actions.Length)
+								{
+									ChangeActionID = 1;
+								}
+								ChangeAllActionsInSchedule(Selected);
+								UpdateStudent();
+							}
+							else
+							{
+								ChangeDestinationID++;
+								if (ChangeDestinationID >= Destinations.Length)
+								{
+									ChangeDestinationID = 1;
+								}
+								ChangeAllDestinationsInSchedule(Selected);
+								UpdateStudent();
+							}
+						}
 						else if (Input.GetButtonDown(InputNames.Xbox_LB))
 						{
 							PromptBar.ClearButtons();
@@ -2377,6 +2425,7 @@ public class CustomModeScript : MonoBehaviour
 								PromptBar.ClearButtons();
 								PromptBar.Label[0].text = "Next";
 								PromptBar.Label[1].text = "Previous";
+								PromptBar.Label[2].text = "Change All";
 								PromptBar.Label[3].text = "Randomize";
 								PromptBar.Label[4].text = "Change Row";
 								PromptBar.Label[5].text = "Change Column";
@@ -3039,6 +3088,10 @@ public class CustomModeScript : MonoBehaviour
 			}
 			StudentKunCosmetic.Start();
 			StudentKunCosmetic.CharacterAnimation.CrossFade(MaleIdles[AnimSet[Selected]]);
+			if (EyeTypeID > 0)
+			{
+				StudentKunCosmetic.EyeTypeCheck();
+			}
 		}
 		else
 		{
@@ -3073,9 +3126,23 @@ public class CustomModeScript : MonoBehaviour
 			StudentChanCosmetic.Teacher = false;
 			StudentChanCosmetic.SkinColor = 0;
 			StudentChanCosmetic.Start();
-			if (Selected > 90 && Selected < 97 && StudentChanCosmetic.Student.EightiesTeacherAttacher.GetComponent<RiggedAccessoryAttacher>().newRenderer != null)
+			SkinnedMeshRenderer skinnedMeshRenderer = null;
+			if (Selected > 90 && Selected < 97)
 			{
-				StudentChanCosmetic.Student.EightiesTeacherAttacher.GetComponent<RiggedAccessoryAttacher>().newRenderer.enabled = true;
+				if (StudentChanCosmetic.Student.EightiesTeacherAttacher.GetComponent<RiggedAccessoryAttacher>().newRenderer != null)
+				{
+					skinnedMeshRenderer = StudentChanCosmetic.Student.EightiesTeacherAttacher.GetComponent<RiggedAccessoryAttacher>().newRenderer;
+					skinnedMeshRenderer.enabled = true;
+				}
+				Debug.Log("This character is a teacher, so we're going to do something extra...");
+				int blendShapeCount = StudentChanCosmetic.MyRenderer.sharedMesh.blendShapeCount;
+				if (skinnedMeshRenderer != null)
+				{
+					for (int i = 0; i < blendShapeCount - 1; i++)
+					{
+						skinnedMeshRenderer.SetBlendShapeWeight(i, StudentChanCosmetic.MyRenderer.GetBlendShapeWeight(i));
+					}
+				}
 			}
 			StudentChanCosmetic.CharacterAnimation.CrossFade(FemaleIdles[AnimSet[Selected]]);
 		}
@@ -3423,6 +3490,120 @@ public class CustomModeScript : MonoBehaviour
 		{
 			string text2 = ID.ToString();
 			if (text2.EndsWith("2") || text2.EndsWith("7"))
+			{
+				int num = JSON.Students[ID].ScheduleBlocks.Length;
+				JSON.Students[ID].ScheduleBlocks[num - 2].action = "Shoes";
+				JSON.Students[ID].ScheduleBlocks[num - 2].destination = "Locker";
+				JSON.Students[ID].ScheduleBlocks[num - 1].action = "Stand";
+				JSON.Students[ID].ScheduleBlocks[num - 1].destination = "Exit";
+			}
+		}
+	}
+
+	private void ChangeAllActionsInSchedule(int ID)
+	{
+		if (ID <= 0)
+		{
+			return;
+		}
+		string action = Actions[ChangeActionID];
+		JSON.Students[ID].ScheduleBlocks[2].action = action;
+		JSON.Students[ID].ScheduleBlocks[4].action = action;
+		JSON.Students[ID].ScheduleBlocks[6].action = action;
+		if (JSON.Students[ID].ScheduleBlocks.Length > 7)
+		{
+			JSON.Students[ID].ScheduleBlocks[7].action = action;
+			if (JSON.Students[ID].ScheduleBlocks.Length > 8)
+			{
+				JSON.Students[ID].ScheduleBlocks[8].action = action;
+				if (JSON.Students[ID].ScheduleBlocks.Length > 9)
+				{
+					JSON.Students[ID].ScheduleBlocks[9].action = action;
+				}
+			}
+		}
+		switch (ID)
+		{
+		case 1:
+		case 11:
+		case 12:
+		case 13:
+		case 14:
+		case 15:
+		case 16:
+		case 17:
+		case 18:
+		case 19:
+		case 20:
+			JSON.Students[ID].ScheduleBlocks[4].action = "Eat";
+			JSON.Students[ID].ScheduleBlocks[4].destination = "LunchSpot";
+			JSON.Students[ID].ScheduleBlocks[8].action = "Shoes";
+			JSON.Students[ID].ScheduleBlocks[8].destination = "Locker";
+			JSON.Students[ID].ScheduleBlocks[9].action = "Stand";
+			JSON.Students[ID].ScheduleBlocks[9].destination = "Exit";
+			break;
+		}
+		if (ID > 21 && ID < 73)
+		{
+			string text = ID.ToString();
+			if (text.EndsWith("2") || text.EndsWith("7"))
+			{
+				int num = JSON.Students[ID].ScheduleBlocks.Length;
+				JSON.Students[ID].ScheduleBlocks[num - 2].action = "Shoes";
+				JSON.Students[ID].ScheduleBlocks[num - 2].destination = "Locker";
+				JSON.Students[ID].ScheduleBlocks[num - 1].action = "Stand";
+				JSON.Students[ID].ScheduleBlocks[num - 1].destination = "Exit";
+			}
+		}
+	}
+
+	private void ChangeAllDestinationsInSchedule(int ID)
+	{
+		if (ID <= 0)
+		{
+			return;
+		}
+		string destination = Destinations[ChangeDestinationID];
+		JSON.Students[ID].ScheduleBlocks[2].destination = destination;
+		JSON.Students[ID].ScheduleBlocks[4].destination = destination;
+		JSON.Students[ID].ScheduleBlocks[6].destination = destination;
+		if (JSON.Students[ID].ScheduleBlocks.Length > 7)
+		{
+			JSON.Students[ID].ScheduleBlocks[7].destination = destination;
+			if (JSON.Students[ID].ScheduleBlocks.Length > 8)
+			{
+				JSON.Students[ID].ScheduleBlocks[8].destination = destination;
+				if (JSON.Students[ID].ScheduleBlocks.Length > 9)
+				{
+					JSON.Students[ID].ScheduleBlocks[9].destination = destination;
+				}
+			}
+		}
+		switch (ID)
+		{
+		case 1:
+		case 11:
+		case 12:
+		case 13:
+		case 14:
+		case 15:
+		case 16:
+		case 17:
+		case 18:
+		case 19:
+		case 20:
+			JSON.Students[ID].ScheduleBlocks[4].action = "Eat";
+			JSON.Students[ID].ScheduleBlocks[4].destination = "LunchSpot";
+			JSON.Students[ID].ScheduleBlocks[8].action = "Shoes";
+			JSON.Students[ID].ScheduleBlocks[8].destination = "Locker";
+			JSON.Students[ID].ScheduleBlocks[9].action = "Stand";
+			JSON.Students[ID].ScheduleBlocks[9].destination = "Exit";
+			break;
+		}
+		if (ID > 21 && ID < 73)
+		{
+			string text = ID.ToString();
+			if (text.EndsWith("2") || text.EndsWith("7"))
 			{
 				int num = JSON.Students[ID].ScheduleBlocks.Length;
 				JSON.Students[ID].ScheduleBlocks[num - 2].action = "Shoes";
@@ -4344,6 +4525,10 @@ public class CustomModeScript : MonoBehaviour
 		StudentKunCosmetic.CharacterAnimation.Play(StudentKunCosmetic.PortraitPoses[JSON.Misc.PortraitPoses[Selected]]);
 		PortraitPoseNameLabel.text = StudentKunCosmetic.PortraitPoses[JSON.Misc.PortraitPoses[Selected]];
 		StudentKunCosmetic.CharacterAnimation.transform.localScale = new Vector3(0.94f, 0.94f, 0.94f);
+		if (EyeTypeID > 0)
+		{
+			StudentKunCosmetic.EyeTypeCheck();
+		}
 	}
 
 	public void PlayFemaleAnimation()
@@ -4402,7 +4587,7 @@ public class CustomModeScript : MonoBehaviour
 		}
 		else
 		{
-			TotalRepLabel.text = "[c][FF0000]Total Reputation: " + (int)num4 + "\n\n (Student will be targeted for bullying.)[-][/c]";
+			TotalRepLabel.text = "[c][FF0000]Total Reputation:\n" + (int)num4 + "\n(Student will be targeted for bullying.)[-][/c]";
 		}
 	}
 
@@ -4421,6 +4606,32 @@ public class CustomModeScript : MonoBehaviour
 			{
 				JSON.Misc.PortraitPoses[i] = 0;
 			}
+		}
+	}
+
+	public void PlayIdleAnim()
+	{
+		if (StudentGenders[Selected])
+		{
+			StudentKunCosmetic.CharacterAnimation.CrossFade(MaleIdles[AnimSet[Selected]]);
+			if (EyeTypeID > 0)
+			{
+				StudentKunCosmetic.EyeTypeCheck();
+			}
+			StudentKunCosmetic.PelvisRoot.localEulerAngles = Vector3.zero;
+		}
+		else
+		{
+			StudentChanCosmetic.CharacterAnimation.CrossFade(FemaleIdles[AnimSet[Selected]]);
+			StudentChanCosmetic.PelvisRoot.localEulerAngles = Vector3.zero;
+		}
+	}
+
+	public void SortStringsAlphabetically(string[] array1, string[] array2)
+	{
+		if (array1 != null && array1.Length > 2)
+		{
+			Array.Sort(array1, array2, 1, array1.Length - 1);
 		}
 	}
 }

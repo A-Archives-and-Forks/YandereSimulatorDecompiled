@@ -25,9 +25,13 @@ public class StalkerYandereScript : MonoBehaviour
 
 	public CharacterController MyController;
 
+	public StalkerIntroScript StalkerIntro;
+
 	public PostProcessingProfile Profile;
 
 	public InputDeviceScript InputDevice;
+
+	public TownManagerScript TownManager;
 
 	public AutoSaveManager SaveManager;
 
@@ -110,6 +114,8 @@ public class StalkerYandereScript : MonoBehaviour
 	public bool Street;
 
 	public bool Night;
+
+	public bool Town;
 
 	public Stance Stance = new Stance(StanceType.Standing);
 
@@ -259,6 +265,7 @@ public class StalkerYandereScript : MonoBehaviour
 
 	public void Start()
 	{
+		Time.timeScale = 1f;
 		if (Asylum)
 		{
 			HomeGlobals.Night = true;
@@ -385,7 +392,7 @@ public class StalkerYandereScript : MonoBehaviour
 			MyAnimation["f02_prepareThrow_00"].weight = 0f;
 		}
 		UpdateBlendshapes = true;
-		if (Street)
+		if (Street || Night)
 		{
 			if (PlayerGlobals.CustomHair > 0)
 			{
@@ -393,13 +400,20 @@ public class StalkerYandereScript : MonoBehaviour
 				CustomHair.Start();
 				CustomHair.UpdateHair();
 				PonytailRenderer.transform.parent.gameObject.SetActive(value: false);
-				RyobaHairWithRibbon.SetActive(value: false);
-				RyobaHair.SetActive(value: false);
+				if (RyobaHairWithRibbon != null)
+				{
+					RyobaHairWithRibbon.SetActive(value: false);
+					RyobaHair.SetActive(value: false);
+				}
 			}
-			else
+			else if (CustomHair != null)
 			{
 				CustomHair.gameObject.SetActive(value: false);
 			}
+		}
+		if (Town)
+		{
+			StalkerIntro.UpdateDOF(2f, 5.6f);
 		}
 		BagsToBurn = DateGlobals.Week;
 	}
@@ -472,6 +486,11 @@ public class StalkerYandereScript : MonoBehaviour
 			{
 				UpdateBlendshapes = false;
 			}
+		}
+		if (!Town && Street && base.transform.position.x < -16f)
+		{
+			base.transform.position = new Vector3(-16f, 0f, base.transform.position.z);
+			Physics.SyncTransforms();
 		}
 		if (Input.GetKeyDown("m") && Jukebox != null)
 		{
@@ -614,10 +633,6 @@ public class StalkerYandereScript : MonoBehaviour
 		{
 			UpdateYandereVision();
 		}
-		if (Street && base.transform.position.x < -16f)
-		{
-			base.transform.position = new Vector3(-16f, 0f, base.transform.position.z);
-		}
 		if (Profile != null)
 		{
 			if (Stance.Current == StanceType.Crouching && Hidden)
@@ -634,7 +649,7 @@ public class StalkerYandereScript : MonoBehaviour
 				UpdateVignette();
 			}
 		}
-		if (InstructionLabel != null)
+		if (InstructionLabel != null && !Town)
 		{
 			if (!Bakery)
 			{
@@ -689,6 +704,38 @@ public class StalkerYandereScript : MonoBehaviour
 		}
 		if (Street)
 		{
+			if (Town && CanMove)
+			{
+				if (!PausePanel.enabled)
+				{
+					if (Input.GetKeyDown(KeyCode.Escape) || Input.GetButtonDown(InputNames.Xbox_Start))
+					{
+						PausePanel.enabled = true;
+						Time.timeScale = 0.0001f;
+					}
+				}
+				else if (Input.GetKeyDown(KeyCode.Escape) || Input.GetButtonDown(InputNames.Xbox_Start))
+				{
+					Debug.Log("Exiting Pause Screen 1.");
+					PausePanel.enabled = false;
+					Time.timeScale = 1f;
+				}
+				else if (Town)
+				{
+					if (Input.GetButtonDown(InputNames.Xbox_A))
+					{
+						SceneManager.LoadScene("LoadingScene");
+					}
+					else if (Input.GetButtonDown(InputNames.Xbox_Y))
+					{
+						SceneManager.LoadScene("HomeScene");
+					}
+					else if (Input.GetButtonDown(InputNames.Xbox_X))
+					{
+						SceneManager.LoadScene("StreetScene");
+					}
+				}
+			}
 			if (PauseScreen != null && CanMove)
 			{
 				if (!PauseScreen.activeInHierarchy)
@@ -703,64 +750,83 @@ public class StalkerYandereScript : MonoBehaviour
 				{
 					if (Input.GetKeyDown(KeyCode.Escape) || Input.GetButtonDown(InputNames.Xbox_Start))
 					{
+						Debug.Log("Exiting Pause Screen 2.");
 						PauseScreen.SetActive(value: false);
 						Time.timeScale = 1f;
 					}
-					else if (Input.GetButtonDown(InputNames.Xbox_X))
+					else if (Town)
 					{
-						PauseMenu.SetActive(value: false);
-						AreYouSure.SetActive(value: true);
+						if (Input.GetButtonDown(InputNames.Xbox_A))
+						{
+							SceneManager.LoadScene("LoadingScene");
+						}
+						else if (Input.GetButtonDown(InputNames.Xbox_Y))
+						{
+							SceneManager.LoadScene("HomeScene");
+						}
+						else if (Input.GetButtonDown(InputNames.Xbox_X))
+						{
+							SceneManager.LoadScene("NewTitleScene");
+						}
 					}
-					else if (Input.GetButtonDown(InputNames.Xbox_Y))
+					else
 					{
-						if (StreetManager.Sunlight.shadows != LightShadows.None)
+						if (Input.GetButtonDown(InputNames.Xbox_X))
 						{
-							StreetManager.Sunlight.shadows = LightShadows.None;
+							PauseMenu.SetActive(value: false);
+							AreYouSure.SetActive(value: true);
 						}
-						else
+						else if (Input.GetButtonDown(InputNames.Xbox_Y))
 						{
-							StreetManager.Sunlight.shadows = LightShadows.Soft;
-						}
-					}
-					if (DebugEnabled)
-					{
-						if (Input.GetKeyDown(KeyCode.M))
-						{
-							PlayerGlobals.Money = 10000f;
-							StreetManager.Clock.UpdateMoneyLabel();
-						}
-						if (Input.GetKeyDown(KeyCode.N))
-						{
-							HomeGlobals.Night = !HomeGlobals.Night;
-							Application.LoadLevel(Application.loadedLevel);
-						}
-						if (Input.GetKeyDown(KeyCode.Y))
-						{
-							GameGlobals.IntroducedAbduction = false;
-							GameGlobals.IntroducedRansom = false;
-							GameGlobals.MetBarber = false;
-							GameGlobals.YakuzaPhase = 1;
-							PlayerGlobals.FakeID = false;
-							for (int j = 11; j < 21; j++)
+							if (StreetManager.Sunlight.shadows != LightShadows.None)
 							{
-								StudentGlobals.SetStudentKidnapped(j, value: false);
-								StudentGlobals.SetStudentMissing(j, value: false);
-								StudentGlobals.SetStudentDead(j, value: false);
+								StreetManager.Sunlight.shadows = LightShadows.None;
 							}
-							PlayerGlobals.BoughtLockpick = false;
-							PlayerGlobals.FakeID = false;
-							PlayerGlobals.BoughtNarcotics = false;
-							PlayerGlobals.BoughtPoison = false;
-							PlayerGlobals.BoughtExplosive = false;
-							Application.LoadLevel(Application.loadedLevel);
+							else
+							{
+								StreetManager.Sunlight.shadows = LightShadows.Soft;
+							}
 						}
-					}
-					else if (Input.GetKeyDown(Letter[LetterID]))
-					{
-						LetterID++;
-						if (LetterID == Letter.Length)
+						if (DebugEnabled)
 						{
-							DebugEnabled = true;
+							if (Input.GetKeyDown(KeyCode.M))
+							{
+								PlayerGlobals.Money = 10000f;
+								StreetManager.Clock.UpdateMoneyLabel();
+							}
+							if (Input.GetKeyDown(KeyCode.N))
+							{
+								HomeGlobals.Night = !HomeGlobals.Night;
+								Application.LoadLevel(Application.loadedLevel);
+							}
+							if (Input.GetKeyDown(KeyCode.Y))
+							{
+								GameGlobals.IntroducedAbduction = false;
+								GameGlobals.IntroducedRansom = false;
+								GameGlobals.MetBarber = false;
+								GameGlobals.YakuzaPhase = 1;
+								PlayerGlobals.FakeID = false;
+								for (int j = 11; j < 21; j++)
+								{
+									StudentGlobals.SetStudentKidnapped(j, value: false);
+									StudentGlobals.SetStudentMissing(j, value: false);
+									StudentGlobals.SetStudentDead(j, value: false);
+								}
+								PlayerGlobals.BoughtLockpick = false;
+								PlayerGlobals.FakeID = false;
+								PlayerGlobals.BoughtNarcotics = false;
+								PlayerGlobals.BoughtPoison = false;
+								PlayerGlobals.BoughtExplosive = false;
+								Application.LoadLevel(Application.loadedLevel);
+							}
+						}
+						else if (Input.GetKeyDown(Letter[LetterID]))
+						{
+							LetterID++;
+							if (LetterID == Letter.Length)
+							{
+								DebugEnabled = true;
+							}
 						}
 					}
 				}
@@ -775,7 +841,7 @@ public class StalkerYandereScript : MonoBehaviour
 				}
 			}
 		}
-		else if (PausePanel != null && PausePanel.enabled && CanMove)
+		else if (PausePanel != null && PausePanel.enabled && CanMove && !Town)
 		{
 			if (Input.GetButtonDown(InputNames.Xbox_Y))
 			{
@@ -791,6 +857,11 @@ public class StalkerYandereScript : MonoBehaviour
 			GameGlobals.Checkpoint = true;
 			CheckForCheckpoint = false;
 			Debug.Log("Player reached checkpoint!");
+		}
+		if (Town && base.transform.position.y < -6.5f)
+		{
+			base.transform.position = new Vector3(base.transform.position.x, 1f, base.transform.position.z);
+			Debug.Log("Teleporting the player up.");
 		}
 	}
 
@@ -1092,7 +1163,7 @@ public class StalkerYandereScript : MonoBehaviour
 	public void UpdateYandereVision()
 	{
 		bool flag = Input.GetButton(InputNames.Xbox_RB);
-		if (Time.timeScale == 0f)
+		if (Time.timeScale == 0f || (PauseMenu != null && PauseMenu.activeInHierarchy) || (PausePanel != null && PausePanel.enabled) || (PauseScreen != null && PauseScreen.activeInHierarchy))
 		{
 			flag = false;
 		}
@@ -1127,8 +1198,9 @@ public class StalkerYandereScript : MonoBehaviour
 			}
 			Time.timeScale = Mathf.Lerp(Time.timeScale, 1f, Time.unscaledDeltaTime * 10f);
 			YandereFilter.FadeFX = Mathf.Lerp(YandereFilter.FadeFX, 0f, Time.unscaledDeltaTime * 10f);
-			if (YandereFilter.FadeFX == 0f)
+			if (YandereFilter.FadeFX < 0.1f)
 			{
+				YandereFilter.FadeFX = 0f;
 				Time.timeScale = 1f;
 			}
 		}

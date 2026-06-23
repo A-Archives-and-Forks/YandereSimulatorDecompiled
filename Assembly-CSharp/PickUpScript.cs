@@ -170,6 +170,8 @@ public class PickUpScript : MonoBehaviour
 
 	public bool RedPaint;
 
+	public bool Balloon;
+
 	public bool Cheated;
 
 	public bool Garbage;
@@ -369,6 +371,10 @@ public class PickUpScript : MonoBehaviour
 				base.transform.localPosition = new Vector3(-0.1f, -0.215f, 0f);
 				base.transform.localEulerAngles = new Vector3(0f, 180f, 110f);
 			}
+			if (Balloon)
+			{
+				base.transform.eulerAngles = new Vector3(0f, 0f, 0f);
+			}
 		}
 		if (Dumped)
 		{
@@ -394,7 +400,6 @@ public class PickUpScript : MonoBehaviour
 		{
 			if (base.transform.position.y < -0.1f)
 			{
-				Debug.Log("A " + base.gameObject.name + " fell through the ground!");
 				base.transform.eulerAngles = OriginalRotation;
 				base.transform.position = new Vector3(base.transform.position.x, 0.025f, base.transform.position.z);
 				MyRigidbody.collisionDetectionMode = CollisionDetectionMode.Continuous;
@@ -567,7 +572,6 @@ public class PickUpScript : MonoBehaviour
 		if (TaskKitten != null)
 		{
 			TaskKitten.Anim.Play("E_held");
-			TaskKitten.enabled = false;
 			TaskKitten.Caught = true;
 			TaskKitten.Stop();
 		}
@@ -886,7 +890,7 @@ public class PickUpScript : MonoBehaviour
 		DoNotTeleport = false;
 		if (TaskKitten != null)
 		{
-			TaskKitten.transform.position = Yandere.transform.position;
+			TaskKitten.transform.position = Yandere.transform.position + Yandere.transform.forward * 0.1f;
 			TaskKitten.transform.rotation = Yandere.transform.rotation;
 			TaskKitten.Anim.Play("B_idle");
 			MyRigidbody.isKinematic = true;

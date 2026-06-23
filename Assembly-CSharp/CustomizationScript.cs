@@ -389,7 +389,7 @@ public class CustomizationScript : MonoBehaviour
 		{
 			if (WhitePanel.alpha == 0f)
 			{
-				GenderPanel.alpha = Mathf.MoveTowards(GenderPanel.alpha, 1f, Time.deltaTime * 2f);
+				GenderPanel.alpha = Mathf.MoveTowards(GenderPanel.alpha, 1f, Time.deltaTime * 5f);
 				if (GenderPanel.alpha == 1f)
 				{
 					if (!AreYouSurePanel.activeInHierarchy)
@@ -446,8 +446,8 @@ public class CustomizationScript : MonoBehaviour
 		}
 		else if (Phase == 2)
 		{
-			GenderPanel.alpha = Mathf.MoveTowards(GenderPanel.alpha, 0f, Time.deltaTime * 2f);
-			Black.color = new Color(0f, 0f, 0f, Mathf.MoveTowards(Black.color.a, 0f, Time.deltaTime * 2f));
+			GenderPanel.alpha = Mathf.MoveTowards(GenderPanel.alpha, 0f, Time.deltaTime * 5f);
+			Black.color = new Color(0f, 0f, 0f, Mathf.MoveTowards(Black.color.a, 0f, Time.deltaTime * 5f));
 			if (GenderPanel.alpha == 0f)
 			{
 				Senpai.gameObject.SetActive(value: true);
@@ -471,7 +471,7 @@ public class CustomizationScript : MonoBehaviour
 			{
 				Adjustment = 0f;
 			}
-			CustomizePanel.alpha = Mathf.MoveTowards(CustomizePanel.alpha, 1f, Time.deltaTime * 2f);
+			CustomizePanel.alpha = Mathf.MoveTowards(CustomizePanel.alpha, 1f, Time.deltaTime * 5f);
 			if (CustomizePanel.alpha == 1f)
 			{
 				if (Input.GetButtonDown(InputNames.Xbox_A))
@@ -583,7 +583,7 @@ public class CustomizationScript : MonoBehaviour
 			LoveSickCamera.transform.eulerAngles = new Vector3(0f, Rotation, 0f);
 			base.transform.eulerAngles = LoveSickCamera.transform.eulerAngles;
 			base.transform.position = LoveSickCamera.transform.position;
-			CustomizePanel.alpha = Mathf.MoveTowards(CustomizePanel.alpha, 0f, Time.deltaTime * 2f);
+			CustomizePanel.alpha = Mathf.MoveTowards(CustomizePanel.alpha, 0f, Time.deltaTime * 5f);
 			if (CustomizePanel.alpha == 0f)
 			{
 				Phase++;
@@ -591,7 +591,7 @@ public class CustomizationScript : MonoBehaviour
 		}
 		else if (Phase == 5)
 		{
-			FinishPanel.alpha = Mathf.MoveTowards(FinishPanel.alpha, 1f, Time.deltaTime * 2f);
+			FinishPanel.alpha = Mathf.MoveTowards(FinishPanel.alpha, 1f, Time.deltaTime * 5f);
 			if (FinishPanel.alpha == 1f)
 			{
 				if (!AreYouSurePanel.activeInHierarchy)
@@ -629,7 +629,7 @@ public class CustomizationScript : MonoBehaviour
 		}
 		else if (Phase == 6)
 		{
-			FinishPanel.alpha = Mathf.MoveTowards(FinishPanel.alpha, 0f, Time.deltaTime * 2f);
+			FinishPanel.alpha = Mathf.MoveTowards(FinishPanel.alpha, 0f, Time.deltaTime * 5f);
 			if (FinishPanel.alpha == 0f)
 			{
 				UpdateFemaleUniform(Data.femaleUniform.Value);
@@ -642,7 +642,7 @@ public class CustomizationScript : MonoBehaviour
 		}
 		else if (Phase == 7)
 		{
-			UniformPanel.alpha = Mathf.MoveTowards(UniformPanel.alpha, 1f, Time.deltaTime * 2f);
+			UniformPanel.alpha = Mathf.MoveTowards(UniformPanel.alpha, 1f, Time.deltaTime * 5f);
 			if (UniformPanel.alpha == 1f)
 			{
 				if (Input.GetButtonDown(InputNames.Xbox_A))
@@ -686,7 +686,7 @@ public class CustomizationScript : MonoBehaviour
 		}
 		else if (Phase == 8)
 		{
-			UniformPanel.alpha = Mathf.MoveTowards(UniformPanel.alpha, 0f, Time.deltaTime * 2f);
+			UniformPanel.alpha = Mathf.MoveTowards(UniformPanel.alpha, 0f, Time.deltaTime * 5f);
 			if (UniformPanel.alpha == 0f)
 			{
 				Phase++;
@@ -694,7 +694,7 @@ public class CustomizationScript : MonoBehaviour
 		}
 		else if (Phase == 9)
 		{
-			FinishPanel.alpha = Mathf.MoveTowards(FinishPanel.alpha, 1f, Time.deltaTime * 2f);
+			FinishPanel.alpha = Mathf.MoveTowards(FinishPanel.alpha, 1f, Time.deltaTime * 5f);
 			if (FinishPanel.alpha == 1f)
 			{
 				if (!AreYouSurePanel.activeInHierarchy)
@@ -732,7 +732,7 @@ public class CustomizationScript : MonoBehaviour
 		}
 		else if (Phase == 10)
 		{
-			FinishPanel.alpha = Mathf.MoveTowards(FinishPanel.alpha, 0f, Time.deltaTime * 2f);
+			FinishPanel.alpha = Mathf.MoveTowards(FinishPanel.alpha, 0f, Time.deltaTime * 5f);
 			if (FinishPanel.alpha == 0f)
 			{
 				White.color = new Color(0f, 0f, 0f, 1f);
@@ -742,7 +742,7 @@ public class CustomizationScript : MonoBehaviour
 		}
 		else if (Phase == 99)
 		{
-			FinishPanel.alpha = Mathf.MoveTowards(FinishPanel.alpha, 0f, Time.deltaTime * 2f);
+			FinishPanel.alpha = Mathf.MoveTowards(FinishPanel.alpha, 0f, Time.deltaTime * 5f);
 			if (FinishPanel.alpha == 0f)
 			{
 				Phase = 7;
@@ -750,7 +750,7 @@ public class CustomizationScript : MonoBehaviour
 		}
 		else if (Phase == 100)
 		{
-			FinishPanel.alpha = Mathf.MoveTowards(FinishPanel.alpha, 0f, Time.deltaTime * 2f);
+			FinishPanel.alpha = Mathf.MoveTowards(FinishPanel.alpha, 0f, Time.deltaTime * 5f);
 			if (FinishPanel.alpha == 0f)
 			{
 				Phase = 3;

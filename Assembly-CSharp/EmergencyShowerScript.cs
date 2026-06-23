@@ -8,13 +8,15 @@ public class EmergencyShowerScript : MonoBehaviour
 
 	public TallLockerScript TallLocker;
 
-	public GameObject VisionBlocker;
-
-	public GameObject CensorSteam;
-
 	public YandereScript Yandere;
 
 	public PromptScript Prompt;
+
+	public GloveScript Gloves;
+
+	public GameObject VisionBlocker;
+
+	public GameObject CensorSteam;
 
 	public Transform BatheSpot;
 
@@ -81,6 +83,12 @@ public class EmergencyShowerScript : MonoBehaviour
 					{
 						Yandere.Container.transform.position = base.transform.position + base.transform.forward * 2f + base.transform.up;
 						Yandere.Container.Drop();
+					}
+					if (Yandere.Gloves != null)
+					{
+						Gloves = Yandere.Gloves;
+						Yandere.RemoveGloves();
+						Gloves.transform.position = base.transform.position + base.transform.forward * 2f + base.transform.up * 3f;
 					}
 					Yandere.Invisible = true;
 					Bathing = true;

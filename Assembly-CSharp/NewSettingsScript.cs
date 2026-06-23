@@ -749,14 +749,24 @@ public class NewSettingsScript : MonoBehaviour
 		}
 		else if (Menu == 4)
 		{
+			if (!PromptBar.Show)
+			{
+				PromptBar.ClearButtons();
+				PromptBar.Label[1].text = "Go Back";
+				PromptBar.Label[2].text = "Toggle All";
+				PromptBar.Label[4].text = "Change Selection";
+				PromptBar.Label[5].text = "Edit Setting";
+				PromptBar.UpdateButtons();
+				PromptBar.Show = true;
+			}
 			if (Selection == 1)
 			{
 				if (NewTitleScreen.InputManager.TappedRight || NewTitleScreen.InputManager.TappedLeft)
 				{
-					GameGlobals.CensorKillingAnims = !GameGlobals.CensorKillingAnims;
+					GameGlobals.BlurKillingAnims = !GameGlobals.BlurKillingAnims;
 					if (SchoolScene)
 					{
-						StudentManager.Yandere.AttackManager.Censor = GameGlobals.CensorKillingAnims;
+						StudentManager.Yandere.AttackManager.Blur = GameGlobals.BlurKillingAnims;
 					}
 					UpdateLabels();
 				}
@@ -803,12 +813,57 @@ public class NewSettingsScript : MonoBehaviour
 					UpdateLabels();
 				}
 			}
-			else if (Selection == 4 && (NewTitleScreen.InputManager.TappedRight || NewTitleScreen.InputManager.TappedLeft))
+			else if (Selection == 4)
 			{
-				GameGlobals.TVHeads = !GameGlobals.TVHeads;
+				if (NewTitleScreen.InputManager.TappedRight || NewTitleScreen.InputManager.TappedLeft)
+				{
+					GameGlobals.TVHeads = !GameGlobals.TVHeads;
+					if (SchoolScene)
+					{
+						StudentManager.TVHeads();
+					}
+					UpdateLabels();
+				}
+			}
+			else if (Selection == 5)
+			{
+				if (NewTitleScreen.InputManager.TappedRight || NewTitleScreen.InputManager.TappedLeft)
+				{
+					GameGlobals.HideKillingAnims = !GameGlobals.HideKillingAnims;
+					if (SchoolScene)
+					{
+						StudentManager.Yandere.AttackManager.Hide = GameGlobals.HideKillingAnims;
+					}
+					UpdateLabels();
+				}
+			}
+			else if (Selection == 6)
+			{
+				if (NewTitleScreen.InputManager.TappedRight || NewTitleScreen.InputManager.TappedLeft)
+				{
+					GameGlobals.CensorCorpses = !GameGlobals.CensorCorpses;
+					if (SchoolScene)
+					{
+						QualityManager.UpdateOutlinesAndRimlight();
+					}
+					UpdateLabels();
+				}
+			}
+			else if (Selection == 7 && (NewTitleScreen.InputManager.TappedRight || NewTitleScreen.InputManager.TappedLeft))
+			{
+				GameGlobals.CensorWeapons = !GameGlobals.CensorWeapons;
 				if (SchoolScene)
 				{
-					StudentManager.TVHeads();
+					if (GameGlobals.CensorWeapons)
+					{
+						QualityManager.StudentManager.Yandere.WeaponManager.CensorWeapons = true;
+						QualityManager.StudentManager.Yandere.WeaponManager.Censor();
+					}
+					else
+					{
+						QualityManager.StudentManager.Yandere.WeaponManager.CensorWeapons = false;
+						QualityManager.StudentManager.Yandere.WeaponManager.Uncensor();
+					}
 				}
 				UpdateLabels();
 			}
@@ -820,6 +875,15 @@ public class NewSettingsScript : MonoBehaviour
 				PromptBar.Label[5].text = "Edit Setting";
 				PromptBar.UpdateButtons();
 				PromptBar.Show = true;
+			}
+			if (Input.GetButtonDown(InputNames.Xbox_X))
+			{
+				GameGlobals.CensorPanties = !GameGlobals.CensorPanties;
+				GameGlobals.CensorBlood = !GameGlobals.CensorBlood;
+				GameGlobals.HideKillingAnims = !GameGlobals.HideKillingAnims;
+				GameGlobals.CensorCorpses = !GameGlobals.CensorCorpses;
+				GameGlobals.CensorWeapons = !GameGlobals.CensorWeapons;
+				UpdateLabels();
 			}
 			if (Input.GetButtonDown(InputNames.Xbox_B))
 			{
@@ -1106,10 +1170,13 @@ public class NewSettingsScript : MonoBehaviour
 			Labels[31].text = "Large";
 		}
 		Labels[32].text = (OptionGlobals.RivalDeathSlowMo ? "Disabled" : "Enabled");
-		Labels[33].text = (GameGlobals.CensorKillingAnims ? "Yes" : "No");
+		Labels[33].text = (GameGlobals.BlurKillingAnims ? "Yes" : "No");
 		Labels[34].text = (GameGlobals.CensorPanties ? "Yes" : "No");
 		Labels[35].text = (GameGlobals.CensorBlood ? "Yes" : "No");
 		Labels[47].text = (GameGlobals.TVHeads ? "Yes" : "No");
+		Labels[48].text = (GameGlobals.HideKillingAnims ? "Yes" : "No");
+		Labels[49].text = (GameGlobals.CensorCorpses ? "Yes" : "No");
+		Labels[50].text = (GameGlobals.CensorWeapons ? "Yes" : "No");
 		Labels[36].text = (OptionGlobals.DisableStatic ? "Yes" : "No");
 		Labels[37].text = (OptionGlobals.DisableDisplacement ? "Yes" : "No");
 		Labels[38].text = (OptionGlobals.DisableAbberation ? "Yes" : "No");

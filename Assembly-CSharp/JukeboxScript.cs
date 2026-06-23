@@ -10,6 +10,8 @@ public class JukeboxScript : MonoBehaviour
 
 	public AudioSource AttackOnTitan;
 
+	public AudioSource Anniversary;
+
 	public AudioSource LunarScythe;
 
 	public AudioSource Megalovania;
@@ -272,6 +274,10 @@ public class JukeboxScript : MonoBehaviour
 
 	public void Start()
 	{
+		if (GameGlobals.Anniversary)
+		{
+			return;
+		}
 		if (GameGlobals.Eighties)
 		{
 			BGMLimit = 13;
@@ -772,5 +778,25 @@ public class JukeboxScript : MonoBehaviour
 		KillVolume();
 		Custom.enabled = true;
 		Custom.Play();
+	}
+
+	public void AnniversaryMusic()
+	{
+		FullSanities[1] = Anniversary.clip;
+		FullSanities[2] = Anniversary.clip;
+		FullSanities[3] = Anniversary.clip;
+		HalfSanities[1] = Anniversary.clip;
+		HalfSanities[2] = Anniversary.clip;
+		HalfSanities[3] = Anniversary.clip;
+		NoSanities[1] = Anniversary.clip;
+		NoSanities[2] = Anniversary.clip;
+		NoSanities[3] = Anniversary.clip;
+		FullSanity.clip = Anniversary.clip;
+		HalfSanity.clip = Anniversary.clip;
+		NoSanity.clip = Anniversary.clip;
+		FullSanity.volume = 1f;
+		FullSanity.Play();
+		Volume = 1f;
+		Dip = 0f;
 	}
 }

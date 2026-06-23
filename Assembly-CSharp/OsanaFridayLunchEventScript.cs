@@ -168,6 +168,11 @@ public class OsanaFridayLunchEventScript : MonoBehaviour
 							Rival.DistanceToDestination = 100f;
 							Spy.Prompt.enabled = true;
 						}
+						else if (Clock.HourTime > 13.375f)
+						{
+							Debug.Log("Ran out of time. Skipping Event.");
+							EndEvent();
+						}
 						if (StudentManager.Students[FriendID] != null && !PlayerGlobals.RaibaruLoner)
 						{
 							Friend = StudentManager.Students[FriendID];
@@ -200,6 +205,15 @@ public class OsanaFridayLunchEventScript : MonoBehaviour
 						if (Rival.CurrentDestination == Location[2] && Senpai.CurrentDestination == Location[1] && Senpai.DistanceToDestination < 0.5f && Rival.DistanceToDestination < 0.5f && !Impatient)
 						{
 							Phase++;
+						}
+						if (Rival.Splashed)
+						{
+							Debug.Log("Oh shit, the rival got splashed. Ending the event.");
+							if (!Rival.Splashed)
+							{
+								UnityEngine.Object.Instantiate(AlarmDisc, Yandere.transform.position + Vector3.up, Quaternion.identity).GetComponent<AlarmDiscScript>().NoScream = true;
+							}
+							EndEvent();
 						}
 					}
 				}
@@ -350,6 +364,7 @@ public class OsanaFridayLunchEventScript : MonoBehaviour
 			}
 			if (Senpai.Alarmed || Rival.Alarmed || Rival.Splashed || Rival.Dodging || Clock.Period == 4 || Rival.GoAway)
 			{
+				Debug.Log("Oh shit, something ended the event.");
 				if (!Rival.Splashed)
 				{
 					UnityEngine.Object.Instantiate(AlarmDisc, Yandere.transform.position + Vector3.up, Quaternion.identity).GetComponent<AlarmDiscScript>().NoScream = true;
@@ -404,7 +419,7 @@ public class OsanaFridayLunchEventScript : MonoBehaviour
 		}
 		if (!Rival.Ragdoll.Zs.activeInHierarchy)
 		{
-			if (!Rival.Alarmed)
+			if (!Rival.Alarmed && !Rival.Splashed)
 			{
 				Rival.Pathfinding.canSearch = true;
 				Rival.Pathfinding.canMove = true;
@@ -455,6 +470,12 @@ public class OsanaFridayLunchEventScript : MonoBehaviour
 			Rival.SmartPhone.transform.parent = Rival.ItemParent;
 			Rival.SmartPhone.transform.localEulerAngles = OriginalRotation;
 			Rival.SmartPhone.transform.localPosition = OriginalPosition;
+		}
+		if (Rival.Splashed)
+		{
+			Rival.Pathfinding.canSearch = false;
+			Rival.Pathfinding.canMove = false;
+			Rival.Routine = false;
 		}
 		Jukebox.Dip = 1f;
 		Yandere.Eavesdropping = false;

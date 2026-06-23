@@ -237,6 +237,11 @@ public class TopicInterfaceScript : MonoBehaviour
 	public void UpdateOpinions()
 	{
 		Debug.Log("Firing the UpdateOpinions() function.");
+		if (JSON.Topics[StudentID].Topics.Length == 0)
+		{
+			Debug.Log("What the FUCK. Topics was an empty array?? Why??");
+			JSON.Topics[StudentID].Topics = new int[25];
+		}
 		for (int i = 1; i <= 25; i++)
 		{
 			UISprite uISprite = OpinionIcons[i];

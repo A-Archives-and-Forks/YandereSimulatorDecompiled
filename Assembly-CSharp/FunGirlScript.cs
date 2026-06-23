@@ -55,6 +55,7 @@ public class FunGirlScript : MonoBehaviour
 			}
 		}
 		StudentManager.Yandere.NoDebug = true;
+		StudentManager.Clock.StopTime = true;
 		base.gameObject.SetActive(value: true);
 		Jukebox.SetActive(value: false);
 		HUD.enabled = false;

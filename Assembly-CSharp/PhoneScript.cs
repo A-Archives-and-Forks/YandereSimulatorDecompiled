@@ -22,6 +22,8 @@ public class PhoneScript : MonoBehaviour
 
 	public AudioClip AppInstall;
 
+	public GameObject InfoChanCamera;
+
 	public GameObject NewMessage;
 
 	public AudioSource Jukebox;
@@ -192,6 +194,10 @@ public class PhoneScript : MonoBehaviour
 		if (InfoChanPortrait != null)
 		{
 			InfoChanPortrait.transform.localPosition = new Vector3(-627f, -65.5f, 0f);
+		}
+		if (!MeetingInfoChan && InfoChanCamera != null)
+		{
+			InfoChanCamera.SetActive(value: false);
 		}
 	}
 

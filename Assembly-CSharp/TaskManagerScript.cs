@@ -379,10 +379,7 @@ public class TaskManagerScript : MonoBehaviour
 			}
 			if (TaskStatus[46] == 1 && StudentManager.Students[46] != null)
 			{
-				if (StudentManager.Students[46].TaskPhase == 0)
-				{
-					StudentManager.Students[46].TaskPhase = 4;
-				}
+				_ = StudentManager.Students[46].TaskPhase;
 				if (StudentManager.Students[10] != null && Vector3.Distance(StudentManager.Students[46].transform.position, StudentManager.Students[10].transform.position) < 2f)
 				{
 					Debug.Log("Budo's task should be ready to turn in!");

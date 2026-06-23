@@ -128,6 +128,7 @@ public class DynamicBone : MonoBehaviour
 			base.enabled = false;
 			return;
 		}
+		m_DistantDisable = true;
 		GameObject gameObject = GameObject.Find("YandereChan");
 		if (gameObject == null)
 		{
@@ -632,6 +633,19 @@ public class DynamicBone : MonoBehaviour
 			{
 				particle.m_Transform.position = particle.m_Position;
 			}
+		}
+	}
+
+	private void CheckTopParentForStudentScript()
+	{
+		Transform parent = base.transform;
+		while (parent.parent != null)
+		{
+			parent = parent.parent;
+		}
+		if (parent.GetComponent<StudentScript>() != null)
+		{
+			m_DistantDisable = true;
 		}
 	}
 }

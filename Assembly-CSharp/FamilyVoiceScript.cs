@@ -122,6 +122,7 @@ public class FamilyVoiceScript : MonoBehaviour
 					{
 						if (!Started)
 						{
+							Debug.Log(base.gameObject.name + " should begin speaking now.");
 							Subtitle.text = SpeechText[0];
 							MyAudio.Play();
 							Started = true;

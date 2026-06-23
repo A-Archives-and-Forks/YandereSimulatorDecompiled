@@ -350,7 +350,7 @@ public class PoliceScript : MonoBehaviour
 			{
 				Timer = Mathf.MoveTowards(Timer, 0f, Time.deltaTime);
 			}
-			if (!StudentManager.Egg)
+			if (!StudentManager.Egg && Yandere.NoDebug)
 			{
 				if (Timer < 60f)
 				{
@@ -403,9 +403,13 @@ public class PoliceScript : MonoBehaviour
 				{
 					Debug.Log("Invalid Genocide Run. Easter Eggs were used.");
 				}
+				else if (Yandere.Noticed)
+				{
+					Debug.Log("Invalid Genocide Run. Currently experiencing a game over.");
+				}
 				else if (Clock.Weekday == 1 && StudentManager.Week <= 1)
 				{
-					if (!StudentManager.Students[1].gameObject.activeInHierarchy || StudentManager.Students[1].Fleeing)
+					if (!StudentManager.Students[1].gameObject.activeInHierarchy || StudentManager.Students[1].Alarmed || StudentManager.Students[1].Fleeing)
 					{
 						Debug.Log("Invalid Genocide Run. Senpai was alarmed.");
 					}
@@ -632,6 +636,10 @@ public class PoliceScript : MonoBehaviour
 		if (Yandere.VtuberID > 0)
 		{
 			Protagonist = VtuberNames[Yandere.VtuberID];
+		}
+		if (StudentManager.Anniversary && StudentManager.Students[39] != null)
+		{
+			StudentManager.Students[39].gameObject.SetActive(value: true);
 		}
 		ResultsLabels[0].transform.parent.gameObject.SetActive(value: true);
 		if (Show)

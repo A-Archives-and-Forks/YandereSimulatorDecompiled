@@ -566,12 +566,16 @@ public class OsanaPoolEventScript : MonoBehaviour
 
 	public void AttachHair()
 	{
-		Rival.OsanaHair.GetComponent<Animation>().Stop();
-		Rival.OsanaHair.transform.parent = Rival.Head;
-		Rival.OsanaHair.transform.localEulerAngles = Vector3.zero;
-		Rival.OsanaHair.transform.localPosition = new Vector3(0f, -1.442789f, 0.01900469f);
-		Rival.OsanaHair.transform.localScale = new Vector3(1f, 1f, 1f);
-		Rival.OsanaHairL.enabled = true;
-		Rival.OsanaHairR.enabled = true;
+		if (Rival != null)
+		{
+			Debug.Log("Re-attaching Osana's hair.");
+			Rival.OsanaHair.GetComponent<Animation>().Stop();
+			Rival.OsanaHair.transform.parent = Rival.Head;
+			Rival.OsanaHair.transform.localEulerAngles = Vector3.zero;
+			Rival.OsanaHair.transform.localPosition = new Vector3(0f, -1.442789f, 0.01900469f);
+			Rival.OsanaHair.transform.localScale = new Vector3(1f, 1f, 1f);
+			Rival.OsanaHairL.enabled = true;
+			Rival.OsanaHairR.enabled = true;
+		}
 	}
 }

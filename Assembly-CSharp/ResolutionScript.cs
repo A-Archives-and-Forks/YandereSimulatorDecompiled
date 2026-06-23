@@ -99,7 +99,7 @@ public class ResolutionScript : MonoBehaviour
 	{
 		if (FadeOut)
 		{
-			Alpha = Mathf.MoveTowards(Alpha, 1f, Time.deltaTime);
+			Alpha = Mathf.MoveTowards(Alpha, 1f, Time.deltaTime * 2f);
 			if (Alpha > 0.999f)
 			{
 				GameGlobals.LastInputType = (int)InputDevice.Type;
@@ -108,7 +108,7 @@ public class ResolutionScript : MonoBehaviour
 		}
 		else
 		{
-			Alpha = Mathf.MoveTowards(Alpha, 0f, Time.deltaTime);
+			Alpha = Mathf.MoveTowards(Alpha, 0f, Time.deltaTime * 2f);
 		}
 		Darkness.alpha = Alpha;
 		if (Alpha == 0f)
@@ -200,6 +200,14 @@ public class ResolutionScript : MonoBehaviour
 				PlayerPrefs.DeleteAll();
 				Screen.SetResolution(1280, 720, fullscreen: false);
 				SceneManager.LoadScene("ResolutionScene");
+			}
+		}
+		if (Input.GetKeyDown("t"))
+		{
+			Ts++;
+			if (Ts == 10)
+			{
+				SceneManager.LoadScene("NewTitleScene");
 			}
 		}
 		if (Input.GetButton(InputNames.Xbox_LB) && Input.GetButton(InputNames.Xbox_RB))

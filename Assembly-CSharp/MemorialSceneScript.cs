@@ -210,6 +210,7 @@ public class MemorialSceneScript : MonoBehaviour
 			Headmaster.SetActive(value: false);
 			Counselor.SetActive(value: false);
 			StudentManager.UpdateAllSleuthClothing();
+			Debug.Log("The MemorialSceneScript is now going to run Clock.GivePlayerBroughtWeapon()");
 			StudentManager.Clock.GivePlayerBroughtWeapon();
 			base.enabled = false;
 			if (GameGlobals.SenpaiMourning)

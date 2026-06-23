@@ -27,6 +27,8 @@ public class OfferHelpScript : MonoBehaviour
 
 	public AudioClip[] EventClip;
 
+	public AudioClip[] EventClipWeek2;
+
 	public string[] EventSpeech;
 
 	public string[] EventAnim;
@@ -40,6 +42,8 @@ public class OfferHelpScript : MonoBehaviour
 	public bool Eighties;
 
 	public bool Offering;
+
+	public bool Fragile;
 
 	public bool Spoken;
 
@@ -64,7 +68,7 @@ public class OfferHelpScript : MonoBehaviour
 		Debug.Log("This ''Offer Help'' prompt is now running its Start() function.");
 		MyAudio = GetComponent<AudioSource>();
 		Prompt.enabled = true;
-		if (EventStudentID != 5)
+		if (StudentManager.Students[EventStudentID].Persona != PersonaType.Fragile)
 		{
 			EventStudentID = StudentManager.RivalID;
 		}
@@ -273,34 +277,30 @@ public class OfferHelpScript : MonoBehaviour
 		}
 		else if (Rival && DateGlobals.Week == 2)
 		{
+			EventClip = EventClipWeek2;
 			EventSpeech[1] = "Oh! So, it was you who left that note in my locker!";
-			EventSpeech[2] = "Do you have proof that someone is trying to sabotage my family's bakery?";
-			EventSpeech[3] = "No; I don't have any proof. But, I want to help you. Tell me more about the situation.";
+			EventSpeech[2] = "Uh...so...you wanted to talk to me about...that new bakery?";
+			EventSpeech[3] = "Yes. I overheard your phone call. You sounded...distressed. What exactly do you think that bakery is doing?";
 			EventSpeech[4] = "...gosh...it's a long story...I wouldn't even know where to begin...";
-			EventSpeech[5] = "Start at the beginning.";
-			EventSpeech[6] = "...(sigh)...recently, a new bakery opened up in town. Shortly afterwards...a bunch of terrible things started happening to my family's bakery.";
-			EventSpeech[7] = "Like what?";
-			EventSpeech[8] = "Well, earlier today, a bunch of rats suddenly appeared in our kitchen, right before a health inspection was supposed to take place.";
-			EventSpeech[9] = "There's no way I can just write that off as a coincidence! I'm certain that the new bakery is behind this...and everything else that's been happening lately, too.";
-			EventSpeech[10] = "But...I don't have any proof! And, between my studies and bakery responsibilities, I don't have any time to gather evidence...";
+			EventSpeech[5] = "Relax - it's okay. Just...start at the beginning.";
+			EventSpeech[6] = "...(sigh)...a few weeks ago, a new bakery opened up in town. Shortly afterwards...a bunch of terrible things started happening to my family's bakery.";
+			EventSpeech[7] = "Like...what?";
+			EventSpeech[8] = "Well, recently, a bunch of rats suddenly appeared in our kitchen, right before a health inspection was supposed to take place!";
+			EventSpeech[9] = "There's no way I can just write that off as a coincidence! I'm certain that the new bakery is behind this! And...everything else that's been happening lately, too!";
+			EventSpeech[10] = "But...I don't have any proof...and...between my studies and bakery responsibilities...I don't have any time to gather evidence...";
 			EventSpeech[11] = "Do you know their address?";
-			EventSpeech[12] = "Yes, I...wait, why are you asking?";
-			EventSpeech[13] = "I'd like to help you.";
+			EventSpeech[12] = "Yes, I...wait. Why are you asking?";
+			EventSpeech[13] = "I'd like...to help you.";
 			EventSpeech[14] = "But...but, how?";
 			EventSpeech[15] = "I'll investigate the bakery and search for evidence that they're sabotaging your family's business.";
-			EventSpeech[16] = "Whoa! Slow down! You don't have to do that. It could end up being a huge waste of time. It might even be dangerous!";
-			EventSpeech[17] = "You don't have to worry about me. I'm tougher than I look.";
+			EventSpeech[16] = "Whoa! Slow down! You don't have to do that! It could just be a waste of time! It might even be dangerous!";
+			EventSpeech[17] = "You don't have to worry about me. I'm...tougher...than I look.";
 			EventSpeech[18] = "Oh, gosh...I really don't know about this!";
-			EventSpeech[19] = "Please, just relax. I'll be fine.";
-			EventSpeech[20] = "...well...if you say so...(sigh)...I'll text you their address later...";
+			EventSpeech[19] = "Please...just relax. I'll be fine.";
+			EventSpeech[20] = "...well...if you say so...(sigh)...I'll...text you their address later...";
 			EventSpeech[21] = "Thank you.";
-			EventSpeech[22] = "...but...be careful, okay?! I don't want anyone to get in trouble while trying to help me...";
+			EventSpeech[22] = "...but...be careful, okay?! I...I don't want anyone to get in trouble while trying to help me...";
 			EventSpeech[23] = "Everything will turn out fine. I promise.";
-			MyAudio.volume = 0f;
-			for (int k = 1; k < EventClip.Length; k++)
-			{
-				EventClip[k] = ShortSilence;
-			}
 		}
 	}
 
@@ -317,7 +317,7 @@ public class OfferHelpScript : MonoBehaviour
 				}
 				bool flag = true;
 				Debug.Log("The player has activated an ''Offer Help'' prompt.");
-				if (EventStudentID == 5)
+				if (StudentManager.Students[EventStudentID].Persona == PersonaType.Fragile)
 				{
 					Debug.Log("Checking to see if we have a bully photo...");
 					flag = false;
@@ -459,7 +459,7 @@ public class OfferHelpScript : MonoBehaviour
 					}
 					if (Timer > EventClip[EventPhase].length + 1f)
 					{
-						if (EventStudentID == 5 && EventPhase == 2)
+						if ((EventStudentID == 5 && EventPhase == 2) || (StudentManager.Students[EventStudentID].Persona == PersonaType.Fragile && EventPhase == 2))
 						{
 							Yandere.PauseScreen.StudentInfoMenu.Targeting = true;
 							StartCoroutine(Yandere.PauseScreen.PhotoGallery.GetPhotos());
@@ -522,7 +522,12 @@ public class OfferHelpScript : MonoBehaviour
 		{
 			EventStudentID = StudentManager.RivalID;
 		}
-		else if (EventStudentID != 5)
+		else if (StudentManager.Students[EventStudentID] == null)
+		{
+			Debug.Log("Uh, something went wrong, and the OfferHelpScript thinks that EventStudent is null.");
+			EventStudentID = StudentManager.RivalID;
+		}
+		else if (StudentManager.Students[EventStudentID].Persona != PersonaType.Fragile)
 		{
 			EventStudentID = StudentManager.RivalID;
 		}
@@ -548,7 +553,7 @@ public class OfferHelpScript : MonoBehaviour
 			base.transform.position = Locations[4].position;
 			base.transform.eulerAngles = Locations[4].eulerAngles;
 		}
-		if (EventStudentID == 5)
+		if (EventStudentID == 5 || StudentManager.Students[EventStudentID].Persona == PersonaType.Fragile)
 		{
 			Prompt.MyCollider.enabled = true;
 		}
@@ -634,6 +639,11 @@ public class OfferHelpScript : MonoBehaviour
 				StudentManager.UpdateInfatuatedTargetDistances();
 			}
 			Prompt.Yandere.PauseScreen.StudentInfoMenu.Targeting = false;
+			if (Fragile)
+			{
+				Debug.Log("Now informing the End of Day sequence that Student # " + Student.StudentID + " should become a fragile mind-broken slave tomorrow.");
+				Yandere.Police.EndOfDay.FragileSlave = Student.StudentID;
+			}
 			Object.Destroy(base.gameObject);
 		}
 	}

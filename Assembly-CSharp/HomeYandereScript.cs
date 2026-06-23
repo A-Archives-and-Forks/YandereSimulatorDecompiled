@@ -471,6 +471,7 @@ public class HomeYandereScript : MonoBehaviour
 			AlphabetID++;
 			if (AlphabetID == Letter.Length)
 			{
+				GameGlobals.Anniversary = false;
 				GameGlobals.AlphabetMode = true;
 				StudentGlobals.MemorialStudents = 0;
 				for (int i = 1; i < 101; i++)

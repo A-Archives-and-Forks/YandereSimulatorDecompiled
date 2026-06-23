@@ -60,6 +60,8 @@ public class KokonaTutorialScript : MonoBehaviour
 
 	public GameObject MaskingTape;
 
+	public GameObject Blocker;
+
 	public GameObject[] TutorialSets;
 
 	public GameObject[] TutorialWall;
@@ -169,8 +171,9 @@ public class KokonaTutorialScript : MonoBehaviour
 		else
 		{
 			Window.gameObject.SetActive(value: true);
-			Yandere.StudentManager.Atmosphere = 1f;
-			Yandere.StudentManager.SetAtmosphere();
+			StudentManager.Atmosphere = 1f;
+			StudentManager.SetAtmosphere();
+			StudentManager.PlazaOccluder.open = true;
 			EightiesTutorialGraphics.SetActive(value: false);
 			GameGlobals.EightiesTutorial = false;
 			GameGlobals.Eighties = false;
@@ -226,6 +229,7 @@ public class KokonaTutorialScript : MonoBehaviour
 			RatPoison.gameObject.SetActive(value: false);
 			Sedative.gameObject.SetActive(value: false);
 			Incinerator.Contents = 0;
+			Blocker.SetActive(value: true);
 			CarBattery.Broken = false;
 			CarBattery.Smoke.Clear();
 			CarBattery.Smoke.Stop();
@@ -577,6 +581,11 @@ public class KokonaTutorialScript : MonoBehaviour
 		}
 		else if (Phase == 3)
 		{
+			if (NewIntro && StudentManager.Students[30].CharacterAnimation["f02_talking_02"].time >= StudentManager.Students[30].CharacterAnimation["f02_talking_02"].length * 0.999f)
+			{
+				StudentManager.Students[30].CharacterAnimation.Stop("f02_talking_02");
+				StudentManager.Students[30].CharacterAnimation.Play("f02_talking_02");
+			}
 			if (Input.GetKey("down"))
 			{
 				DownTimer += Time.deltaTime;
@@ -1585,6 +1594,7 @@ public class KokonaTutorialScript : MonoBehaviour
 			{
 				if (Yandere.Inventory.String && Yandere.Inventory.MaskingTape && WeaponManager.Weapons[0].transform.parent != null)
 				{
+					Blocker.SetActive(value: false);
 					TutorialPhase++;
 					PlayKokonaVoice();
 				}
@@ -1699,6 +1709,7 @@ public class KokonaTutorialScript : MonoBehaviour
 			Yandere.RightFootprintSpawner.Bloodiness = 0;
 			Yandere.LeftFootprintSpawner.Bloodiness = 0;
 			Yandere.RPGCamera.enabled = false;
+			Yandere.Zoom.TargetZoom = 0f;
 			WeaponManager.Weapons[0].Undroppable = false;
 			if (Yandere.Armed)
 			{
@@ -1757,7 +1768,6 @@ public class KokonaTutorialScript : MonoBehaviour
 		}
 		if (Gamepad.current != null && Gamepad.current.GetType() != LastGamepadType)
 		{
-			Debug.Log("Kokona tutorial acknowledges that we just switched gamepads!");
 			if (Gamepad.current is DualShockGamepad)
 			{
 				UseSonyInputs();

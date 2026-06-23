@@ -200,15 +200,18 @@ public class TranqDetectorScript : MonoBehaviour
 		}
 		Debug.Log("Performing garrote attack.");
 		Yandere.AttackManager.Stealth = true;
-		if (Yandere.TargetStudent.Male)
+		if (!GameGlobals.HideKillingAnims)
 		{
-			MyAudioSource.clip = MaleGarroteClips[Random.Range(0, MaleGarroteClips.Length)];
+			if (Yandere.TargetStudent.Male)
+			{
+				MyAudioSource.clip = MaleGarroteClips[Random.Range(0, MaleGarroteClips.Length)];
+			}
+			else
+			{
+				MyAudioSource.clip = FemaleGarroteClips[Random.Range(0, FemaleGarroteClips.Length)];
+			}
+			MyAudioSource.Play();
 		}
-		else
-		{
-			MyAudioSource.clip = FemaleGarroteClips[Random.Range(0, FemaleGarroteClips.Length)];
-		}
-		MyAudioSource.Play();
 		base.enabled = true;
 	}
 

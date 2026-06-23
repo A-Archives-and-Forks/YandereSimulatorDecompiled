@@ -8,6 +8,8 @@ public class TitleSponsorScript : MonoBehaviour
 
 	public PromptBarScript PromptBar;
 
+	public Texture[] SponsorLogos;
+
 	public string[] SponsorURLs;
 
 	public string[] Sponsors;
@@ -26,11 +28,13 @@ public class TitleSponsorScript : MonoBehaviour
 
 	private int Row;
 
-	public UISprite BlackSprite;
+	public UITexture[] SponsorLogoSlots;
 
 	public UISprite[] RedSprites;
 
 	public UILabel[] Labels;
+
+	public UISprite BlackSprite;
 
 	private void Start()
 	{
@@ -38,6 +42,10 @@ public class TitleSponsorScript : MonoBehaviour
 		if (GameGlobals.LoveSick)
 		{
 			TurnLoveSick();
+		}
+		for (int i = 0; i < SponsorLogos.Length; i++)
+		{
+			SponsorLogoSlots[i].mainTexture = SponsorLogos[i];
 		}
 	}
 

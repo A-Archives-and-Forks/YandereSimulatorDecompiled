@@ -144,6 +144,8 @@ public class EndOfDayScript : MonoBehaviour
 
 	public int FragileTarget;
 
+	public int FragileSlave;
+
 	public int EyeWitnesses;
 
 	public int NewFriends;
@@ -816,6 +818,15 @@ public class EndOfDayScript : MonoBehaviour
 							weaponScript.AlreadyExamined = true;
 							MurderWeapon = weaponScript;
 							WeaponID = ID;
+							if (weaponScript.ScytheParts.Length == 3)
+							{
+								Debug.Log("The specific weapon is a scythe.");
+								weaponScript.AnimTimer = 5f;
+								weaponScript.Animate = true;
+								weaponScript.TargetRotation[0] = new Vector3(90f, -3.254547f, 0f);
+								weaponScript.TargetRotation[1] = new Vector3(0f, 0f, -7.877716f);
+								weaponScript.TargetRotation[2] = new Vector3(0f, 0f, 100.2056f);
+							}
 						}
 						else
 						{
@@ -865,6 +876,7 @@ public class EndOfDayScript : MonoBehaviour
 			MurderWeapon.transform.parent = base.transform;
 			MurderWeapon.transform.localPosition = new Vector3(0.6f, 1.4f, -1.5f);
 			MurderWeapon.transform.localEulerAngles = new Vector3(-45f, 90f, -90f);
+			MurderWeapon.transform.localScale = new Vector3(1f, 1f, 1f);
 			MurderWeapon.MyRigidbody.useGravity = false;
 			MurderWeapon.Rotate = true;
 		}
@@ -1494,7 +1506,6 @@ public class EndOfDayScript : MonoBehaviour
 		}
 		else if (Phase == 17)
 		{
-			Debug.Log("Phase 17 - checking whether or not any clubs need to be shut down.");
 			ClubLimit = ClubArray.Length;
 			if (!GameGlobals.Eighties)
 			{
@@ -1511,7 +1522,6 @@ public class EndOfDayScript : MonoBehaviour
 				}
 				if (!ClubGlobals.GetClubClosed(ClubArray[ClubID]))
 				{
-					Debug.Log("Right now, we're checking the " + ClubNames[ClubID].ToString() + ".");
 					ClubManager.CheckClub(ClubArray[ClubID]);
 					if (ClubManager.ClubMembers < 5)
 					{
@@ -1702,6 +1712,7 @@ public class EndOfDayScript : MonoBehaviour
 		}
 		else if (Phase == 21)
 		{
+			Debug.Log("The EoD sequence is now checking the rival's reputation.");
 			Rival = StudentManager.Students[StudentManager.RivalID];
 			if (ArticleID == 2)
 			{
@@ -1710,6 +1721,7 @@ public class EndOfDayScript : MonoBehaviour
 			}
 			if (Rival != null && Rival.Alive && !Rival.Tranquil && StudentManager.StudentReps[StudentManager.RivalID] <= -100f)
 			{
+				Debug.Log("The rival is not null, the rival is alive, and the rival's reputation is below -100.");
 				Rival.gameObject.SetActive(value: true);
 				Rival.transform.parent = base.transform;
 				Rival.transform.localPosition = new Vector3(0f, 0f, 0f);
@@ -2720,6 +2732,12 @@ public class EndOfDayScript : MonoBehaviour
 				Debug.Log("Going to the Calendar Scene now...");
 				SceneManager.LoadScene("CalendarScene");
 			}
+			if (TranqCase.VictimID > 10 && TranqCase.VictimID < DateGlobals.Week + 10)
+			{
+				Debug.Log("A previous rival was kidnapped today.");
+				GameGlobals.SetSpecificEliminations(TranqCase.VictimID - 10, 12);
+				GameGlobals.SetRivalEliminations(TranqCase.VictimID - 10, 14);
+			}
 		}
 		Police.KillStudents();
 		if (Dumpster.StudentToGoMissing > 0)
@@ -2742,7 +2760,7 @@ public class EndOfDayScript : MonoBehaviour
 		if (FragileTarget > 0)
 		{
 			StudentGlobals.FragileTarget = FragileTarget;
-			StudentGlobals.FragileSlave = 5;
+			StudentGlobals.FragileSlave = FragileSlave;
 		}
 		if (StudentManager.ReactedToGameLeader)
 		{
@@ -3052,6 +3070,7 @@ public class EndOfDayScript : MonoBehaviour
 		{
 			GameGlobals.WhipGameUnlocked = true;
 		}
+		GameGlobals.Anniversary = false;
 	}
 
 	private void DisableThings(StudentScript TargetStudent)
@@ -3275,6 +3294,7 @@ public class EndOfDayScript : MonoBehaviour
 		Debug.Log("The elimination information for Rival #" + RivalID + " is now being updated.");
 		if (Rival.DeathType == DeathType.Burning)
 		{
+			Debug.Log("She was burned to death.");
 			GameGlobals.SetSpecificEliminations(RivalID, 5);
 		}
 		else if (Rival.DeathType == DeathType.Electrocution)
@@ -3316,6 +3336,11 @@ public class EndOfDayScript : MonoBehaviour
 		else if (Rival.DeathType == DeathType.Weapon)
 		{
 			Debug.Log("Was killed by a weapon.");
+			GameGlobals.SetSpecificEliminations(RivalID, 1);
+		}
+		else if (Rival.DeathType == DeathType.EasterEgg)
+		{
+			Debug.Log("Oh, it was a fucking easter egg. Uhhhhh. Setting it to ''Weapon.''");
 			GameGlobals.SetSpecificEliminations(RivalID, 1);
 		}
 		else

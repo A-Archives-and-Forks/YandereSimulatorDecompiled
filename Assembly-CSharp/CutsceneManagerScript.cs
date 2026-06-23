@@ -39,7 +39,6 @@ public class CutsceneManagerScript : MonoBehaviour
 		bool flag = false;
 		if (!GameGlobals.Eighties && DateGlobals.Week == 2)
 		{
-			Debug.Log("Amai's week. There should never be a scene where the counselor checks Amai's desk.");
 			flag = true;
 		}
 		AudioSource component = GetComponent<AudioSource>();

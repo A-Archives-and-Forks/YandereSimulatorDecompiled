@@ -5,6 +5,8 @@ public class TaskKittenScript : MonoBehaviour
 {
 	public Transform TargetDestination;
 
+	public Transform OriginalParent;
+
 	public YandereScript Yandere;
 
 	public AIPath Pathfinding;
@@ -12,6 +14,8 @@ public class TaskKittenScript : MonoBehaviour
 	public Animation Anim;
 
 	public bool RememberPosition;
+
+	public bool Advice;
 
 	public bool Caught;
 
@@ -29,23 +33,36 @@ public class TaskKittenScript : MonoBehaviour
 
 	private void Update()
 	{
-		if (Pathfinding.speed == 0f)
+		if (base.transform.parent == null || base.transform.parent == OriginalParent)
 		{
-			Quaternion b = Quaternion.LookRotation(Yandere.transform.position - base.transform.position);
-			base.transform.rotation = Quaternion.Slerp(base.transform.rotation, b, 10f * Time.deltaTime);
-			Anim.CrossFade("B_idle");
-			if (Vector3.Distance(base.transform.position, Yandere.transform.position) < 5f)
+			if (Caught)
 			{
-				PickDestination();
+				return;
+			}
+			if (Pathfinding.speed == 0f)
+			{
+				Quaternion b = Quaternion.LookRotation(Yandere.transform.position - base.transform.position);
+				base.transform.rotation = Quaternion.Slerp(base.transform.rotation, b, 10f * Time.deltaTime);
+				Anim.CrossFade("B_idle");
+				if (Vector3.Distance(base.transform.position, Yandere.transform.position) < 5f)
+				{
+					PickDestination();
+				}
+			}
+			else
+			{
+				Anim.CrossFade("A_run");
+				if (Vector3.Distance(base.transform.position, TargetDestination.position) < 1f)
+				{
+					Stop();
+				}
 			}
 		}
-		else
+		else if (!Advice && Yandere.StudentManager.Students[Yandere.StudentManager.RivalID] != null && Vector3.Distance(Yandere.transform.position, Yandere.StudentManager.Students[Yandere.StudentManager.RivalID].transform.position) < 1f)
 		{
-			Anim.CrossFade("A_run");
-			if (Vector3.Distance(base.transform.position, TargetDestination.position) < 1f)
-			{
-				Stop();
-			}
+			Yandere.NotificationManager.CustomText = "Put the cat down next to her.";
+			Yandere.NotificationManager.DisplayNotification(NotificationType.Custom);
+			Advice = true;
 		}
 	}
 

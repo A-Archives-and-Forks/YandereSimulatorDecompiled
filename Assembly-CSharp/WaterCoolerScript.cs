@@ -65,7 +65,7 @@ public class WaterCoolerScript : MonoBehaviour
 		{
 			if (Yandere.PickUp != null)
 			{
-				if ((Yandere.PickUp.Bucket != null && Yandere.PickUp.Bucket.Full) || Yandere.PickUp.BrownPaint || Yandere.PickUp.JerryCan)
+				if ((Yandere.PickUp.Bucket != null && Yandere.PickUp.Bucket.Full) || Yandere.PickUp.BrownPaint || (Yandere.PickUp.JerryCan && !Yandere.StudentManager.KokonaTutorial))
 				{
 					Prompt.HideButton[0] = false;
 					if (Prompt.Circle[0].fillAmount == 0f)

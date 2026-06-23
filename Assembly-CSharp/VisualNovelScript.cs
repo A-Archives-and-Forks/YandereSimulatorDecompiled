@@ -69,6 +69,8 @@ public class VisualNovelScript : MonoBehaviour
 
 	public AudioClip[] VoiceLines;
 
+	public AudioClip[] AltVoiceLines;
+
 	public Renderer Backdrop;
 
 	public float ChangeTimer;
@@ -236,6 +238,7 @@ public class VisualNovelScript : MonoBehaviour
 			Names = BasementTapeData[GameGlobals.BasementTape].Names;
 			Colors = BasementTapeData[GameGlobals.BasementTape].Colors;
 			GraphicIDs = BasementTapeData[GameGlobals.BasementTape].GraphicIDs;
+			VoiceLines = BasementTapeData[GameGlobals.BasementTape].VoiceLines;
 			Jukebox.clip = BasementTapeData[GameGlobals.BasementTape].BGM;
 			DialogueLabel.transform.localPosition = new Vector3(0f, -350f, 0f);
 			MaleCharacter.gameObject.SetActive(value: false);
@@ -270,6 +273,7 @@ public class VisualNovelScript : MonoBehaviour
 				CurrentIdleAnim = KizanaMeetData.CurrentIdleAnim;
 				Names = KizanaMeetData.Names;
 				Colors = KizanaMeetData.Colors;
+				VoiceLines = KizanaMeetData.VoiceLines;
 				Backdrop.material.mainTexture = KizanaMeetData.Backdrop;
 				Jukebox.clip = KizanaMeetData.BGM;
 				Week = 2;
@@ -414,7 +418,14 @@ public class VisualNovelScript : MonoBehaviour
 					Jukebox.Play();
 				}
 				Darkness.alpha = Mathf.MoveTowards(Darkness.alpha, 0f, Time.deltaTime);
-				Jukebox.volume = 1f - Darkness.alpha;
+				if (VoiceLines.Length != 0)
+				{
+					Jukebox.volume = (1f - Darkness.alpha) * 0.2f;
+				}
+				else
+				{
+					Jukebox.volume = 1f - Darkness.alpha;
+				}
 				if (Darkness.alpha < 0.0001f)
 				{
 					VisualNovelPanel.alpha = Mathf.MoveTowards(VisualNovelPanel.alpha, 1f, Time.deltaTime);
@@ -429,6 +440,11 @@ public class VisualNovelScript : MonoBehaviour
 							if (CurrentIdleAnim.Length > 3)
 							{
 								CharAnim[3].CrossFade(CurrentIdleAnim[3], 1f);
+							}
+							if (ID == 1 && VoiceLines.Length != 0)
+							{
+								VoiceAudioSource.clip = VoiceLines[ID];
+								VoiceAudioSource.Play();
 							}
 							CharAnim[Speaker[ID]].CrossFade(Anims[ID], 1f);
 						}
@@ -453,6 +469,13 @@ public class VisualNovelScript : MonoBehaviour
 									Dialogue[j] = AltDialogue[j];
 									Speaker[j] = AltSpeaker[j];
 									Anims[j] = AltAnims[j];
+								}
+								for (int k = 0; k < VoiceLines.Length; k++)
+								{
+									if (AltVoiceLines[k] != null)
+									{
+										VoiceLines[k] = AltVoiceLines[k];
+									}
 								}
 								ShowOption = false;
 								Betrayed = true;
@@ -803,7 +826,7 @@ public class VisualNovelScript : MonoBehaviour
 		NameLabel.gradientBottom = Colors[Speaker[ID]];
 		Background.color = Colors[Speaker[ID]];
 		NameLabel.text = Names[Speaker[ID]];
-		if (VoiceLines.Length != 0)
+		if (ID > 1 && VoiceLines.Length != 0)
 		{
 			VoiceAudioSource.clip = VoiceLines[ID];
 			VoiceAudioSource.Play();

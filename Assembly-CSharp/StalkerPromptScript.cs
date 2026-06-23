@@ -17,6 +17,8 @@ public class StalkerPromptScript : MonoBehaviour
 
 	public FamilyVoiceScript FatherVoice;
 
+	public TownManagerScript TownManager;
+
 	public StalkerYandereScript Yandere;
 
 	public SmoothLookAtScript Cat;
@@ -92,6 +94,8 @@ public class StalkerPromptScript : MonoBehaviour
 	public bool Slide;
 
 	public bool Open;
+
+	public bool Town;
 
 	public float TargetRotation = 5.5f;
 
@@ -395,6 +399,17 @@ public class StalkerPromptScript : MonoBehaviour
 							FadeOut = true;
 						}
 					}
+					else if (Town)
+					{
+						Yandere.MyAnimation.CrossFade(Yandere.IdleAnim);
+						Yandere.CanMove = false;
+						TownManager.DestinationID = ID;
+						TownManager.FadeIn = false;
+						if (ID == 2)
+						{
+							TownManager.Darkness.color = new Color(0f, 0f, 0f, 0f);
+						}
+					}
 					else if (ID == 1)
 					{
 						Yandere.MyAnimation.CrossFade("f02_climbTrellis_00");
@@ -529,7 +544,7 @@ public class StalkerPromptScript : MonoBehaviour
 		}
 		else
 		{
-			if (!Eighties && !Bakery && (ID == 1 || ID == 6) && Yandere.transform.position.x > -11f && Yandere.transform.position.x < 11f && Yandere.transform.position.z > -11f && Yandere.transform.position.z < 11f)
+			if (!Eighties && !Bakery && !Town && (ID == 1 || ID == 6) && Yandere.transform.position.x > -11f && Yandere.transform.position.x < 11f && Yandere.transform.position.z > -11f && Yandere.transform.position.z < 11f)
 			{
 				if (ID == 1)
 				{

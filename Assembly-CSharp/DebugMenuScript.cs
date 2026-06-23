@@ -179,8 +179,8 @@ public class DebugMenuScript : MonoBehaviour
 				}
 				else if (Input.GetKeyDown(KeyCode.F9))
 				{
-					GameGlobals.CensorKillingAnims = !GameGlobals.CensorKillingAnims;
-					Yandere.AttackManager.Censor = !Yandere.AttackManager.Censor;
+					GameGlobals.BlurKillingAnims = !GameGlobals.BlurKillingAnims;
+					Yandere.AttackManager.Blur = !Yandere.AttackManager.Blur;
 					Window.SetActive(value: false);
 				}
 				else if (Input.GetKeyDown(KeyCode.F10))

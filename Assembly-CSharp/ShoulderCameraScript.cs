@@ -266,6 +266,10 @@ public class ShoulderCameraScript : MonoBehaviour
 					base.transform.position = NoticedPOV.position;
 					NoticedTimer = NoticedLimit;
 					Phase = 2;
+					Yandere.RightRedEye.material.color = new Color(1f, 1f, 1f, 0f);
+					Yandere.LeftRedEye.material.color = new Color(1f, 1f, 1f, 0f);
+					Yandere.RightYandereEye.material.color = new Color(1f, 1f, 1f, 0f);
+					Yandere.LeftYandereEye.material.color = new Color(1f, 1f, 1f, 0f);
 					if (GoingToCounselor)
 					{
 						Yandere.CharacterAnimation.CrossFade("f02_disappointed_00");
@@ -297,6 +301,10 @@ public class ShoulderCameraScript : MonoBehaviour
 				}
 				NoticedPOV.Translate(Vector3.forward * Time.deltaTime * 0.075f);
 				Yandere.CameraEffects.UpdateDOF(0.75f);
+				Yandere.RightRedEye.material.color = new Color(1f, 1f, 1f, 0f);
+				Yandere.LeftRedEye.material.color = new Color(1f, 1f, 1f, 0f);
+				Yandere.RightYandereEye.material.color = new Color(1f, 1f, 1f, 0f);
+				Yandere.LeftYandereEye.material.color = new Color(1f, 1f, 1f, 0f);
 				if (GoingToCounselor)
 				{
 					Yandere.CharacterAnimation.CrossFade("f02_disappointed_00");

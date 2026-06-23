@@ -26,6 +26,8 @@ public class GenocideEndingScript : MonoBehaviour
 
 	public AudioClip OsanaClip;
 
+	public AudioClip AmaiClip;
+
 	public AudioClip Slam;
 
 	public string[] EightiesText;
@@ -76,6 +78,8 @@ public class GenocideEndingScript : MonoBehaviour
 
 	public GameObject SenpaiJaw;
 
+	public GameObject Genocide;
+
 	public GameObject Plaza;
 
 	public GameObject Book;
@@ -103,6 +107,7 @@ public class GenocideEndingScript : MonoBehaviour
 			SkipPanel.gameObject.SetActive(value: true);
 			SkipPanel.alpha = 0f;
 			Debug.Log("We're here for the end of 1980s Mode.");
+			Genocide.SetActive(value: false);
 			SpeechText = EightiesText;
 			Subtitle.text = SpeechText[1];
 			SpeechClip = EightiesSpeechClip;
@@ -126,6 +131,7 @@ public class GenocideEndingScript : MonoBehaviour
 			Debug.Log("We're here for a Betray cutscene.");
 			Osana.GetComponent<StudentScript>().CharacterAnimation["f02_kidnapTorture_01"].speed = 0.8f;
 			Osana.GetComponent<CosmeticScript>().SetFemaleUniform();
+			Genocide.gameObject.SetActive(value: false);
 			SenpaiRopes.SetActive(value: false);
 			OsanaRopes.SetActive(value: true);
 			Senpai.transform.parent.gameObject.SetActive(value: false);
@@ -154,10 +160,11 @@ public class GenocideEndingScript : MonoBehaviour
 			}
 			else if (DateGlobals.Week == 2)
 			{
-				SpeechText[10] = "...huh...?!...am...am I...tied to a chair...?!...no...no, this can't be happening...Yan-chan?! Yan-chan, did you do this?! Why?! Please, let me go...let me go!";
+				SpeechText[10] = "...ugh...what happened...? ...uh...hello? Is anyone there? I...I can't see anything. Where am I? What's going on?! Yan-chan? Yan-chan, are you there?!";
 				RivalHair[DateGlobals.Week].SetActive(value: true);
 				RivalHair[0].SetActive(value: false);
-				MyAudio.volume = 0f;
+				MyAudio.clip = AmaiClip;
+				MyAudio.Play();
 			}
 			Subtitle.text = SpeechText[10];
 			return;

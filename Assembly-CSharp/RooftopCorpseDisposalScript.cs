@@ -10,6 +10,8 @@ public class RooftopCorpseDisposalScript : MonoBehaviour
 
 	public Transform DropSpot;
 
+	public bool EastWest;
+
 	private void Start()
 	{
 		if (SchoolGlobals.RoofFence)
@@ -20,35 +22,49 @@ public class RooftopCorpseDisposalScript : MonoBehaviour
 
 	private void Update()
 	{
-		if (MyCollider.bounds.Contains(Yandere.transform.position))
+		if (Yandere.Carrying && Yandere.Ragdoll != null)
 		{
-			if (Yandere.Ragdoll != null)
+			if (MyCollider.bounds.Contains(Yandere.transform.position))
 			{
-				if (!Yandere.Dropping)
+				if (Yandere.Dropping)
 				{
-					Prompt.enabled = true;
-					Prompt.transform.position = new Vector3(Yandere.transform.position.x, Yandere.transform.position.y + 1.66666f, Yandere.transform.position.z);
-					if (Prompt.Circle[0].fillAmount == 0f)
+					return;
+				}
+				Prompt.enabled = true;
+				Prompt.transform.position = new Vector3(Yandere.transform.position.x + 0.0001f, Yandere.transform.position.y + 1.66666f, Yandere.transform.position.z + 0.0001f);
+				if (Prompt.Circle[0].fillAmount == 0f)
+				{
+					if (EastWest)
 					{
 						DropSpot.position = new Vector3(DropSpot.position.x, DropSpot.position.y, Yandere.transform.position.z);
-						Yandere.CharacterAnimation.CrossFade(Yandere.Carrying ? "f02_carryIdleA_00" : "f02_dragIdle_00");
-						Yandere.DropSpot = DropSpot;
-						Yandere.Dropping = true;
-						Yandere.CanMove = false;
-						Prompt.Hide();
-						Prompt.enabled = false;
-						Yandere.Ragdoll.GetComponent<RagdollScript>().BloodPoolSpawner.Falling = true;
-						Yandere.Ragdoll.GetComponent<RagdollScript>().DroppedFromRooftop = true;
 					}
+					else
+					{
+						DropSpot.position = new Vector3(Yandere.transform.position.x, DropSpot.position.y, DropSpot.position.z);
+					}
+					Yandere.CharacterAnimation.CrossFade("f02_carryIdleA_00");
+					Yandere.DropSpot = DropSpot;
+					Yandere.Dropping = true;
+					Yandere.CanMove = false;
+					HidePrompt();
+					Yandere.Ragdoll.GetComponent<RagdollScript>().BloodPoolSpawner.Falling = true;
+					Yandere.Ragdoll.GetComponent<RagdollScript>().DroppedFromRooftop = true;
 				}
 			}
 			else
 			{
-				Prompt.Hide();
-				Prompt.enabled = false;
+				HidePrompt();
 			}
 		}
 		else
+		{
+			HidePrompt();
+		}
+	}
+
+	private void HidePrompt()
+	{
+		if (Prompt.enabled)
 		{
 			Prompt.Hide();
 			Prompt.enabled = false;

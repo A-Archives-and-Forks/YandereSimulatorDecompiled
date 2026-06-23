@@ -189,6 +189,7 @@ public class BusStopScript : MonoBehaviour
 	{
 		Debug.Log("The game believes that we are currently in Week #" + DateGlobals.Week);
 		Debug.Log("GameGlobals.SenpaiMeetsNewRival is: " + GameGlobals.SenpaiMeetsNewRival);
+		SchemeGlobals.SetServicePurchased(10, value: false);
 		Theater.SetActive(value: false);
 		Renderer.material.color = new Color(0f, 0f, 0f, 1f);
 		base.transform.position = new Vector3(0.375f, 0.5f, 2.5f);

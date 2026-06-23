@@ -145,8 +145,8 @@ public class VoidGoddessScript : MonoBehaviour
 		Column = 0;
 		Row = 0;
 		UpdatePortraits();
-		AssignTVHeads();
 		Initialized = true;
+		AssignTVHeads();
 	}
 
 	private void Update()
@@ -481,6 +481,10 @@ public class VoidGoddessScript : MonoBehaviour
 
 	public void AssignTVHeads()
 	{
+		if (!Initialized)
+		{
+			Start();
+		}
 		for (ID = 1; ID < 98; ID++)
 		{
 			if (Portraits[ID] != null && StudentManager.Students[ID] != null && StudentManager.Students[ID].gameObject.activeInHierarchy)

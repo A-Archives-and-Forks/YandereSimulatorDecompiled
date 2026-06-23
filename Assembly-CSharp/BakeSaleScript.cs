@@ -114,7 +114,7 @@ public class BakeSaleScript : MonoBehaviour
 			{
 				IncreaseID();
 			}
-			if (StudentManager.Students[ID].Routine && StudentManager.Students[ID].Indoors && !StudentManager.Students[ID].Slave && !StudentManager.Students[ID].Bullied && !StudentManager.Students[ID].Meeting && !StudentManager.Students[ID].ClubAttire && !StudentManager.Students[ID].Distracted && !StudentManager.Students[ID].DressCode && !StudentManager.Students[ID].Investigating && StudentManager.Students[ID].Schoolwear == 1 && StudentManager.Students[ID].ClubActivityPhase < 16 && StudentManager.Students[ID].Club != ClubType.Delinquent)
+			if (StudentManager.Students[ID].Routine && StudentManager.Students[ID].Indoors && !StudentManager.Students[ID].Slave && !StudentManager.Students[ID].InEvent && !StudentManager.Students[ID].Bullied && !StudentManager.Students[ID].Meeting && !StudentManager.Students[ID].DressCode && !StudentManager.Students[ID].ClubAttire && !StudentManager.Students[ID].Distracted && !StudentManager.Students[ID].Investigating && StudentManager.Students[ID].Schoolwear == 1 && StudentManager.Students[ID].ClubActivityPhase < 16 && StudentManager.Students[ID].Club != ClubType.Delinquent && StudentManager.Students[ID].CurrentAction != StudentActionType.PrepareFoodForever)
 			{
 				Debug.Log(StudentManager.Students[ID].Name + " has decided to go to the bake sale.");
 				Timer = 0f;

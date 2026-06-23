@@ -388,6 +388,11 @@ public class WeaponMenuScript : MonoBehaviour
 			}
 			AudioSource.PlayClipAtPoint(Yandere.EquippedWeapon.EquipClip, Camera.main.transform.position);
 			Show = false;
+			if (Yandere.WeaponManager.CensorWeapons)
+			{
+				Yandere.EquippedWeapon.MyRenderer.enabled = false;
+				Yandere.Bouquet.SetActive(value: true);
+			}
 		}
 		else
 		{

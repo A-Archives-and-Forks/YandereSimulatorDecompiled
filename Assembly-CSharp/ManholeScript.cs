@@ -24,6 +24,10 @@ public class ManholeScript : MonoBehaviour
 
 	public int[] VictimList;
 
+	public int Limbs;
+
+	public int[] LimbList;
+
 	private void Update()
 	{
 		if (!Open)
@@ -172,6 +176,11 @@ public class ManholeScript : MonoBehaviour
 			if (pickUp.ConcealedBodyPart)
 			{
 				Prompt.Yandere.Police.BodyParts--;
+			}
+			if (pickUp.BodyPart != null)
+			{
+				LimbList[Limbs] = pickUp.BodyPart.StudentID;
+				Limbs++;
 			}
 			Object.Destroy(pickUp.gameObject);
 		}

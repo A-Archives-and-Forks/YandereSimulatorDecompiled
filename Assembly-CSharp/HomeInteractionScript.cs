@@ -31,6 +31,8 @@ public class HomeInteractionScript : MonoBehaviour
 
 	public float Timer;
 
+	public bool DisableInModernDay;
+
 	public bool DisableInEighties;
 
 	public bool SlideInOut;
@@ -53,6 +55,13 @@ public class HomeInteractionScript : MonoBehaviour
 			}
 		}
 		if ((DisableInEighties && GameGlobals.Eighties) || (ID == 7 && GameGlobals.VtuberID > 0))
+		{
+			base.gameObject.SetActive(value: false);
+			Label.alpha = 0f;
+			Label.enabled = false;
+			base.enabled = false;
+		}
+		if (DisableInModernDay && !GameGlobals.Eighties)
 		{
 			base.gameObject.SetActive(value: false);
 			Label.alpha = 0f;
@@ -141,6 +150,26 @@ public class HomeInteractionScript : MonoBehaviour
 				OriginalRot = Yandere.transform.eulerAngles;
 				Yandere.transform.position = new Vector3(0f, 200f, 0f);
 				Yandere.transform.eulerAngles = new Vector3(0f, 180f, 0f);
+			}
+			else if (ID == 8)
+			{
+				Yandere.HomeCamera.Triggers[1].gameObject.transform.position = new Vector3(-2.31f, 0.5f, -1.8525f);
+				Yandere.HomeCamera.Triggers[1].gameObject.GetComponent<BoxCollider>().size = new Vector3(1f, 1f, 1f);
+				Yandere.HomeCamera.Triggers[1].FadeIn = false;
+				Yandere.HomeCamera.Triggers[1].Label.transform.localPosition = new Vector3(-2510f, 1500f, -1865f);
+				Yandere.HomeCamera.Triggers[1].Label.transform.localEulerAngles = new Vector3(0f, -90f, 0f);
+				Yandere.HomeCamera.Destinations[1].transform.localPosition = new Vector3(0f, 1f, 0f);
+				Yandere.HomeCamera.Targets[1].transform.localPosition = new Vector3(-2.561f, 1f, -1.86f);
+				Yandere.HomeCamera.HomeExit.HomeBringItem.HardwareButton.SetActive(value: true);
+				Debug.Log("Attempting to set Homecamera.ID to 1 here.");
+				Yandere.HomeCamera.OutOfRoom = false;
+				Yandere.HomeCamera.HomeExit.ID = 6;
+				Yandere.HomeCamera.ID = 1;
+				Yandere.CanMove = false;
+				Exit.HomeDarkness.FadeOut = true;
+				Exit.HomeCamera.enabled = false;
+				Exit.HomeWindow.Show = false;
+				Exit.enabled = true;
 			}
 		}
 		if (Move)

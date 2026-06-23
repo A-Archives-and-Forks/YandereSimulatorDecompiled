@@ -68,6 +68,10 @@ public class PassTimeBookScript : MonoBehaviour
 						if (Yandere.StudentManager.Students[i] != null && Yandere.StudentManager.Students[i].Alive && !Yandere.StudentManager.Students[i].Tranquil && !Yandere.StudentManager.Students[i].Sedated && Yandere.StudentManager.Students[i].CurrentDestination != null)
 						{
 							Yandere.StudentManager.Students[i].transform.position = Yandere.StudentManager.Students[i].CurrentDestination.position;
+							if (Yandere.StudentManager.Students[i].CurrentAction == StudentActionType.Sunbathe && Yandere.StudentManager.Students[i].Schoolwear == 2 && Yandere.StudentManager.PoolClosed)
+							{
+								Yandere.StudentManager.Students[i].transform.position = new Vector3(-11f, 4f, 72f);
+							}
 						}
 					}
 					Physics.SyncTransforms();

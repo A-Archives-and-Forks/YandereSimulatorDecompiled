@@ -44,8 +44,6 @@ public class WeaponScript : MonoBehaviour
 
 	public GameObject WeaponTrail;
 
-	public GameObject ExtraBlade;
-
 	public AudioSource FireAudio;
 
 	public Rigidbody MyRigidbody;
@@ -339,73 +337,69 @@ public class WeaponScript : MonoBehaviour
 
 	private void Update()
 	{
-		if (WeaponID == 16 && Yandere.EquippedWeapon == this && Input.GetButtonDown(InputNames.Xbox_RB) && ExtraBlade != null)
+		if (Yandere.EquippedWeapon == this)
 		{
-			ExtraBlade.SetActive(!ExtraBlade.activeInHierarchy);
-		}
-		if (Dismembering)
-		{
-			_ = Chainsaw;
-			if (DismemberPhase < 4)
+			if (Dismembering)
 			{
-				if (MyAudio.time > 0.75f)
+				_ = Chainsaw;
+				if (DismemberPhase < 4)
 				{
-					if (Speed < 36f)
+					if (MyAudio.time > 0.75f)
 					{
-						Speed += Time.deltaTime + 10f;
+						if (Speed < 36f)
+						{
+							Speed += Time.deltaTime + 10f;
+						}
+						if (!Chainsaw)
+						{
+							Rotation += Speed;
+							Blade.localEulerAngles = new Vector3(Rotation, Blade.localEulerAngles.y, Blade.localEulerAngles.z);
+						}
+						else
+						{
+							ChainsawTeeth.SetBlendShapeWeight(0, Random.Range(0, 101));
+						}
 					}
+					if (MyAudio.time > SoundTime[DismemberPhase])
+					{
+						Yandere.Sanity -= ((PlayerGlobals.PantiesEquipped == 10) ? 2.5f : 5f) * Yandere.Numbness;
+						Yandere.Bloodiness += 25f;
+						ShortBloodSpray[0].Play();
+						ShortBloodSpray[1].Play();
+						if (!Blood.enabled)
+						{
+							Yandere.StainWeapon();
+						}
+						DismemberPhase++;
+						if (Yandere.Gloved && !Yandere.Gloves.Blood.enabled)
+						{
+							Yandere.Gloves.Blood.material.SetColor("_TintColor", new Color(0.25f, 0.25f, 0.25f, 1f));
+							Yandere.Gloves.Blood.material.mainTexture = Yandere.BloodTextures[5];
+							Yandere.Gloves.PickUp.Evidence = true;
+							Yandere.Gloves.Blood.enabled = true;
+							Yandere.GloveBlood = 1;
+							Yandere.Police.BloodyClothing++;
+						}
+					}
+				}
+				else
+				{
 					if (!Chainsaw)
 					{
-						Rotation += Speed;
+						Rotation = Mathf.Lerp(Rotation, 0f, Time.deltaTime * 2f);
 						Blade.localEulerAngles = new Vector3(Rotation, Blade.localEulerAngles.y, Blade.localEulerAngles.z);
 					}
-					else
+					if (!MyAudio.isPlaying)
 					{
-						ChainsawTeeth.SetBlendShapeWeight(0, Random.Range(0, 101));
-					}
-				}
-				if (MyAudio.time > SoundTime[DismemberPhase])
-				{
-					Yandere.Sanity -= ((PlayerGlobals.PantiesEquipped == 10) ? 2.5f : 5f) * Yandere.Numbness;
-					Yandere.Bloodiness += 25f;
-					ShortBloodSpray[0].Play();
-					ShortBloodSpray[1].Play();
-					if (!Blood.enabled)
-					{
-						Yandere.StainWeapon();
-					}
-					DismemberPhase++;
-					if (Yandere.Gloved && !Yandere.Gloves.Blood.enabled)
-					{
-						Yandere.Gloves.Blood.material.SetColor("_TintColor", new Color(0.25f, 0.25f, 0.25f, 1f));
-						Yandere.Gloves.Blood.material.mainTexture = Yandere.BloodTextures[5];
-						Yandere.Gloves.PickUp.Evidence = true;
-						Yandere.Gloves.Blood.enabled = true;
-						Yandere.GloveBlood = 1;
-						Yandere.Police.BloodyClothing++;
+						MyAudio.clip = OriginalClip;
+						Dismembering = false;
+						DismemberPhase = 0;
+						Rotation = 0f;
+						Speed = 0f;
 					}
 				}
 			}
-			else
-			{
-				if (!Chainsaw)
-				{
-					Rotation = Mathf.Lerp(Rotation, 0f, Time.deltaTime * 2f);
-					Blade.localEulerAngles = new Vector3(Rotation, Blade.localEulerAngles.y, Blade.localEulerAngles.z);
-				}
-				if (!MyAudio.isPlaying)
-				{
-					MyAudio.clip = OriginalClip;
-					Dismembering = false;
-					DismemberPhase = 0;
-					Rotation = 0f;
-					Speed = 0f;
-				}
-			}
-		}
-		else if (Yandere.EquippedWeapon == this)
-		{
-			if (Yandere.AttackManager.IsAttacking())
+			else if (Yandere.AttackManager.IsAttacking())
 			{
 				if (Type == WeaponType.Knife)
 				{
@@ -427,78 +421,80 @@ public class WeaponScript : MonoBehaviour
 					ChainsawTeeth.SetBlendShapeWeight(0, Random.Range(0, 101));
 				}
 			}
-		}
-		else if (!MyRigidbody.isKinematic && Yandere.Police.EndOfDay.Phase == 1)
-		{
-			if (base.transform.position.y < 0f)
+			if (Unravel)
 			{
-				Debug.Log("Allegedly, a weapon named " + Name + " just fell beneath y 0?");
-				base.transform.position = new Vector3(base.transform.position.x, 0.025f, base.transform.position.z);
-			}
-			KinematicTimer = Mathf.MoveTowards(KinematicTimer, 5f, Time.deltaTime);
-			if (KinematicTimer == 5f)
-			{
-				MyRigidbody.isKinematic = true;
-				KinematicTimer = 0f;
-			}
-			if (base.transform.position.x > -71f && base.transform.position.x < -61f && base.transform.position.z > -37.5f && base.transform.position.z < -27.5f)
-			{
-				Yandere.NotificationManager.CustomText = "The weapon has been placed nearby.";
-				Yandere.NotificationManager.DisplayNotification(NotificationType.Custom);
-				base.transform.position = new Vector3(-63f, 1f, -26.5f);
-				KinematicTimer = 0f;
-			}
-			if (base.transform.position.x > -21f && base.transform.position.x < 21f && base.transform.position.z > 100f && base.transform.position.z < 133f)
-			{
-				Yandere.NotificationManager.CustomText = "A weapon rolled to the bottom of the hill.";
-				Yandere.NotificationManager.DisplayNotification(NotificationType.Custom);
-				base.transform.position = new Vector3(0f, 0.5f, 99.5f);
-				KinematicTimer = 0f;
-			}
-			if (base.transform.position.z >= 133f && base.transform.position.y < Yandere.transform.position.y)
-			{
-				Debug.Log("Popping an object up above the ground.");
-				base.transform.position += Vector3.up;
-			}
-			if (base.transform.position.x > -46f && base.transform.position.x < -18f && base.transform.position.z > 66f && base.transform.position.z < 78f)
-			{
-				base.transform.position = new Vector3(-16f, 5f, 72f);
-				KinematicTimer = 0f;
-			}
-		}
-		if (Rotate)
-		{
-			base.transform.Rotate(Vector3.forward * Time.deltaTime * 100f);
-		}
-		if (Unravel)
-		{
-			if (Yandere.Attacking)
-			{
-				base.transform.localPosition = Vector3.Lerp(base.transform.localPosition, UnravelPosition, Time.deltaTime * 2f);
-				base.transform.localEulerAngles = UnravelRotation;
-				if (SkinnedMesh.GetBlendShapeWeight(0) < 100f)
+				if (Yandere.Attacking)
 				{
-					SkinnedMesh.SetBlendShapeWeight(0, SkinnedMesh.GetBlendShapeWeight(0) + Time.deltaTime * 200f);
-				}
-			}
-			else
-			{
-				SkinnedMesh.SetBlendShapeWeight(0, SkinnedMesh.GetBlendShapeWeight(0) - Time.deltaTime * 200f);
-				if (SkinnedMesh.GetBlendShapeWeight(0) <= 0f)
-				{
-					base.transform.localPosition = Vector3.zero;
-					base.transform.localEulerAngles = Vector3.zero;
-					if (CustomRotation != Vector3.zero)
+					base.transform.localPosition = Vector3.Lerp(base.transform.localPosition, UnravelPosition, Time.deltaTime * 2f);
+					base.transform.localEulerAngles = UnravelRotation;
+					if (SkinnedMesh.GetBlendShapeWeight(0) < 100f)
 					{
-						base.transform.localPosition = CustomRotation;
+						SkinnedMesh.SetBlendShapeWeight(0, SkinnedMesh.GetBlendShapeWeight(0) + Time.deltaTime * 200f);
 					}
-					Unravel = false;
+				}
+				else
+				{
+					SkinnedMesh.SetBlendShapeWeight(0, SkinnedMesh.GetBlendShapeWeight(0) - Time.deltaTime * 200f);
+					if (SkinnedMesh.GetBlendShapeWeight(0) <= 0f)
+					{
+						base.transform.localPosition = Vector3.zero;
+						base.transform.localEulerAngles = Vector3.zero;
+						if (CustomRotation != Vector3.zero)
+						{
+							base.transform.localPosition = CustomRotation;
+						}
+						Unravel = false;
+					}
 				}
 			}
+			if (WeaponID == 24 && Flip)
+			{
+				base.transform.localEulerAngles = new Vector3(2f, -172f, -102.5f);
+			}
 		}
-		if (WeaponID == 24 && Flip)
+		else
 		{
-			base.transform.localEulerAngles = new Vector3(2f, -172f, -102.5f);
+			if (!MyRigidbody.isKinematic && Yandere.Police.EndOfDay.Phase == 1)
+			{
+				if (base.transform.position.y < 0f)
+				{
+					base.transform.position = new Vector3(base.transform.position.x, 0.025f, base.transform.position.z);
+				}
+				KinematicTimer = Mathf.MoveTowards(KinematicTimer, 5f, Time.deltaTime);
+				if (KinematicTimer == 5f)
+				{
+					MyRigidbody.isKinematic = true;
+					KinematicTimer = 0f;
+				}
+				if (base.transform.position.x > -71f && base.transform.position.x < -61f && base.transform.position.z > -37.5f && base.transform.position.z < -27.5f)
+				{
+					Yandere.NotificationManager.CustomText = "The weapon has been placed nearby.";
+					Yandere.NotificationManager.DisplayNotification(NotificationType.Custom);
+					base.transform.position = new Vector3(-63f, 1f, -26.5f);
+					KinematicTimer = 0f;
+				}
+				if (base.transform.position.x > -21f && base.transform.position.x < 21f && base.transform.position.z > 100f && base.transform.position.z < 133f)
+				{
+					Yandere.NotificationManager.CustomText = "A weapon rolled to the bottom of the hill.";
+					Yandere.NotificationManager.DisplayNotification(NotificationType.Custom);
+					base.transform.position = new Vector3(0f, 0.5f, 99.5f);
+					KinematicTimer = 0f;
+				}
+				if (base.transform.position.z >= 133f && base.transform.position.y < Yandere.transform.position.y)
+				{
+					Debug.Log("Popping an object up above the ground.");
+					base.transform.position += Vector3.up;
+				}
+				if (base.transform.position.x > -46f && base.transform.position.x < -18f && base.transform.position.z > 66f && base.transform.position.z < 78f)
+				{
+					base.transform.position = new Vector3(-16f, 5f, 72f);
+					KinematicTimer = 0f;
+				}
+			}
+			if (Rotate)
+			{
+				base.transform.Rotate(Vector3.forward * Time.deltaTime * 100f);
+			}
 		}
 		if (Animate)
 		{
@@ -791,6 +787,11 @@ public class WeaponScript : MonoBehaviour
 			Yandere.Unequip();
 		}
 		Yandere.UpdateConcealedWeaponStatus();
+		if (Yandere.WeaponManager.CensorWeapons)
+		{
+			MyRenderer.enabled = false;
+			Yandere.Bouquet.SetActive(value: true);
+		}
 	}
 
 	public void Drop()
@@ -886,7 +887,6 @@ public class WeaponScript : MonoBehaviour
 		}
 		if (Blood.enabled)
 		{
-			Debug.Log("This weapon, " + base.gameObject.name + " is now incrementing Police.BloodyWeapons.");
 			Yandere.Police.BloodyWeapons++;
 		}
 		if (Vector3.Distance(StartingPosition, base.transform.position) > 2f && Vector3.Distance(base.transform.position, Yandere.StudentManager.WeaponBoxSpot.parent.position) > 2f)
@@ -928,6 +928,14 @@ public class WeaponScript : MonoBehaviour
 			if (SecondaryCollider != null)
 			{
 				SecondaryCollider.isTrigger = true;
+			}
+		}
+		if (Yandere.WeaponManager.CensorWeapons)
+		{
+			MyRenderer.enabled = true;
+			if (!Yandere.Armed)
+			{
+				Yandere.Bouquet.SetActive(value: false);
 			}
 		}
 	}
@@ -1046,7 +1054,6 @@ public class WeaponScript : MonoBehaviour
 
 	public void StainWithBlood()
 	{
-		Debug.Log("Now adding blood to: " + base.gameObject.name);
 		if (MyRenderer.materials.Length > 1)
 		{
 			MyRenderer.materials[0].SetFloat("_BlendAmount", 1f);
@@ -1061,7 +1068,6 @@ public class WeaponScript : MonoBehaviour
 
 	public void RemoveBlood()
 	{
-		Debug.Log("Now removing blood from: " + base.gameObject.name);
 		if (MyRenderer.materials.Length > 1)
 		{
 			MyRenderer.materials[0].SetFloat("_BlendAmount", 0f);

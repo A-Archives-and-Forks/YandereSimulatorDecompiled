@@ -179,7 +179,6 @@ public class WeekSelectScript : MonoBehaviour
 						else if (GameGlobals.GetSpecificEliminations(i) == 4)
 						{
 							Debug.Log("Rival #" + i + " was bullied out of school, so she will not be appearing at Akademi.");
-							StudentGlobals.SetStudentMissing(i + 10, value: true);
 							StudentGlobals.SetStudentReputation(i + 10, -100);
 						}
 						else if (GameGlobals.GetSpecificEliminations(i) == 9)
@@ -706,7 +705,6 @@ public class WeekSelectScript : MonoBehaviour
 
 	private void ChangeFont(Transform PanelToUpdate)
 	{
-		Debug.Log("Now attempting to change all font.");
 		BG.color = new Color(1f, 0.75f, 1f, 1f);
 		int num = 0;
 		Transform[] componentsInChildren = PanelToUpdate.GetComponentsInChildren<Transform>();

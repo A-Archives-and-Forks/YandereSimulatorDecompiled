@@ -122,6 +122,8 @@ public class ShutterScript : MonoBehaviour
 
 	public bool Skirt;
 
+	public bool God;
+
 	public RaycastHit hit;
 
 	public float ReactionDistance;
@@ -466,12 +468,13 @@ public class ShutterScript : MonoBehaviour
 							{
 								Debug.Log("Saving a bully photo!");
 								int studentID = BullyPhotoCollider.transform.parent.gameObject.GetComponent<StudentScript>().StudentID;
-								if (StudentManager.Students[studentID].Club != ClubType.Bully)
+								if (StudentManager.Students[studentID].Club != ClubType.Bully && !StudentManager.Eighties)
 								{
 									Yandere.PauseScreen.PhotoGallery.BullyPhoto[Slot] = studentID;
 								}
 								else
 								{
+									Debug.Log("In this photo, the bully is talking to Student #" + StudentManager.Students[studentID].DistractionTarget.StudentID);
 									Yandere.PauseScreen.PhotoGallery.BullyPhoto[Slot] = StudentManager.Students[studentID].DistractionTarget.StudentID;
 								}
 							}
@@ -799,6 +802,11 @@ public class ShutterScript : MonoBehaviour
 				PhotoDescription.SetActive(value: true);
 				PhotoDescLabel.text = "Photo of: A cute plushie doll";
 			}
+			else if (hit.collider.gameObject.name == "YandereDev")
+			{
+				PhotoDescLabel.text = "Photo of: God";
+				God = true;
+			}
 		}
 		if (Physics.Raycast(SmartphoneCamera.transform.position, direction, out hit, float.PositiveInfinity, OnlyRagdolls) && hit.collider.gameObject.layer == 11)
 		{
@@ -1010,6 +1018,11 @@ public class ShutterScript : MonoBehaviour
 		{
 			empty = "Hey, that's " + PlushieName + "!";
 			num = 4;
+		}
+		else if (God)
+		{
+			empty = "...kami-sama?!";
+			num = 1;
 		}
 		else
 		{

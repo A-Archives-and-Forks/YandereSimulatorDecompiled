@@ -1,6 +1,5 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class StudentInfoMenuScript : MonoBehaviour
 {
@@ -11,6 +10,8 @@ public class StudentInfoMenuScript : MonoBehaviour
 	public PauseScreenScript PauseScreen;
 
 	public StudentInfoScript StudentInfo;
+
+	public VoidGoddessScript VoidGoddess;
 
 	public NoteWindowScript NoteWindow;
 
@@ -90,6 +91,8 @@ public class StudentInfoMenuScript : MonoBehaviour
 
 	public bool Targeting;
 
+	public bool AtSchool;
+
 	public bool Started;
 
 	public bool Dead;
@@ -119,6 +122,14 @@ public class StudentInfoMenuScript : MonoBehaviour
 	public float HeldUp;
 
 	public Shader GreyscaleShader;
+
+	public bool[] StudentKidnapped;
+
+	public bool[] StudentArrested;
+
+	public bool[] StudentReplaced;
+
+	public bool[] StudentDead;
 
 	public bool GrabbedPortraits;
 
@@ -160,6 +171,10 @@ public class StudentInfoMenuScript : MonoBehaviour
 				Column = 0;
 				Row++;
 			}
+			StudentKidnapped[i] = StudentGlobals.GetStudentKidnapped(i);
+			StudentArrested[i] = StudentGlobals.GetStudentArrested(i);
+			StudentReplaced[i] = StudentGlobals.GetStudentReplaced(i);
+			StudentDead[i] = StudentGlobals.GetStudentDead(i);
 		}
 		if (PauseScreen.Eighties)
 		{
@@ -199,6 +214,7 @@ public class StudentInfoMenuScript : MonoBehaviour
 	{
 		if (!GrabbedPortraits)
 		{
+			Debug.Log("Now commanding the game to UpdatePortraits() from StudentInfoMenu.");
 			StartCoroutine(UpdatePortraits());
 			GrabbedPortraits = true;
 			if (PauseScreen.Eighties)
@@ -561,10 +577,19 @@ public class StudentInfoMenuScript : MonoBehaviour
 			PromptBar.Label[0].text = string.Empty;
 			PromptBar.UpdateButtons();
 		}
-		if (SendingHome && StudentManager.Students[StudentID] != null)
+		if (SendingHome)
 		{
-			StudentScript studentScript = StudentManager.Students[StudentID];
-			if (StudentID == 1 || StudentGlobals.GetStudentDead(StudentID) || (StudentID < 98 && studentScript.SentHome) || StudentID > 97 || StudentGlobals.StudentSlave == StudentID || (studentScript.Club == ClubType.MartialArts && studentScript.ClubAttire) || (studentScript.Club == ClubType.Sports && studentScript.ClubAttire) || StudentManager.Students[StudentID].CameraReacting || (!StudentManager.StudentPhotographed[StudentID] && !StudentManager.StudentBefriended[StudentID]) || studentScript.Wet || studentScript.Slave || studentScript.Phoneless)
+			Debug.Log("Highlighting student number " + StudentID);
+			if (StudentManager.Students[StudentID] != null)
+			{
+				StudentScript studentScript = StudentManager.Students[StudentID];
+				if (StudentID == 1 || StudentGlobals.GetStudentDead(StudentID) || (StudentID < 90 && studentScript.SentHome) || StudentID > 89 || StudentGlobals.StudentSlave == StudentID || (studentScript.Club == ClubType.MartialArts && studentScript.ClubAttire) || (studentScript.Club == ClubType.Sports && studentScript.ClubAttire) || StudentManager.Students[StudentID].CameraReacting || (!StudentManager.StudentPhotographed[StudentID] && !StudentManager.StudentBefriended[StudentID]) || studentScript.Wet || studentScript.Slave || studentScript.Phoneless)
+				{
+					PromptBar.Label[0].text = string.Empty;
+					PromptBar.UpdateButtons();
+				}
+			}
+			else
 			{
 				PromptBar.Label[0].text = string.Empty;
 				PromptBar.UpdateButtons();
@@ -686,7 +711,7 @@ public class StudentInfoMenuScript : MonoBehaviour
 		else
 		{
 			NameLabel.text = "Unknown";
-			if (StudentManager != null && StudentManager.Yandere != null && StudentManager.Yandere.Inventory != null && StudentManager.Yandere.Inventory.PantyShots > 0)
+			if (StudentManager != null && !StudentManager.Eighties && StudentManager.Yandere != null && StudentManager.Yandere.Inventory != null && StudentManager.Yandere.Inventory.PantyShots > 0)
 			{
 				PromptBar.Label[2].text = "Unlock for 1 Info Point";
 			}
@@ -730,24 +755,33 @@ public class StudentInfoMenuScript : MonoBehaviour
 					{
 						if (StudentManager.StudentBefriended[ID] || StudentManager.StudentPhotographed[ID])
 						{
-							string url = "file:///" + Application.streamingAssetsPath + "/Portraits" + EightiesPrefix + "/Student_" + ID + ".png";
-							WWW www = new WWW(url);
-							yield return www;
-							if (www.error == null)
+							Texture Portrait = null;
+							if (VoidGoddess != null)
 							{
-								if (!StudentGlobals.GetStudentReplaced(ID))
-								{
-									StudentPortraits[ID].Portrait.mainTexture = www.texture;
-								}
-								else
-								{
-									StudentPortraits[ID].Portrait.mainTexture = BlankPortrait;
-								}
+								Portrait = VoidGoddess.Portraits[ID].mainTexture;
 							}
 							else
 							{
-								Debug.Log("Student #" + ID + " gets an '' Unknown'' portrait because an error occured.");
-								StudentPortraits[ID].Portrait.mainTexture = UnknownPortrait;
+								string url = "file:///" + Application.streamingAssetsPath + "/Portraits" + EightiesPrefix + "/Student_" + ID + ".png";
+								WWW www = new WWW(url);
+								yield return www;
+								if (www.error == null)
+								{
+									Portrait = www.texture;
+								}
+								else
+								{
+									Debug.Log("Student #" + ID + " gets an '' Unknown'' portrait because an error occured.");
+									StudentPortraits[ID].Portrait.mainTexture = UnknownPortrait;
+								}
+							}
+							if (!StudentReplaced[ID])
+							{
+								StudentPortraits[ID].Portrait.mainTexture = Portrait;
+							}
+							else
+							{
+								StudentPortraits[ID].Portrait.mainTexture = BlankPortrait;
 							}
 							PortraitLoaded[ID] = true;
 						}
@@ -808,7 +842,7 @@ public class StudentInfoMenuScript : MonoBehaviour
 					}
 				}
 			}
-			if (StudentManager.PantyShotTaken[ID] || PlayerGlobals.GetStudentPantyShot(ID))
+			if (StudentManager.PantyShotTaken[ID])
 			{
 				StudentPortraits[ID].Panties.SetActive(value: true);
 			}
@@ -820,24 +854,24 @@ public class StudentInfoMenuScript : MonoBehaviour
 			{
 				StudentPortraits[ID].Friend.SetActive(PlayerGlobals.GetStudentFriend(ID));
 			}
-			if (StudentGlobals.GetStudentDying(ID) || StudentGlobals.GetStudentDead(ID) || (StudentManager.Students[ID] != null && !StudentManager.Students[ID].Alive))
+			if (StudentDead[ID] || (StudentManager.Students[ID] != null && !StudentManager.Students[ID].Alive))
 			{
 				StudentPortraits[ID].FuneralFrame.SetActive(value: true);
 			}
-			if (MissionModeGlobals.MissionMode && ID == 1)
+			if (StudentManager.MissionMode && ID == 1)
 			{
 				StudentPortraits[ID].FuneralFrame.SetActive(value: true);
 			}
-			if (SceneManager.GetActiveScene().name == "SchoolScene" && StudentManager.Students[ID] != null && StudentManager.Students[ID].Tranquil)
+			if (AtSchool && StudentManager.Students[ID] != null && StudentManager.Students[ID].Tranquil)
 			{
 				StudentPortraits[ID].Darkness.SetActive(value: true);
 			}
-			if (StudentGlobals.GetStudentArrested(ID))
+			if (StudentArrested[ID])
 			{
 				StudentPortraits[ID].PrisonBars.SetActive(value: true);
 				StudentPortraits[ID].Darkness.SetActive(value: true);
 			}
-			if (StudentGlobals.GetStudentKidnapped(ID))
+			if (StudentKidnapped[ID])
 			{
 				StudentPortraits[ID].Darkness.SetActive(value: true);
 			}

@@ -234,6 +234,7 @@ public class BodyHidingLockerScript : MonoBehaviour
 				if (Outline != null)
 				{
 					Outline.color = new Color(1f, 0.5f, 0f, 1f);
+					Outline.h.ConstantOnImmediate(Outline.color);
 				}
 				Corpse.Locker = this;
 			}
@@ -312,6 +313,7 @@ public class BodyHidingLockerScript : MonoBehaviour
 			Corpse.Locker = null;
 			Corpse = null;
 			Outline.color = new Color(0f, 1f, 1f, 1f);
+			Outline.h.ConstantOnImmediate(Outline.color);
 			StudentID = 0;
 			Physics.SyncTransforms();
 		}

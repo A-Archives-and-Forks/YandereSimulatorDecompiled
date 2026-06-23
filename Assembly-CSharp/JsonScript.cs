@@ -148,4 +148,9 @@ public class JsonScript : MonoBehaviour
 		}
 		return list.ToArray();
 	}
+
+	public void ReloadStudents()
+	{
+		students = StudentJson.LoadFromJson(StudentJson.FilePath);
+	}
 }

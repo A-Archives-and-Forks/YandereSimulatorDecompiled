@@ -153,7 +153,7 @@ public class DDRMinigame : MonoBehaviour
 		{
 			manager.LoadedLevel = levels[selectedLevel];
 		}
-		if (Input.GetButtonDown(InputNames.Xbox_B))
+		if (Input.GetButtonDown(InputNames.Xbox_B) && manager.Timer > 2f)
 		{
 			manager.BootOut();
 		}

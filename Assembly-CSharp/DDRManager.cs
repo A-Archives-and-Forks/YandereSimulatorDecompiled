@@ -93,6 +93,8 @@ public class DDRManager : MonoBehaviour
 
 	public bool CheckingForEnd;
 
+	public float Timer;
+
 	private void Start()
 	{
 		minigameCamera.position = startPoint.position;
@@ -106,6 +108,7 @@ public class DDRManager : MonoBehaviour
 	{
 		minigameCamera.position = Vector3.Slerp(minigameCamera.position, target.position, transitionSpeed * Time.deltaTime);
 		minigameCamera.rotation = Quaternion.Slerp(minigameCamera.rotation, target.rotation, transitionSpeed * Time.deltaTime);
+		Timer += Time.deltaTime;
 		if (target == null)
 		{
 			return;

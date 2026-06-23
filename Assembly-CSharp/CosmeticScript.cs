@@ -419,6 +419,8 @@ public class CosmeticScript : MonoBehaviour
 
 	public bool RememberInvertHair;
 
+	public bool UpdateBlendshapes;
+
 	public bool DoNotChangeFace;
 
 	public bool NoClubAccessory;
@@ -1969,6 +1971,10 @@ public class CosmeticScript : MonoBehaviour
 			{
 				Student.EightiesTeacherAttacher.SetActive(value: true);
 				Student.MyRenderer.enabled = false;
+				if (!CustomModeMenu)
+				{
+					UpdateBlendshapes = true;
+				}
 			}
 		}
 		else if (Club == ClubType.GymTeacher)
@@ -2184,10 +2190,13 @@ public class CosmeticScript : MonoBehaviour
 			{
 				TeacherHair[Hairstyle].SetActive(value: true);
 				HairRenderer = TeacherHairRenderers[Hairstyle];
+				FaceTexture = HairRenderer.material.mainTexture;
 				HairRenderer.material.color = new Color(1f, 1f, 1f, 1f);
 				if (Club == ClubType.Teacher)
 				{
-					MyRenderer.materials[0].mainTexture = DefaultFaceTexture;
+					_ = StudentID;
+					_ = 94;
+					MyRenderer.materials[0].mainTexture = FaceTexture;
 					MyRenderer.materials[1].mainTexture = TeacherBodyTexture;
 					MyRenderer.materials[2].mainTexture = TeacherBodyTexture;
 				}
@@ -2326,6 +2335,16 @@ public class CosmeticScript : MonoBehaviour
 				else if (Club == ClubType.Art)
 				{
 					ClubAccessories[(int)Club].GetComponent<MeshFilter>().sharedMesh = Berets[StudentID];
+					if (StudentID == 42)
+					{
+						ClubAccessories[(int)Club].transform.localPosition = new Vector3(0f, -1.535f, 0f);
+						ClubAccessories[(int)Club].transform.localEulerAngles = new Vector3(0f, 0f, 0f);
+					}
+					if (StudentID == 43)
+					{
+						ClubAccessories[(int)Club].transform.localPosition = new Vector3(0f, -1.475f, -0.42f);
+						ClubAccessories[(int)Club].transform.localEulerAngles = new Vector3(15f, 0f, 0f);
+					}
 					if (StudentID == 44)
 					{
 						ClubAccessories[(int)Club].transform.localEulerAngles = new Vector3(0f, 0f, 0f);
@@ -2683,6 +2702,10 @@ public class CosmeticScript : MonoBehaviour
 							HairRenderer.materials[1].color = new Color(0.5f, 0.5f, 0.5f);
 						}
 					}
+					else if (HairRenderer == null)
+					{
+						Debug.Log("Whoa, HairRenderer is null here? Why?");
+					}
 					else
 					{
 						HairRenderer.material.color = ColorValue;
@@ -2882,7 +2905,7 @@ public class CosmeticScript : MonoBehaviour
 				if (MaleHair[Hairstyle].transform.localScale.x > 0f)
 				{
 					MaleHair[Hairstyle].transform.localScale = new Vector3(MaleHair[Hairstyle].transform.localScale.x * -1f, MaleHair[Hairstyle].transform.localScale.y, MaleHair[Hairstyle].transform.localScale.z);
-					if (TakingPortrait)
+					if (TakingPortrait || Club == ClubType.Council)
 					{
 						RememberInvertHair = true;
 					}
@@ -2890,16 +2913,16 @@ public class CosmeticScript : MonoBehaviour
 			}
 			else
 			{
-				Debug.Log("This is a female student.");
+				Debug.Log(Name + " is a female student who knows that she must invert her hair.");
 				if (!Teacher)
 				{
-					Debug.Log("This character is not a teacher.");
-					Debug.Log("This character's hair model's scale.x is: " + FemaleHair[Hairstyle].transform.localScale.x);
+					Debug.Log("She's not a teacher.");
+					Debug.Log("Her hair model's scale.x is: " + FemaleHair[Hairstyle].transform.localScale.x);
 					if (FemaleHair[Hairstyle].transform.localScale.x > 0f)
 					{
 						Debug.Log("It was greater than 0, so it is now flipping.");
 						FemaleHair[Hairstyle].transform.localScale = new Vector3(FemaleHair[Hairstyle].transform.localScale.x * -1f, FemaleHair[Hairstyle].transform.localScale.y, FemaleHair[Hairstyle].transform.localScale.z);
-						if (TakingPortrait)
+						if (TakingPortrait || Club == ClubType.Council)
 						{
 							RememberInvertHair = true;
 						}
@@ -2920,8 +2943,9 @@ public class CosmeticScript : MonoBehaviour
 		}
 		else if (!Teacher)
 		{
-			if (FemaleHair[Hairstyle].transform.localScale.x < 0f)
+			if (HairRenderer != null && FemaleHair[Hairstyle].transform.localScale.x < 0f)
 			{
+				Debug.Log(Name + " is under the impression that she must now flip her hair back to how it was before.");
 				FemaleHair[Hairstyle].transform.localScale = new Vector3(FemaleHair[Hairstyle].transform.localScale.x * -1f, FemaleHair[Hairstyle].transform.localScale.y, FemaleHair[Hairstyle].transform.localScale.z);
 			}
 		}
@@ -4415,6 +4439,19 @@ public class CosmeticScript : MonoBehaviour
 		}
 	}
 
+	public void DisableHair()
+	{
+		Debug.Log("Firing DisableHair()");
+		GameObject[] femaleHair = FemaleHair;
+		foreach (GameObject gameObject in femaleHair)
+		{
+			if (gameObject != null)
+			{
+				gameObject.SetActive(value: false);
+			}
+		}
+	}
+
 	public void WearBurlapSack()
 	{
 		MyRenderer.enabled = false;
@@ -4536,6 +4573,19 @@ public class CosmeticScript : MonoBehaviour
 			}
 			BurlapSack.newRenderer.updateWhenOffscreen = true;
 			UpdateSack = false;
+		}
+		else if (UpdateBlendshapes)
+		{
+			SkinnedMeshRenderer newRenderer = Student.EightiesTeacherAttacher.GetComponent<RiggedAccessoryAttacher>().newRenderer;
+			if (newRenderer != null)
+			{
+				int blendShapeCount = MyRenderer.sharedMesh.blendShapeCount;
+				for (int i = 0; i < blendShapeCount - 1; i++)
+				{
+					newRenderer.SetBlendShapeWeight(i, MyRenderer.GetBlendShapeWeight(i));
+				}
+				UpdateBlendshapes = false;
+			}
 		}
 		else
 		{

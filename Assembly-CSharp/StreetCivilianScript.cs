@@ -33,6 +33,10 @@ public class StreetCivilianScript : MonoBehaviour
 			return;
 		}
 		MoveTowardsTarget(Destinations[ID].position);
+		if (MyAnimation == null)
+		{
+			Debug.Log("Whoa! " + base.gameObject.name + " doesn't have an animation component!");
+		}
 		MyAnimation.CrossFade(IdleAnim);
 		if (Anim2 != null)
 		{

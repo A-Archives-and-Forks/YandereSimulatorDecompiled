@@ -210,6 +210,8 @@ public class HomeMangaScript : MonoBehaviour
 				}
 				AreYouSure.SetActive(value: false);
 				Darkness.FadeOut = true;
+				HomeYandere.enabled = false;
+				base.enabled = false;
 			}
 			if (Input.GetButtonDown(InputNames.Xbox_B))
 			{

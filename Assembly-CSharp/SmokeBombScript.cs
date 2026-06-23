@@ -48,11 +48,26 @@ public class SmokeBombScript : MonoBehaviour
 		{
 			if (Stink)
 			{
+				bool flag = false;
+				if (component.InEvent && component.StudentManager.CookingEvent.Phase > 0)
+				{
+					Debug.Log("Student #" + component.StudentID + " was in Amai's Cooking Event when the stink bomb hit..");
+					flag = true;
+				}
 				if (component != null && !component.Yandere.Noticed && !component.Guarding && !component.Fleeing)
 				{
+					Debug.Log("A student just entered a stink bomb cloud. Deciding what to do next.");
 					if (component.Actions[component.Phase] == StudentActionType.ClubAction && component.Club == ClubType.Cooking && component.ClubActivityPhase > 0)
 					{
 						component.Subtitle.CustomText = "Ew, something stinks! I want to run from the smell, but I can't run while holding this tray...";
+						component.Subtitle.UpdateLabel(SubtitleType.Custom, 0, 5f);
+					}
+					else if (component.InEvent && component.StinkBombSpecialCase == 0 && !flag)
+					{
+						Debug.Log("CookingEvent is: " + flag);
+						Debug.Log("Student.InEvent is: " + component.InEvent);
+						Debug.Log("Student.StinkBombSpecialCase is: " + component.StinkBombSpecialCase);
+						component.Subtitle.CustomText = "Ew, something stinks! But, I want to finish what I'm doing...";
 						component.Subtitle.UpdateLabel(SubtitleType.Custom, 0, 5f);
 					}
 					else
@@ -60,16 +75,18 @@ public class SmokeBombScript : MonoBehaviour
 						GoAway(component);
 					}
 				}
-				return;
 			}
-			if (Amnesia && !component.Chasing)
+			else
 			{
-				component.ReturnToNormal();
+				if (Amnesia && !component.Chasing)
+				{
+					component.ReturnToNormal();
+				}
+				Debug.Log(component.Name + " has been blinded.");
+				Students[ID] = component;
+				component.Blind = true;
+				ID++;
 			}
-			Debug.Log(component.Name + " has been blinded.");
-			Students[ID] = component;
-			component.Blind = true;
-			ID++;
 		}
 		else
 		{
@@ -91,11 +108,23 @@ public class SmokeBombScript : MonoBehaviour
 				return;
 			}
 			StudentScript component = other.gameObject.GetComponent<StudentScript>();
+			bool flag = false;
+			if (component.InEvent && component.StudentManager.CookingEvent.Phase > 0)
+			{
+				Debug.Log("Student #" + component.StudentID + " was in Amai's Cooking Event when the stink bomb hit..");
+				flag = true;
+			}
 			if (component != null && !component.Yandere.Noticed && !component.Guarding && !component.Fleeing)
 			{
+				Debug.Log("A student just remained inside of a stink bomb cloud. Deciding what to do next.");
 				if (component.Actions[component.Phase] == StudentActionType.ClubAction && component.Club == ClubType.Cooking && component.ClubActivityPhase > 0)
 				{
 					component.Subtitle.CustomText = "Ew, something stinks! I want to run from the smell, but I can't run while holding this tray...";
+					component.Subtitle.UpdateLabel(SubtitleType.Custom, 0, 5f);
+				}
+				else if (component.InEvent && component.StinkBombSpecialCase == 0 && !flag)
+				{
+					component.Subtitle.CustomText = "Ew, something stinks! But, I want to finish what I'm doing...";
 					component.Subtitle.UpdateLabel(SubtitleType.Custom, 0, 5f);
 				}
 				else
@@ -189,6 +218,7 @@ public class SmokeBombScript : MonoBehaviour
 				Student.AmnesiaTimer = 10f;
 				Student.GoAway = true;
 			}
+			Student.FocusOnStudent = false;
 			Student.FocusOnYandere = false;
 			Student.Distracted = true;
 			Student.Drownable = false;
@@ -198,6 +228,11 @@ public class SmokeBombScript : MonoBehaviour
 			if (BigStink)
 			{
 				Student.GoAwayLimit = 60f;
+			}
+			if (Stink)
+			{
+				Student.OriginalSprintAnim = Student.SprintAnim;
+				Student.SprintAnim = Student.GenderPrefix + "runStink_00";
 			}
 			Student.AlarmTimer = 0f;
 			if (Student.Nemesis)

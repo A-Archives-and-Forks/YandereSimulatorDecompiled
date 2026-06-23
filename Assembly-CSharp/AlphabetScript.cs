@@ -103,6 +103,10 @@ public class AlphabetScript : MonoBehaviour
 			MissionMode.RemoveBoxes();
 			UpdateText();
 			UpdateDifficultyLabel();
+			StudentManager.PlazaPreview.SetActive(value: false);
+			StudentManager.InteriorOccluder.open = true;
+			StudentManager.ClassProps.SetActive(value: true);
+			StudentManager.PlazaOccluder.open = true;
 		}
 		else
 		{

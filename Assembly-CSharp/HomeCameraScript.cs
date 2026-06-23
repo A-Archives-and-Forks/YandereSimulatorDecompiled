@@ -72,6 +72,8 @@ public class HomeCameraScript : MonoBehaviour
 
 	public GameObject DayLight;
 
+	public GameObject Firework;
+
 	public GameObject Tripod;
 
 	public GameObject Victim;
@@ -152,6 +154,8 @@ public class HomeCameraScript : MonoBehaviour
 
 	public bool Mute;
 
+	public int AnniversaryID;
+
 	public CosmeticScript SenpaiCosmetic;
 
 	public Renderer ClockFace;
@@ -165,6 +169,8 @@ public class HomeCameraScript : MonoBehaviour
 	public Vector3 LastChangePoint;
 
 	public GameObject PinkBackground;
+
+	public string[] Anniversary;
 
 	private int Is;
 
@@ -308,6 +314,20 @@ public class HomeCameraScript : MonoBehaviour
 		else
 		{
 			QualitySettings.vSyncCount = 1;
+		}
+	}
+
+	private void Update()
+	{
+		if (AnniversaryID < Anniversary.Length && Input.GetKeyDown(Anniversary[AnniversaryID]))
+		{
+			AnniversaryID++;
+			if (AnniversaryID >= Anniversary.Length)
+			{
+				GameGlobals.Anniversary = true;
+				Firework.SetActive(value: true);
+				Debug.Log("Anniversary is now true.");
+			}
 		}
 	}
 

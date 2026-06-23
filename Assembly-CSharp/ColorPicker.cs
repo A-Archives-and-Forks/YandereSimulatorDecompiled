@@ -335,6 +335,7 @@ public class ColorPicker : MonoBehaviour
 
 	private void SetColor(Color currentColor)
 	{
+		Debug.Log("Supposed to be setting color.");
 		r[0].sharedMaterial.color = currentColor;
 		r[1].sharedMaterial.color = currentColor;
 		SaveColor();

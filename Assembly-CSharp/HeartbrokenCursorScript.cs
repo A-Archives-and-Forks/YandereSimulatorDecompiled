@@ -110,6 +110,7 @@ public class HeartbrokenCursorScript : MonoBehaviour
 
 	private void Start()
 	{
+		Time.timeScale = 1f;
 		Continue.color = new Color(Continue.color.r, Continue.color.g, Continue.color.b, 0f);
 		if (StudentManager != null)
 		{
@@ -172,6 +173,7 @@ public class HeartbrokenCursorScript : MonoBehaviour
 						MyAudio.Play();
 						if (Selected == 1 || (Selected == 2 && Heartbroken.Options[1].alpha == 1f) || (Selected == 3 && GameGlobals.MostRecentSlot > 0) || Selected == 4)
 						{
+							Darkness.transform.localPosition = new Vector3(0f, 0f, -99f);
 							FadeOut = true;
 						}
 					}

@@ -1792,7 +1792,7 @@ public class GenericRivalEventScript : MonoBehaviour
 					}
 					if (flag && !Rival.InEvent && Rival.CurrentAction != StudentActionType.Sleep && Rival.Schoolwear != 2)
 					{
-						Debug.Log("The rival is being put into an event now.");
+						Debug.Log("The rival is now being put into an event named " + base.gameObject.name);
 						Rival.CharacterAnimation.cullingType = AnimationCullingType.AlwaysAnimate;
 						Rival.Pathfinding.target = Location[2];
 						Rival.CurrentDestination = Location[2];
@@ -1834,7 +1834,7 @@ public class GenericRivalEventScript : MonoBehaviour
 					{
 						flag2 = true;
 					}
-					if (flag2 && flag && !Senpai.InEvent)
+					if (flag2 && !Senpai.InEvent)
 					{
 						Senpai.CharacterAnimation.cullingType = AnimationCullingType.AlwaysAnimate;
 						Senpai.CharacterAnimation.CrossFade(Senpai.WalkAnim);
@@ -1860,6 +1860,8 @@ public class GenericRivalEventScript : MonoBehaviour
 					}
 					if (Senpai.CurrentDestination == Location[1] && Senpai.DistanceToDestination < 0.5f)
 					{
+						string text = "";
+						text = ((!Male) ? "f02_impatience_00" : "impatience_00");
 						if (!Impatient)
 						{
 							if (Senpai.Male)
@@ -1874,12 +1876,12 @@ public class GenericRivalEventScript : MonoBehaviour
 							Senpai.Pathfinding.canMove = false;
 							if (Clock.HourTime > 17.916666f)
 							{
-								Senpai.CharacterAnimation.CrossFade("impatience_00");
+								Senpai.CharacterAnimation.CrossFade(text);
 								EventSubtitle.text = "I understand being a few minutes late, but this is just too much...";
 								Impatient = true;
 							}
 						}
-						else if (Senpai.CharacterAnimation["impatience_00"].time >= Senpai.CharacterAnimation["impatience_00"].length)
+						else if (Senpai.CharacterAnimation[text].time >= Senpai.CharacterAnimation[text].length)
 						{
 							StudentManager.SabotageProgress++;
 							Debug.Log("Sabotage Progress: " + StudentManager.SabotageProgress + "/5");
@@ -2197,7 +2199,7 @@ public class GenericRivalEventScript : MonoBehaviour
 		WWW CurrentDownload = new WWW("File:///" + Application.streamingAssetsPath + "/CustomMode/Events/Week" + Week + "/Voice/" + EventID + "-" + ClipID + ".wav");
 		yield return CurrentDownload;
 		SpeechClip[ClipID] = CurrentDownload.GetAudioClipCompressed();
-		if (SpeechClip[ClipID].length > 0f)
+		if (SpeechClip[ClipID] != null && SpeechClip[ClipID].length > 0f)
 		{
 			MustInitializeSpeechTimes = true;
 		}

@@ -243,7 +243,7 @@ public class JournalistScript : MonoBehaviour
 					Pathfinding.canMove = true;
 				}
 			}
-			if ((DistanceToPlayer < 15f && CanSeeYandere()) || (DistanceToPlayer < 5f && AwareOfMurder))
+			if ((DistanceToPlayer < 19f && CanSeeYandere()) || (DistanceToPlayer < 5f && AwareOfMurder))
 			{
 				CheckBehavior();
 			}
@@ -267,7 +267,7 @@ public class JournalistScript : MonoBehaviour
 				}
 				for (int i = 0; i < Yandere.StudentManager.Police.Corpses; i++)
 				{
-					if (Yandere.StudentManager.Police.CorpseList[i] != null && !Yandere.StudentManager.Police.CorpseList[i].Concealed && Vector3.Distance(base.transform.position, Yandere.StudentManager.Police.CorpseList[i].transform.position) < 22f)
+					if (Yandere.StudentManager.Police.CorpseList[i] != null && !Yandere.StudentManager.Police.CorpseList[i].Concealed && Yandere.StudentManager.Police.CorpseList[i].transform.position.y < 1f && Yandere.StudentManager.Police.CorpseList[i].transform.position.x > -6f && Yandere.StudentManager.Police.CorpseList[i].transform.position.x < 6f && Yandere.StudentManager.Police.CorpseList[i].transform.position.z < -34f)
 					{
 						Corpse = Yandere.StudentManager.Police.CorpseList[i];
 						Freeze = true;

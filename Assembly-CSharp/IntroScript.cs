@@ -189,6 +189,8 @@ public class IntroScript : MonoBehaviour
 
 	public bool VibrationCheck;
 
+	public GameObject[] CensorCubes;
+
 	public Transform RightHair;
 
 	public Transform LeftHair;
@@ -314,6 +316,12 @@ public class IntroScript : MonoBehaviour
 				}
 			}
 			CorpseCamera.SetActive(value: false);
+		}
+		bool censorCorpses = GameGlobals.CensorCorpses;
+		GameObject[] censorCubes = CensorCubes;
+		for (int j = 0; j < censorCubes.Length; j++)
+		{
+			censorCubes[j].SetActive(censorCorpses);
 		}
 		VtuberCheck();
 	}

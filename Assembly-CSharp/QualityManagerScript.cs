@@ -91,6 +91,10 @@ public class QualityManagerScript : MonoBehaviour
 
 	public Material GlassesMaterial;
 
+	public Shader GlassesShader;
+
+	public bool CensorCorpses;
+
 	public bool Eighties;
 
 	public bool LoveSick;
@@ -108,6 +112,7 @@ public class QualityManagerScript : MonoBehaviour
 	public void Start()
 	{
 		Eighties = GameGlobals.Eighties;
+		CensorCorpses = GameGlobals.CensorCorpses;
 		if (OptionGlobals.DisableOutlines)
 		{
 			Debug.Log("The player wants outlines to be disabled.");
@@ -184,6 +189,7 @@ public class QualityManagerScript : MonoBehaviour
 			}
 		}
 		LoveSick = GameGlobals.LoveSick;
+		GlassesShader = Shader.Find("Legacy Shaders/Transparent/Diffuse");
 	}
 
 	public void UpdateParticles()
@@ -293,6 +299,27 @@ public class QualityManagerScript : MonoBehaviour
 				emission17.enabled = false;
 			}
 		}
+	}
+
+	public void PermanentlyDisableAllParticles()
+	{
+		EastRomanceBlossoms.gameObject.SetActive(value: false);
+		WestRomanceBlossoms.gameObject.SetActive(value: false);
+		EastGardenBlossoms[1].gameObject.SetActive(value: false);
+		EastGardenBlossoms[2].gameObject.SetActive(value: false);
+		EastGardenBlossoms[3].gameObject.SetActive(value: false);
+		EastGardenBlossoms[4].gameObject.SetActive(value: false);
+		WestGardenBlossoms[1].gameObject.SetActive(value: false);
+		WestGardenBlossoms[2].gameObject.SetActive(value: false);
+		WestGardenBlossoms[3].gameObject.SetActive(value: false);
+		WestGardenBlossoms[4].gameObject.SetActive(value: false);
+		CorridorBlossoms.gameObject.SetActive(value: false);
+		PlazaBlossoms.gameObject.SetActive(value: false);
+		MythBlossoms.gameObject.SetActive(value: false);
+		Steam[1].gameObject.SetActive(value: false);
+		Fountains[1].gameObject.SetActive(value: false);
+		Fountains[2].gameObject.SetActive(value: false);
+		Fountains[3].gameObject.SetActive(value: false);
 	}
 
 	public void UpdateStockings()
@@ -739,10 +766,12 @@ public class QualityManagerScript : MonoBehaviour
 		if (!OptionGlobals.Fog)
 		{
 			Yandere.MainCamera.clearFlags = CameraClearFlags.Skybox;
+			Yandere.HandCamera.clearFlags = CameraClearFlags.Skybox;
 			RenderSettings.fogMode = FogMode.Exponential;
 			return;
 		}
 		Yandere.MainCamera.clearFlags = CameraClearFlags.Color;
+		Yandere.HandCamera.clearFlags = CameraClearFlags.Color;
 		RenderSettings.fogMode = FogMode.Linear;
 		RenderSettings.fogEndDistance = OptionGlobals.DrawDistance;
 		if (GameGlobals.EightiesTutorial && DateGlobals.Week < 10)
@@ -828,6 +857,9 @@ public class QualityManagerScript : MonoBehaviour
 			NewHairShader = ToonOutline;
 			NewBodyShader = ToonOutlineOverlay;
 		}
+		Shader newHairShader = NewHairShader;
+		Shader newBodyShader = NewBodyShader;
+		CensorCorpses = GameGlobals.CensorCorpses;
 		TVHeads = GameGlobals.TVHeads;
 		if (TVHeads)
 		{
@@ -842,6 +874,11 @@ public class QualityManagerScript : MonoBehaviour
 				if (!(studentScript != null))
 				{
 					continue;
+				}
+				if (!studentScript.Alive && CensorCorpses)
+				{
+					NewHairShader = Hologram;
+					NewBodyShader = Hologram;
 				}
 				studentScript.MyRenderer.materials[0].shader = NewBodyShader;
 				studentScript.MyRenderer.materials[1].shader = NewBodyShader;
@@ -907,8 +944,14 @@ public class QualityManagerScript : MonoBehaviour
 						}
 						if (studentScript.Club == ClubType.Council)
 						{
-							studentScript.Cosmetic.TurtleEyewearRenderer.material.shader = NewHairShader;
 							studentScript.Cosmetic.ScarfRenderer.material.shader = NewHairShader;
+							studentScript.Cosmetic.TurtleEyewearRenderer.materials[0].shader = GlassesShader;
+						}
+						if (studentScript.Cosmetic.Accessory == 13)
+						{
+							Renderer component2 = studentScript.Cosmetic.FemaleAccessories[studentScript.Cosmetic.Accessory].GetComponent<Renderer>();
+							component2.materials[0].color = new Color(1f, 1f, 1f, 0.5f);
+							component2.materials[0].shader = Shader.Find("Transparent/Diffuse");
 						}
 						if (LoveSick)
 						{
@@ -972,26 +1015,31 @@ public class QualityManagerScript : MonoBehaviour
 					}
 					if (studentScript.Cosmetic.Accessory > 0)
 					{
-						Renderer component2 = studentScript.Cosmetic.MaleAccessories[studentScript.Cosmetic.Accessory].GetComponent<Renderer>();
-						if (component2 != null)
+						Renderer component3 = studentScript.Cosmetic.MaleAccessories[studentScript.Cosmetic.Accessory].GetComponent<Renderer>();
+						if (component3 != null)
 						{
-							component2.material.shader = NewBodyShader;
-							AdjustRimLight(component2.material);
+							component3.material.shader = NewBodyShader;
+							AdjustRimLight(component3.material);
 							if (!Eighties && studentScript.StudentID == 33)
 							{
-								component2.materials[2].color = new Color(1f, 1f, 1f, 0.5f);
-								component2.materials[2].shader = Shader.Find("Transparent/Diffuse");
+								component3.materials[2].color = new Color(1f, 1f, 1f, 0.5f);
+								component3.materials[2].shader = Shader.Find("Transparent/Diffuse");
 							}
 						}
 					}
 				}
-				if (!studentScript.Teacher && studentScript.Cosmetic.Club > ClubType.None && studentScript.Cosmetic.Club != ClubType.Council && studentScript.Cosmetic.Club != ClubType.Bully && studentScript.Cosmetic.Club != ClubType.Delinquent && studentScript.Cosmetic.ClubAccessories[(int)studentScript.Cosmetic.Club] != null)
+				if (!studentScript.Teacher && studentScript.Cosmetic.Club > ClubType.None && studentScript.Cosmetic.Club != ClubType.Council && studentScript.Cosmetic.Club != ClubType.Bully && studentScript.Cosmetic.Club != ClubType.Delinquent && (int)studentScript.Cosmetic.Club < studentScript.Cosmetic.ClubAccessories.Length && studentScript.Cosmetic.ClubAccessories[(int)studentScript.Cosmetic.Club] != null)
 				{
-					Renderer component3 = studentScript.Cosmetic.ClubAccessories[(int)studentScript.Cosmetic.Club].GetComponent<Renderer>();
-					if (component3 != null)
+					Renderer component4 = studentScript.Cosmetic.ClubAccessories[(int)studentScript.Cosmetic.Club].GetComponent<Renderer>();
+					if (component4 != null)
 					{
-						component3.material.shader = NewBodyShader;
-						AdjustRimLight(component3.material);
+						component4.material.shader = NewBodyShader;
+						AdjustRimLight(component4.material);
+					}
+					if (!Eighties && studentScript.StudentID == 64)
+					{
+						component4.materials[0].color = new Color(1f, 1f, 1f, 0.5f);
+						component4.materials[0].shader = Shader.Find("Transparent/Diffuse");
 					}
 				}
 				if (studentScript.Cosmetic.EyewearID > 0 && studentScript.Cosmetic.Eyewear.Length != 0 && studentScript.Cosmetic.Eyewear[studentScript.Cosmetic.EyewearID] != null)
@@ -1010,13 +1058,18 @@ public class QualityManagerScript : MonoBehaviour
 				}
 				studentScript.Cosmetic.Bookbag.GetComponent<Renderer>().material.shader = NewHairShader;
 				studentScript.Cosmetic.CanRenderer.material.shader = NewHairShader;
-				if (TVHeads)
+				if (TVHeads || (!studentScript.Alive && CensorCorpses))
 				{
-					Debug.Log("QualityManager is supposed to be setting this student's materials to the Hologram material now...");
+					Debug.Log("QualityManager is supposed to be setting this student's materials to the Static material now...");
 					for (int k = 0; k < studentScript.MyRenderer.materials.Length; k++)
 					{
 						ApplyMatrixSettings(studentScript.MyRenderer.materials[k], MatrixTexture);
 					}
+				}
+				if (!studentScript.Alive && CensorCorpses)
+				{
+					NewHairShader = newHairShader;
+					NewBodyShader = newBodyShader;
 				}
 			}
 			if (!TVHeads)
@@ -1158,7 +1211,7 @@ public class QualityManagerScript : MonoBehaviour
 		}
 	}
 
-	private void ApplyMatrixSettings(Material mat, Texture matrixTexture)
+	public void ApplyMatrixSettings(Material mat, Texture matrixTexture)
 	{
 		if (!(mat == null))
 		{

@@ -124,7 +124,7 @@ public class EightiesClubDialogueScript : MonoBehaviour
 	{
 		if (ClubID == 1)
 		{
-			Subtitle.ClubGreetings[ClubID] = "Oh, hello there! Did you want to talk with me about the Cooking Club?";
+			Subtitle.ClubGreetings[ClubID] = "Oh, hello there! Did you want to talk to me about the Cooking Club?";
 			Subtitle.Club1Info[1] = "Well, like our name suggests, everyone in this club loves to prepare food! And all of us share a common desire to make people smile by serving them delicious treats!";
 			Subtitle.Club1Info[2] = "You'll find a wide range of appetites here! Some of us are health nuts who prioritize nutrition, while others have a sweet tooth and want to eat dessert for every meal, haha!";
 			Subtitle.Club1Info[3] = "If you join our club, you'll have access to all of our tasty ingredients, and you'll be able to make meals for others! Serving someone a yummy snack is a great way to make friends fast, you know!";
@@ -141,9 +141,9 @@ public class EightiesClubDialogueScript : MonoBehaviour
 			Subtitle.ClubYeses[ClubID] = "Yay! Let's get started right away!";
 			Subtitle.ClubNoes[ClubID] = "Oh! Um, okay! We'll wait for you, but...we can't wait any longer than 5:30, alright...?";
 			Subtitle.ClubRejoins[ClubID] = "Um...I'm sorry...it's kinda hard to consider letting you join the club again...we only want people in the club if they're going to take it seriously, and...you didn't seem very serious about it last time...sorry...";
-			Subtitle.ClubKicks[ClubID] = "...um...it's...not really easy to find the right words to say this...but...well...you're just...not a good fit for our club, and...I...have to ask you to leave...I'm very sorry...please don't take offense...";
-			Subtitle.ClubUnwelcomes[ClubID] = "...y...you killed someone. Are you just...trying to pretend that it didn't happen?! I saw it. I...saw...it. I can't just...forget that. Look...I don't want to make a scene, so...please...leave. Just...leave.";
-			Subtitle.ClubGrudges[ClubID] = "...oh, gosh...this is...really awkward...um...okay, so...one of my clubmembers...well...I'm sorry, but, they have a big problem with you, so...I can't let you join the club. I'm sorry...I'm very sorry!";
+			Subtitle.ClubKicks[ClubID] = "Uhhhhh...it's...not really easy to find the right words to say this...but...well...you're just...not a good fit for our club...and...I have to ask you to leave...I'm sorry...please don't take offense...";
+			Subtitle.ClubUnwelcomes[ClubID] = "Y...you...killed someone! Are you just...trying to pretend that it didn't happen?! I...I saw it! I...saw...it! I can't just...forget that! Look...I don't want to make a scene, so please...leave. Just...leave.";
+			Subtitle.ClubGrudges[ClubID] = "Oh, gosh...this is...really awkward...um...okay, so...one of my clubmates...well...I'm sorry, but, they have a big problem with you, so...I...just can't let you join the club. I'm sorry...I'm very sorry!";
 			Subtitle.ClubFarewells[ClubID] = "Bye bye for now! Hope to see you later!";
 			Subtitle.ClubGreetingClips[ClubID] = AmaiLines[0];
 			Subtitle.Club1Clips[1] = AmaiLines[1];

@@ -194,6 +194,8 @@ public class RagdollScript : MonoBehaviour
 
 	public int Frame;
 
+	public string RoofDumpAnim = string.Empty;
+
 	public string DumpedAnim = string.Empty;
 
 	public string LiftAnim = string.Empty;
@@ -282,6 +284,10 @@ public class RagdollScript : MonoBehaviour
 		{
 			BloodPoolSpawner.enabled = false;
 			Student.StudentManager.Dumpster.Corpse = base.gameObject;
+		}
+		if (Student.Broken != null)
+		{
+			Student.Broken.enabled = false;
 		}
 		Student.ResetEyes();
 	}
@@ -421,6 +427,7 @@ public class RagdollScript : MonoBehaviour
 						Yandere.EmptyHands();
 						obj.SetActive(value: false);
 						Yandere.StudentManager.KokonaTutorialObject.SpawnedTarp = MyTarp;
+						Yandere.StudentManager.Tarp = true;
 					}
 					else if (!Yandere.Chased && Yandere.Chasers == 0)
 					{
@@ -531,6 +538,10 @@ public class RagdollScript : MonoBehaviour
 							Yandere.StudentManager.UpdateStudents();
 							if (MurderSuicide)
 							{
+								if (Police == null)
+								{
+									Police = Yandere.Police;
+								}
 								Police.MurderSuicideScene = false;
 								MurderSuicide = false;
 							}
@@ -838,10 +849,12 @@ public class RagdollScript : MonoBehaviour
 			LeftBreast.localScale = new Vector3(BreastSize, BreastSize, BreastSize);
 			if (LeftEye != null)
 			{
-				LeftEye.localPosition = new Vector3(LeftEye.localPosition.x, LeftEye.localPosition.y, LeftEyeOrigin.z - EyeShrink * 0.01f);
-				RightEye.localPosition = new Vector3(RightEye.localPosition.x, RightEye.localPosition.y, RightEyeOrigin.z + EyeShrink * 0.01f);
-				LeftEye.localScale = new Vector3(1f - EyeShrink * 0.5f, 1f - EyeShrink * 0.5f, LeftEye.localScale.z);
-				RightEye.localScale = new Vector3(1f - EyeShrink * 0.5f, 1f - EyeShrink * 0.5f, RightEye.localScale.z);
+				RightEye.localPosition = new Vector3(-0.0208873f, 0.0042227f, 0.033206f);
+				RightEye.localEulerAngles = new Vector3(-12.00287f, 90.00002f, 179.9951f);
+				RightEye.localScale = new Vector3(0.5f, 0.5f, 1f);
+				LeftEye.localPosition = new Vector3(-0.0208873f, 0.0042227f, -0.033206f);
+				LeftEye.localEulerAngles = new Vector3(12.00287f, -90.00002f, 0.004936442f);
+				LeftEye.localScale = new Vector3(0.5f, 0.5f, 1f);
 			}
 			if (StudentID == 81)
 			{
@@ -873,7 +886,7 @@ public class RagdollScript : MonoBehaviour
 				base.transform.eulerAngles = Yandere.transform.eulerAngles;
 				float axis = Input.GetAxis("Vertical");
 				float axis2 = Input.GetAxis("Horizontal");
-				if ((Yandere.CanMove && axis != 0f) || (Yandere.CanMove && axis2 != 0f))
+				if ((Yandere.CanMove && !Yandere.Frozen && axis != 0f) || (Yandere.CanMove && !Yandere.Frozen && axis2 != 0f))
 				{
 					Student.CharacterAnimation.CrossFade(Yandere.Running ? RunAnim : WalkAnim);
 				}
@@ -1172,6 +1185,7 @@ public class RagdollScript : MonoBehaviour
 					if (Student.Club == ClubType.Photography && Student.Cosmetic.ClubAccessories[(int)Student.Club] != null)
 					{
 						Student.Cosmetic.ClubAccessories[(int)Student.Club].transform.parent = gameObject.transform;
+						Student.Cosmetic.ClubAccessories[(int)Student.Club].SetActive(value: false);
 					}
 					break;
 				case 2:
@@ -1218,6 +1232,7 @@ public class RagdollScript : MonoBehaviour
 				gameObject2.transform.parent = Prompt.Yandere.Police.GarbageParent;
 				Student.StudentManager.GarbageBagList[Student.StudentManager.GarbageBags] = gameObject2;
 				Student.StudentManager.GarbageBags++;
+				Yandere.StudentManager.Tarp = false;
 			}
 		}
 		if (Police == null)
@@ -1419,6 +1434,10 @@ public class RagdollScript : MonoBehaviour
 				Yandere.NotificationManager.CustomText = Student.Yandere.PickUp.BodyBags + " bodybags remaining!";
 				Yandere.NotificationManager.DisplayNotification(NotificationType.Custom);
 			}
+		}
+		if (Student.FrostProjector != null)
+		{
+			Student.FrostProjector.enabled = false;
 		}
 	}
 

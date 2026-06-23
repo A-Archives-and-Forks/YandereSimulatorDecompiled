@@ -56,7 +56,9 @@ public class DrainPoolScript : MonoBehaviour
 				SM.Students[SM.RivalID].CharacterAnimation.Play("f02_knifeHighSanityB_00");
 				if (SM.RivalID == 11)
 				{
+					OsanaPoolEvent.OsanaDrowned = false;
 					OsanaPoolEvent.AttachHair();
+					OsanaPoolEvent.enabled = false;
 				}
 				SM.Students[SM.RivalID].CharacterAnimation["f02_knifeHighSanityB_00"].time = SM.Students[SM.RivalID].CharacterAnimation["f02_knifeHighSanityB_00"].length;
 				Phase++;

@@ -5,8 +5,6 @@ public class ModernRivalEventScript : MonoBehaviour
 {
 	public EventInstructions[] Instructions;
 
-	public bool Depressing;
-
 	public ModernRivalEventScript AlternateEvent;
 
 	public StudentManagerScript StudentManager;
@@ -21,7 +19,11 @@ public class ModernRivalEventScript : MonoBehaviour
 
 	public ClockScript Clock;
 
+	public AudioClip Silence;
+
 	public GameObject[] EventObject;
+
+	public Texture[] OverlayTexture;
 
 	public StudentScript[] Char;
 
@@ -53,11 +55,15 @@ public class ModernRivalEventScript : MonoBehaviour
 
 	public bool DisableBlendshapes;
 
+	public bool DynamicPopulation;
+
 	public bool AlreadyPopulated;
 
 	public bool SyncAnimToAudio;
 
 	public bool ClubClosed;
+
+	public bool Depressing;
 
 	public bool ClubCheck;
 
@@ -68,6 +74,10 @@ public class ModernRivalEventScript : MonoBehaviour
 	public int SpecialCase;
 
 	public int Characters;
+
+	public int Offset;
+
+	public int Frame;
 
 	public int Loops;
 
@@ -136,15 +146,14 @@ public class ModernRivalEventScript : MonoBehaviour
 						Debug.Log("Never mind. Cancel event. Character is a mind-broken slave or is being targeted by one.");
 						base.gameObject.SetActive(value: false);
 						base.enabled = false;
+						return;
 					}
-					else
-					{
-						Char[0].InEvent = true;
-						Char[0].Private = Private;
-						Char[0].IgnoringPettyActions = true;
-						Phase++;
-						TakeInstructions();
-					}
+					Instructions[0].Destination[0].position = Char[0].transform.position;
+					Char[0].InEvent = true;
+					Char[0].Private = Private;
+					Char[0].IgnoringPettyActions = true;
+					Phase++;
+					TakeInstructions();
 				}
 			}
 			else if (StartCriteria == StartCriteriaType.BagSet)
@@ -163,6 +172,7 @@ public class ModernRivalEventScript : MonoBehaviour
 					int num2 = 0;
 					for (int i = 0; i < Char.Length; i++)
 					{
+						Char[i] = StudentManager.Students[CharIDs[i]];
 						if (Char[i] != null && !Char[i].InEvent && Char[i].Routine && !Char[i].Following)
 						{
 							num++;
@@ -254,27 +264,55 @@ public class ModernRivalEventScript : MonoBehaviour
 				Phase++;
 				TakeInstructions();
 			}
+			if (Frame > 0)
+			{
+				for (int l = 0; l < Char.Length; l++)
+				{
+					if (Char[l] != null)
+					{
+						if (!Char[l].FocusOnStudent)
+						{
+							Char[l].transform.rotation = Quaternion.Slerp(Char[l].transform.rotation, Char[l].CurrentDestination.rotation, 10f * Time.deltaTime);
+						}
+						if (Instructions[Phase].Type != InstructionType.Stay && Instructions[Phase].Destination[l] != null)
+						{
+							Char[l].MoveTowardsTarget(Char[l].CurrentDestination.position);
+						}
+					}
+				}
+			}
 		}
 		else if (NextCriteria == NextCriteriaType.DestinationReached)
 		{
 			int num3 = 0;
-			for (int l = 0; l < Char.Length; l++)
+			for (int m = 0; m < Char.Length; m++)
 			{
-				if (Char[l] != null)
+				if (!(Char[m] != null))
 				{
-					if (Char[l].DistanceToDestination < 0.5f)
+					continue;
+				}
+				if (Char[m].DistanceToDestination < 0.5f)
+				{
+					PlayDesignatedAnimation(m);
+					num3++;
+					Char[m].Pathfinding.canSearch = false;
+					Char[m].Pathfinding.canMove = false;
+					if (Frame > 0)
 					{
-						PlayDesignatedAnimation(l);
-						num3++;
+						if (!Char[m].FocusOnStudent)
+						{
+							Char[m].transform.rotation = Quaternion.Slerp(Char[m].transform.rotation, Char[m].CurrentDestination.rotation, 10f * Time.deltaTime);
+						}
+						Char[m].MoveTowardsTarget(Char[m].CurrentDestination.position);
 					}
-					else if (Instructions[Phase].Rush)
-					{
-						Char[l].CharacterAnimation.CrossFade(Char[l].SprintAnim);
-					}
-					else
-					{
-						Char[l].CharacterAnimation.CrossFade(Char[l].WalkAnim);
-					}
+				}
+				else if (Instructions[Phase].Rush)
+				{
+					Char[m].CharacterAnimation.CrossFade(Char[m].SprintAnim);
+				}
+				else
+				{
+					Char[m].CharacterAnimation.CrossFade(Char[m].WalkAnim);
 				}
 			}
 			if (num3 == Characters)
@@ -299,15 +337,15 @@ public class ModernRivalEventScript : MonoBehaviour
 			}
 		}
 		UpdateSubtitle();
-		for (int m = 0; m < Char.Length; m++)
+		for (int n = 0; n < Char.Length; n++)
 		{
-			if (Char[m] != null && (Char[m].Alarmed || Char[m].Splashed || Char[m].Dying || Char[m].GoAway))
+			if (Char[n] != null && (Char[n].Alarmed || Char[n].Splashed || Char[n].Dying || Char[n].GoAway))
 			{
 				Debug.Log("The event ended because a character was alarmed or splashed or stink bombed or killed.");
-				if (Char[m].GoAway)
+				if (Char[n].GoAway)
 				{
-					Char[m].Subtitle.CustomText = "What's that smell?! I can't take it! I'm getting out of here!";
-					Char[m].Subtitle.UpdateLabel(SubtitleType.Custom, 0, 5f);
+					Char[n].Subtitle.CustomText = "What's that smell?! I can't take it! I'm getting out of here!";
+					Char[n].Subtitle.UpdateLabel(SubtitleType.Custom, 0, 5f);
 				}
 				EndEvent();
 			}
@@ -316,6 +354,7 @@ public class ModernRivalEventScript : MonoBehaviour
 		{
 			SpecialCaseCheck();
 		}
+		Frame++;
 	}
 
 	private void TakeInstructions()
@@ -338,50 +377,56 @@ public class ModernRivalEventScript : MonoBehaviour
 				Debug.Log("SabtoageProgress is now " + StudentManager.SabotageProgress + "/5");
 			}
 			EndEvent();
-			return;
 		}
-		for (int i = 0; i < Char.Length; i++)
+		else
 		{
-			if (!(Char[i] != null))
+			for (int i = 0; i < Char.Length; i++)
 			{
-				continue;
-			}
-			if (Instructions[Phase].Type == InstructionType.Stay)
-			{
-				Char[i].Pathfinding.canSearch = false;
-				Char[i].Pathfinding.canMove = false;
-				Char[i].Pathfinding.speed = 0f;
-			}
-			else
-			{
-				Char[i].Pathfinding.target = Instructions[Phase].Destination[i];
-				Char[i].CurrentDestination = Instructions[Phase].Destination[i];
-				Char[i].Pathfinding.canSearch = true;
-				Char[i].Pathfinding.canMove = true;
-				Char[i].DistanceToDestination = 100f;
-				if (Instructions[Phase].Rush)
+				if (!(Char[i] != null))
 				{
-					Char[i].Pathfinding.speed = 4f;
+					continue;
+				}
+				if (Instructions[Phase].Destination[i] != null)
+				{
+					Char[i].Pathfinding.target = Instructions[Phase].Destination[i];
+					Char[i].CurrentDestination = Instructions[Phase].Destination[i];
+				}
+				if (Instructions[Phase].Type == InstructionType.Stay)
+				{
+					Char[i].Pathfinding.canSearch = false;
+					Char[i].Pathfinding.canMove = false;
+					Char[i].Pathfinding.speed = 0f;
 				}
 				else
 				{
-					Char[i].Pathfinding.speed = 1f;
+					Char[i].Pathfinding.canSearch = true;
+					Char[i].Pathfinding.canMove = true;
+					Char[i].DistanceToDestination = 100f;
+					if (Instructions[Phase].Rush)
+					{
+						Char[i].Pathfinding.speed = 4f;
+					}
+					else
+					{
+						Char[i].Pathfinding.speed = 1f;
+					}
 				}
+				PlayDesignatedAnimation(i);
 			}
-			PlayDesignatedAnimation(i);
+			if (Instructions[Phase].Audio != null)
+			{
+				SpawnTimeRespectingAudioSource(Instructions[Phase].Audio);
+			}
+			if (num < 10f)
+			{
+				EventSubtitle.text = Instructions[Phase].Dialogue;
+			}
+			NextCriteria = Instructions[Phase].NextCritera;
+			SpecialCase = Instructions[Phase].SpecialCase;
+			TimeLimit = Instructions[Phase].TimeLimit;
+			SpecialCaseTimer = 0f;
 		}
-		if (Instructions[Phase].Audio != null)
-		{
-			SpawnTimeRespectingAudioSource(Instructions[Phase].Audio);
-		}
-		if (num < 10f)
-		{
-			EventSubtitle.text = Instructions[Phase].Dialogue;
-		}
-		NextCriteria = Instructions[Phase].NextCritera;
-		SpecialCase = Instructions[Phase].SpecialCase;
-		TimeLimit = Instructions[Phase].TimeLimit;
-		SpecialCaseTimer = 0f;
+		Frame = 0;
 	}
 
 	public void UpdateSubtitle()
@@ -471,16 +516,16 @@ public class ModernRivalEventScript : MonoBehaviour
 			break;
 		case 5:
 		{
-			for (int i = 1; i < Char.Length; i++)
+			for (int k = 1; k < Char.Length; k++)
 			{
-				if (Char[i] != null)
+				if (Char[k] != null)
 				{
-					Char[i].InEvent = true;
-					Char[i].Routine = false;
-					Char[i].SpeechLines.Stop();
-					Char[i].FocusOnStudent = true;
-					Char[i].WeirdStudent = Char[0].transform;
-					Char[i].CharacterAnimation.CrossFade(Char[i].IdleAnim);
+					Char[k].InEvent = true;
+					Char[k].Routine = false;
+					Char[k].SpeechLines.Stop();
+					Char[k].FocusOnStudent = true;
+					Char[k].WeirdStudent = Char[0].transform;
+					Char[k].CharacterAnimation.CrossFade(Char[k].IdleAnim);
 				}
 			}
 			break;
@@ -510,15 +555,15 @@ public class ModernRivalEventScript : MonoBehaviour
 			break;
 		case 11:
 		{
-			ScheduleBlock obj = Char[0].ScheduleBlocks[4];
-			obj.destination = "Picnic";
-			obj.action = "Picnic";
+			ScheduleBlock obj2 = Char[0].ScheduleBlocks[4];
+			obj2.destination = "Picnic";
+			obj2.action = "Picnic";
 			Char[0].GetDestinations();
 			Char[0].Pathfinding.target = Char[0].Destinations[4];
 			Char[0].CurrentDestination = Char[0].Destinations[4];
-			ScheduleBlock obj2 = Char[1].ScheduleBlocks[4];
-			obj2.destination = "Picnic";
-			obj2.action = "Picnic";
+			ScheduleBlock obj3 = Char[1].ScheduleBlocks[4];
+			obj3.destination = "Picnic";
+			obj3.action = "Picnic";
 			Char[1].GetDestinations();
 			Char[1].Pathfinding.target = Char[1].Destinations[4];
 			Char[1].CurrentDestination = Char[1].Destinations[4];
@@ -579,11 +624,25 @@ public class ModernRivalEventScript : MonoBehaviour
 			}
 			break;
 		case 17:
-			Char[0].TaroApron.enabled = true;
+			if (StudentManager.BakeSaleFoodTrays[1].activeInHierarchy)
+			{
+				for (int j = 1; j < 8; j++)
+				{
+					StudentManager.BakeSaleFoodTrays[j].SetActive(value: false);
+				}
+				StudentManager.Students[1].TaroApron.enabled = true;
+				EventObject[1].SetActive(value: true);
+			}
 			break;
 		case 18:
-			Char[0].TaroApron.newRenderer.enabled = false;
+		{
+			StudentManager.Students[1].TaroApron.newRenderer.enabled = false;
+			ScheduleBlock obj = StudentManager.Students[1].ScheduleBlocks[4];
+			obj.destination = "LunchSpot";
+			obj.action = "Eat";
+			StudentManager.Students[1].GetDestinations();
 			break;
+		}
 		case 19:
 			Char[0].WalkAnim = "f02_walkHoldingBag_00";
 			Char[0].GiftBag.SetActive(value: true);
@@ -615,6 +674,62 @@ public class ModernRivalEventScript : MonoBehaviour
 			break;
 		case 23:
 			Char[0].PhoneCallScreen.SetActive(value: false);
+			break;
+		case 24:
+		{
+			for (int i = 0; i < Char.Length; i++)
+			{
+				if (Char[i] != null)
+				{
+					Char[i].WeirdStudent = null;
+					Char[i].FocusOnStudent = false;
+				}
+			}
+			break;
+		}
+		case 25:
+			Char[1].MyRenderer.materials[2].SetTexture("_OverlayTex", OverlayTexture[0]);
+			Char[1].MyRenderer.materials[0].SetTexture("_OverlayTex", OverlayTexture[1]);
+			Char[1].MyRenderer.materials[2].SetFloat("_BlendAmount", 1f);
+			Char[1].MyRenderer.materials[0].SetFloat("_BlendAmount", 1f);
+			break;
+		case 26:
+			Char[1].MyRenderer.materials[2].SetFloat("_BlendAmount", 0f);
+			break;
+		case 27:
+			EventObject[0].SetActive(value: false);
+			EventObject[1].SetActive(value: true);
+			break;
+		case 28:
+			EventObject[1].SetActive(value: false);
+			break;
+		case 29:
+			Debug.Log("Attempting to jump ahead to Phase 21.");
+			Phase = 21;
+			TakeInstructions();
+			break;
+		case 30:
+			Loops++;
+			Debug.Log("So far, we have looped " + Loops + " times.");
+			if (Loops >= 10)
+			{
+				Phase++;
+				TakeInstructions();
+			}
+			else if (EventObject[2].activeInHierarchy)
+			{
+				Phase = 19;
+				TakeInstructions();
+			}
+			else
+			{
+				Phase = 12;
+				TakeInstructions();
+			}
+			break;
+		case 31:
+			Phase = 22;
+			TakeInstructions();
 			break;
 		}
 	}
@@ -653,6 +768,10 @@ public class ModernRivalEventScript : MonoBehaviour
 		{
 			EventObject[0].SetActive(value: false);
 		}
+		else if (EventID == RivalEventType.AmaiCookingEvent)
+		{
+			MakeStudentsPrepareFoodForever();
+		}
 		else
 		{
 			_ = EventID;
@@ -665,47 +784,56 @@ public class ModernRivalEventScript : MonoBehaviour
 		}
 		for (int i = 0; i < Char.Length; i++)
 		{
-			if (Char[i] != null && Char[i].Alive && !Char[i].Dying)
+			if (!(Char[i] != null) || !Char[i].Alive || Char[i].Dying)
 			{
-				Char[i].EmptyHands();
-				if (!Char[i].Alarmed && !Char[i].Splashed && !Char[i].GoAway)
-				{
-					Char[i].Pathfinding.canSearch = true;
-					Char[i].Pathfinding.canMove = true;
-					Char[i].Pathfinding.speed = 1f;
-					Char[i].Routine = true;
-				}
-				else
-				{
-					Debug.Log("Character # " + i + " was alarmed when event ended.");
-				}
-				if (Char[i].TimeRespectingAudioSource != null)
-				{
-					UnityEngine.Object.Destroy(Char[i].TimeRespectingAudioSource);
-				}
-				Char[i].CharacterAnimation.cullingType = AnimationCullingType.BasedOnRenderers;
-				Char[i].CurrentDestination = Char[i].Destinations[Char[i].Phase];
-				Char[i].Pathfinding.target = Char[i].Destinations[Char[i].Phase];
-				Char[i].IgnoringPettyActions = false;
-				Char[i].SmartPhone.SetActive(value: false);
-				Char[i].DistanceToDestination = 100f;
-				Char[i].Prompt.enabled = true;
-				Char[i].InEvent = false;
-				Char[i].Private = false;
-				if (Depressing && Char[i].Rival)
+				continue;
+			}
+			Char[i].EmptyHands();
+			if (!Char[i].Alarmed && !Char[i].Splashed && !Char[i].GoAway)
+			{
+				Char[i].Pathfinding.canSearch = true;
+				Char[i].Pathfinding.canMove = true;
+				Char[i].Pathfinding.speed = 1f;
+				Char[i].Routine = true;
+			}
+			else
+			{
+				Debug.Log("Character # " + i + " was alarmed when event ended.");
+			}
+			if (Char[i].TimeRespectingAudioSource != null)
+			{
+				UnityEngine.Object.Destroy(Char[i].TimeRespectingAudioSource);
+			}
+			Char[i].CharacterAnimation.cullingType = AnimationCullingType.BasedOnRenderers;
+			Char[i].CurrentDestination = Char[i].Destinations[Char[i].Phase];
+			Char[i].Pathfinding.target = Char[i].Destinations[Char[i].Phase];
+			Char[i].IgnoringPettyActions = false;
+			Char[i].SmartPhone.SetActive(value: false);
+			Char[i].DistanceToDestination = 100f;
+			Char[i].Prompt.enabled = true;
+			Char[i].InEvent = false;
+			Char[i].Private = false;
+			if (Char[i].Rival)
+			{
+				if (Depressing)
 				{
 					Char[i].IdleAnim = "f02_bulliedIdle_00";
 					Char[i].WalkAnim = "f02_bulliedWalk_00";
 				}
-				if (!StudentManager.Stop)
+				else
 				{
-					StudentManager.UpdateStudents();
+					Char[i].IdleAnim = Char[i].OriginalIdleAnim;
+					Char[i].WalkAnim = Char[i].OriginalWalkAnim;
 				}
-				if (Char[i].Rival)
-				{
-					Debug.Log(Char[i]?.ToString() + " is a rival, so, as she is exiting this event, we're going to check to see if she needs to add ''Place Bag'' to her routine.");
-					Char[i].CheckIfWeNeedToPlaceBag();
-				}
+			}
+			if (!StudentManager.Stop)
+			{
+				StudentManager.UpdateStudents();
+			}
+			if (Char[i].Rival)
+			{
+				Debug.Log(Char[i]?.ToString() + " is a rival, so, as she is exiting this event, we're going to check to see if she needs to add ''Place Bag'' to her routine.");
+				Char[i].CheckIfWeNeedToPlaceBag();
 			}
 		}
 		EventSubtitle.text = string.Empty;
@@ -738,6 +866,14 @@ public class ModernRivalEventScript : MonoBehaviour
 		{
 			Char[ID].CharacterAnimation.CrossFade(Char[ID].WalkAnim);
 		}
+		else if (Instructions[Phase].Anim[ID] == "Wait")
+		{
+			Char[ID].CharacterAnimation.CrossFade(Char[ID].WaitAnim);
+		}
+		else if (Instructions[Phase].Anim[ID] == "PrepareFood")
+		{
+			Char[ID].CharacterAnimation.CrossFade(Char[ID].PrepareFoodAnim);
+		}
 		else if (Instructions[Phase].Anim[ID] != "")
 		{
 			Char[ID].CharacterAnimation.CrossFade(Instructions[Phase].Anim[ID]);
@@ -746,8 +882,24 @@ public class ModernRivalEventScript : MonoBehaviour
 
 	public void PopulateCharacterList()
 	{
+		if (Char[0] == null)
+		{
+			Debug.Log("Char[0] is null. Either variables have not been initialized yet, or the player just reloaded a save. Initializing variables now.");
+			AlreadyPopulated = false;
+			Characters = 0;
+			if (DynamicPopulation)
+			{
+				GrabAvailableStudents();
+				DynamicPopulation = false;
+			}
+		}
 		_ = EventID;
 		_ = 3;
+		if (EventID == RivalEventType.AmaiCakeEvent)
+		{
+			Debug.Log("AmaiCakeEvent's PopulateCharactersList is now being called.");
+			Debug.Log("AlreadyPopulated is: " + AlreadyPopulated);
+		}
 		if (AlreadyPopulated)
 		{
 			return;
@@ -788,6 +940,36 @@ public class ModernRivalEventScript : MonoBehaviour
 		StudentManager.BakeSaleHasBegun = true;
 	}
 
+	public void MakeStudentsPrepareFoodForever()
+	{
+		Debug.Log("Now attempting to adjust student routines so that several students prepare food in the Home Ec room.");
+		if (Char[0] != null)
+		{
+			ScheduleBlock obj = Char[0].ScheduleBlocks[4];
+			obj.destination = "Patrol";
+			obj.action = "Patrol";
+			Char[0].GetDestinations();
+			Char[0].CurrentAction = StudentActionType.Patrol;
+			Char[0].Pathfinding.speed = 1f;
+		}
+		for (int i = 1 + Offset; i < Char.Length; i++)
+		{
+			if (Char[i] != null)
+			{
+				StudentManager.BakeSalePrepSpots[Char[i].StudentID] = Instructions[0].Destination[i];
+				Debug.Log("StudentManager.BakeSalePrepSpots[" + Char[i].StudentID + "] was just changed to " + StudentManager.BakeSalePrepSpots[Char[i].StudentID]);
+				ScheduleBlock obj2 = Char[i].ScheduleBlocks[4];
+				obj2.destination = "BakeSalePrepSpot";
+				obj2.action = "PrepareFoodForever";
+				Char[i].GetDestinations();
+				Char[i].CurrentAction = StudentActionType.PrepareFoodForever;
+				Char[i].Pathfinding.target = Char[i].Destinations[Char[i].Phase];
+				Char[i].CurrentDestination = Char[i].Destinations[Char[i].Phase];
+				Char[i].Pathfinding.speed = 1f;
+			}
+		}
+	}
+
 	public void CheckForDeaths()
 	{
 		Debug.Log("The script named " + base.gameObject.name + " is now checking to see if any of the characters involved in this event are dead.");
@@ -800,12 +982,33 @@ public class ModernRivalEventScript : MonoBehaviour
 				int num2 = i * 2;
 				Instructions[num2].Dialogue = "";
 				Instructions[num2].TimeLimit = 0f;
+				Instructions[num2].Audio = Silence;
+				Instructions[num2].NextCritera = NextCriteriaType.TimeLimit;
 				if (num2 + 1 < Instructions.Length)
 				{
 					Instructions[num2 + 1].Dialogue = "";
 					Instructions[num2 + 1].TimeLimit = 0f;
+					Instructions[num2 + 1].Audio = Silence;
+					Instructions[num2 + 1].NextCritera = NextCriteriaType.TimeLimit;
 				}
 			}
+		}
+	}
+
+	public void GrabAvailableStudents()
+	{
+		Debug.Log("Grabbing available students!");
+		int num = 2;
+		int num2 = 2;
+		while (num < CharIDs.Length && num2 < StudentManager.Students.Length)
+		{
+			if (StudentManager.Students[num2] != null && StudentManager.Students[num2].Class < 30 && !StudentManager.Students[num2].BakeSale)
+			{
+				Debug.Log("Student #" + num + " appears to be available. Not part of the Bake Sale or anything. Adding this student to an event.");
+				CharIDs[num] = num2;
+				num++;
+			}
+			num2++;
 		}
 	}
 

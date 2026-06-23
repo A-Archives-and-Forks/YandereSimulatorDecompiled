@@ -232,33 +232,44 @@ public class TutorialWindowScript : MonoBehaviour
 
 	public UILabel ShortShadow;
 
+	public GameObject InfoChan;
+
+	public GameObject Static;
+
 	private void Start()
 	{
 		base.transform.localScale = new Vector3(0f, 0f, 0f);
 		if (OptionGlobals.TutorialsOff)
 		{
 			base.enabled = false;
-			return;
 		}
-		IgnoreDistraction = TutorialGlobals.IgnoreDistraction;
-		IgnoreClothing = TutorialGlobals.IgnoreClothing;
-		IgnoreCouncil = TutorialGlobals.IgnoreCouncil;
-		IgnoreTeacher = TutorialGlobals.IgnoreTeacher;
-		IgnorePersona = TutorialGlobals.IgnorePersona;
-		IgnoreLocker = TutorialGlobals.IgnoreLocker;
-		IgnorePolice = TutorialGlobals.IgnorePolice;
-		IgnoreSanity = TutorialGlobals.IgnoreSanity;
-		IgnoreSenpai = TutorialGlobals.IgnoreSenpai;
-		IgnoreVision = TutorialGlobals.IgnoreVision;
-		IgnoreWeapon = TutorialGlobals.IgnoreWeapon;
-		IgnoreBlood = TutorialGlobals.IgnoreBlood;
-		IgnoreClass = TutorialGlobals.IgnoreClass;
-		IgnoreMoney = TutorialGlobals.IgnoreMoney;
-		IgnorePhoto = TutorialGlobals.IgnorePhoto;
-		IgnoreClub = TutorialGlobals.IgnoreClub;
-		IgnoreInfo = TutorialGlobals.IgnoreInfo;
-		IgnorePool = TutorialGlobals.IgnorePool;
-		IgnoreRep = TutorialGlobals.IgnoreRep;
+		else
+		{
+			IgnoreDistraction = TutorialGlobals.IgnoreDistraction;
+			IgnoreClothing = TutorialGlobals.IgnoreClothing;
+			IgnoreCouncil = TutorialGlobals.IgnoreCouncil;
+			IgnoreTeacher = TutorialGlobals.IgnoreTeacher;
+			IgnorePersona = TutorialGlobals.IgnorePersona;
+			IgnoreLocker = TutorialGlobals.IgnoreLocker;
+			IgnorePolice = TutorialGlobals.IgnorePolice;
+			IgnoreSanity = TutorialGlobals.IgnoreSanity;
+			IgnoreSenpai = TutorialGlobals.IgnoreSenpai;
+			IgnoreVision = TutorialGlobals.IgnoreVision;
+			IgnoreWeapon = TutorialGlobals.IgnoreWeapon;
+			IgnoreBlood = TutorialGlobals.IgnoreBlood;
+			IgnoreClass = TutorialGlobals.IgnoreClass;
+			IgnoreMoney = TutorialGlobals.IgnoreMoney;
+			IgnorePhoto = TutorialGlobals.IgnorePhoto;
+			IgnoreClub = TutorialGlobals.IgnoreClub;
+			IgnoreInfo = TutorialGlobals.IgnoreInfo;
+			IgnorePool = TutorialGlobals.IgnorePool;
+			IgnoreRep = TutorialGlobals.IgnoreRep;
+		}
+		if (GameGlobals.Eighties)
+		{
+			InfoChan.SetActive(value: false);
+			Static.SetActive(value: false);
+		}
 	}
 
 	private void Update()

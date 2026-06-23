@@ -101,6 +101,10 @@ public class ZoomScript : MonoBehaviour
 		{
 			TargetZoom = 0f;
 		}
+		if (TargetZoom > 0.4f)
+		{
+			TargetZoom = 0.4f;
+		}
 		if (Zoom != TargetZoom)
 		{
 			Zoom = Mathf.MoveTowards(Zoom, TargetZoom, Time.deltaTime);

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using HighlightingSystem;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Audio;
@@ -238,13 +239,21 @@ public class GenericAnimationSequenceController : MonoBehaviour
 
 	private float originalFixedDeltaTime = 0.02f;
 
+	public YandereScript YandereHair;
+
 	public CosmeticScript Yandere;
+
+	public JsonScript JSON;
+
+	public GameObject NoFemaleSenpai;
+
+	public GameObject UICamera;
 
 	public GameObject AyanoHair;
 
 	public GameObject RyobaHair;
 
-	public GameObject UICamera;
+	public UISprite Darkness;
 
 	public UILabel Subtitle;
 
@@ -255,6 +264,14 @@ public class GenericAnimationSequenceController : MonoBehaviour
 	public AudioSource[] Fountain;
 
 	public DynamicBoneCollider HeadCollider;
+
+	public UISprite SkipCircle;
+
+	public UIPanel SkipPanel;
+
+	public float SkipTimer;
+
+	public bool EndEarly;
 
 	private void Awake()
 	{
@@ -272,6 +289,8 @@ public class GenericAnimationSequenceController : MonoBehaviour
 				Debug.Log("We are now in Custom Mode.");
 			}
 		}
+		debugMode = false;
+		DisableOutlineScripts(YandereHair.gameObject);
 	}
 
 	private void Start()
@@ -313,6 +332,41 @@ public class GenericAnimationSequenceController : MonoBehaviour
 
 	private void Update()
 	{
+		SkipTimer += Time.deltaTime;
+		if (SkipTimer > 5f)
+		{
+			SkipPanel.alpha -= Time.deltaTime;
+		}
+		if (EndEarly)
+		{
+			Darkness.alpha = Mathf.MoveTowards(Darkness.alpha, 1f, Time.deltaTime);
+			SkipPanel.alpha -= Time.deltaTime;
+			Subtitle.text = "";
+			if (Darkness.alpha > 0.999f)
+			{
+				GameGlobals.DarkEnding = true;
+				SceneManager.LoadScene("GenocideScene");
+				if (!GameGlobals.Debug)
+				{
+					PlayerPrefs.SetInt("Genocide", 1);
+					PlayerPrefs.SetInt("a", 1);
+				}
+			}
+		}
+		else if (Input.GetButton(InputNames.Xbox_X))
+		{
+			SkipPanel.alpha = 1f;
+			SkipTimer = 0f;
+			SkipCircle.fillAmount -= Time.deltaTime;
+			if (SkipCircle.fillAmount == 0f)
+			{
+				EndEarly = true;
+			}
+		}
+		else
+		{
+			SkipCircle.fillAmount = 1f;
+		}
 		Timer += Time.deltaTime;
 		if (!Initiated)
 		{
@@ -322,6 +376,7 @@ public class GenericAnimationSequenceController : MonoBehaviour
 				int index = (currentSequenceIndex + 1) % sequenceCount;
 				PlaySequence(index);
 				Initiated = true;
+				Yandere.DisableHair();
 				if (GameGlobals.Eighties)
 				{
 					AyanoHair.gameObject.SetActive(value: false);
@@ -333,6 +388,18 @@ public class GenericAnimationSequenceController : MonoBehaviour
 					{
 						RyobaHair.gameObject.SetActive(value: true);
 						Yandere.MyRenderer.materials[0].mainTexture = Yandere.MyRenderer.materials[1].mainTexture;
+					}
+					else
+					{
+						YandereHair.gameObject.SetActive(value: true);
+						YandereHair.Hairstyle = 0;
+						YandereHair.UpdateHair();
+						string hairstyle = JSON.Students[0].Hairstyle;
+						YandereHair.Hairstyles[int.Parse(hairstyle)].SetActive(value: true);
+						if (GameGlobals.FemaleSenpai)
+						{
+							NoFemaleSenpai.SetActive(value: true);
+						}
 					}
 				}
 				else
@@ -352,16 +419,17 @@ public class GenericAnimationSequenceController : MonoBehaviour
 			Fountain[1].volume -= Time.deltaTime * 0.0007f;
 			Fountain[2].volume -= Time.deltaTime * 7E-05f;
 		}
-		if (Timer > 30f)
+		if (Timer < 25.5f)
 		{
-			if (HeadCollider.m_Radius > 0.1f)
-			{
-				HeadCollider.m_Radius = Mathf.MoveTowards(HeadCollider.m_Radius, 0.1f, Time.deltaTime * 0.1f);
-			}
+			HeadCollider.m_Radius = Mathf.MoveTowards(HeadCollider.m_Radius, 0.09f, Time.deltaTime * 0.1f);
 		}
-		else if (Timer > 25f)
+		else if (Timer < 29f)
 		{
 			HeadCollider.m_Radius = Mathf.MoveTowards(HeadCollider.m_Radius, 0.15f, Time.deltaTime * 0.1f);
+		}
+		else
+		{
+			HeadCollider.m_Radius = Mathf.MoveTowards(HeadCollider.m_Radius, 0f, Time.deltaTime * 0.1f);
 		}
 		if (mainCamera == null)
 		{
@@ -434,15 +502,15 @@ public class GenericAnimationSequenceController : MonoBehaviour
 				ApplyTimeScale(playbackSpeed);
 				Debug.Log("[GenericAnimationHandler][Debug] TimeScale reset to 1.0");
 			}
+			if (Input.GetKeyDown(KeyCode.Space))
+			{
+				int index2 = (currentSequenceIndex + 1) % sequenceCount;
+				PlaySequence(index2);
+			}
 		}
 		else
 		{
 			playbackSpeed = 1f;
-		}
-		if (Input.GetKeyDown(KeyCode.Space))
-		{
-			int index2 = (currentSequenceIndex + 1) % sequenceCount;
-			PlaySequence(index2);
 		}
 		if (isSequencePlaying)
 		{
@@ -1115,5 +1183,19 @@ public class GenericAnimationSequenceController : MonoBehaviour
 			v = 1f;
 		}
 		return Mathf.Clamp(v, 0.01f, 5f);
+	}
+
+	private void DisableOutlineScripts(GameObject root)
+	{
+		OutlineScript[] componentsInChildren = root.GetComponentsInChildren<OutlineScript>(includeInactive: true);
+		for (int i = 0; i < componentsInChildren.Length; i++)
+		{
+			UnityEngine.Object.Destroy(componentsInChildren[i]);
+		}
+		Highlighter[] componentsInChildren2 = root.GetComponentsInChildren<Highlighter>(includeInactive: true);
+		for (int i = 0; i < componentsInChildren2.Length; i++)
+		{
+			UnityEngine.Object.Destroy(componentsInChildren2[i]);
+		}
 	}
 }

@@ -319,6 +319,11 @@ public class PracticeWindowScript : MonoBehaviour
 				if (StudentManager.Clock.HourTime < 7.9f && StudentManager.Students[7] != null)
 				{
 					StudentManager.Students[7].gameObject.SetActive(value: false);
+					Debug.Log("Disabling Otohiko from here. 1");
+				}
+				if (StudentManager.TranqDetector.TranqCase.VictimID != 0)
+				{
+					StudentManager.Students[StudentManager.TranqDetector.TranqCase.VictimID].gameObject.SetActive(value: false);
 				}
 				if (GameGlobals.SenpaiMourning)
 				{
@@ -380,6 +385,11 @@ public class PracticeWindowScript : MonoBehaviour
 				if (StudentManager.Eighties && StudentManager.Clock.HourTime < 7.9f && StudentManager.Students[7] != null)
 				{
 					StudentManager.Students[7].gameObject.SetActive(value: false);
+					Debug.Log("Disabling Otohiko from here. 2");
+				}
+				if (StudentManager.TranqDetector.TranqCase.VictimID != 0)
+				{
+					StudentManager.Students[StudentManager.TranqDetector.TranqCase.VictimID].gameObject.SetActive(value: false);
 				}
 				Debug.Log("Regenerating pathfinding grid.");
 				AstarPath.active.Scan();

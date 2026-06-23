@@ -962,6 +962,19 @@ public class MissionModeScript : MonoBehaviour
 						DisposalMethod = 5;
 					}
 				}
+				int num3 = 0;
+				for (ID = 0; ID < Manhole.Limbs + 1; ID++)
+				{
+					if (Manhole.LimbList[ID] == TargetID)
+					{
+						num3++;
+					}
+					Debug.Log(num3 + " ManholeTargetLimbs counted.");
+					if (num3 == 6)
+					{
+						DisposalMethod = 5;
+					}
+				}
 				for (ID = 1; ID < Kiln.Victims + 1; ID++)
 				{
 					if (Kiln.VictimList[ID] == TargetID)
@@ -969,14 +982,14 @@ public class MissionModeScript : MonoBehaviour
 						DisposalMethod = 6;
 					}
 				}
-				int num3 = 0;
+				int num4 = 0;
 				for (ID = 1; ID < Kiln.Limbs + 1; ID++)
 				{
 					if (Kiln.LimbList[ID] == TargetID)
 					{
-						num3++;
+						num4++;
 					}
-					if (num3 == 6)
+					if (num4 == 6)
 					{
 						DisposalMethod = 6;
 					}
@@ -986,15 +999,15 @@ public class MissionModeScript : MonoBehaviour
 				{
 					DisposalMethod = 7;
 				}
-				int num4 = 0;
+				int num5 = 0;
 				for (ID = 0; ID < Plant.Limbs + 1; ID++)
 				{
 					if (Plant.LimbList[ID] == TargetID)
 					{
-						num4++;
+						num5++;
 					}
-					Debug.Log(num4 + " PlantTargetLimbs counted.");
-					if (num4 == 6)
+					Debug.Log(num5 + " PlantTargetLimbs counted.");
+					if (num5 == 6)
 					{
 						DisposalMethod = 7;
 					}
@@ -1112,10 +1125,10 @@ public class MissionModeScript : MonoBehaviour
 				{
 					TimeRemaining = Mathf.MoveTowards(TimeRemaining, 0f, Time.unscaledDeltaTime);
 				}
-				int num5 = Mathf.CeilToInt(TimeRemaining);
-				int num6 = num5 / 60;
-				int num7 = num5 % 60;
-				TimeLabel.text = $"{num6:00}:{num7:00}";
+				int num6 = Mathf.CeilToInt(TimeRemaining);
+				int num7 = num6 / 60;
+				int num8 = num6 % 60;
+				TimeLabel.text = $"{num7:00}:{num8:00}";
 				if (TimeRemaining == 0f)
 				{
 					Chastise = true;

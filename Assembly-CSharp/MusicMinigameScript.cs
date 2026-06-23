@@ -785,7 +785,8 @@ public class MusicMinigameScript : MonoBehaviour
 			PlayerPrefs.SetInt("Panther", 1);
 			PlayerPrefs.SetInt("a", 1);
 		}
-		Debug.Log("And now, after playing the Light Music Club minigame, we should gain " + PlayerPrefs.GetFloat("TempReputation") + " reputation points.");
+		Debug.Log("After playing the Light Music Club minigame, we should gain " + PlayerPrefs.GetFloat("TempReputation") + " reputation points.");
+		Debug.Log("And now, we are telling SchoolScene to reactivate all GameObjects - including Students.");
 		GameObject[] rootGameObjects = SceneManager.GetActiveScene().GetRootGameObjects();
 		for (int i = 0; i < rootGameObjects.Length; i++)
 		{

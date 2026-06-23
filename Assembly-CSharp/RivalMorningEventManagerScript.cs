@@ -102,7 +102,7 @@ public class RivalMorningEventManagerScript : MonoBehaviour
 		{
 			DateGlobals.Weekday = DayOfWeek.Monday;
 		}
-		if (DateGlobals.Weekday != EventDay || HomeGlobals.LateForSchool || StudentManager.YandereLate || DatingGlobals.SuitorProgress == 2 || StudentGlobals.MemorialStudents > 0 || GameGlobals.RivalEliminationID > 0 || StudentGlobals.StudentSlave == RivalID || GameGlobals.AlphabetMode || MissionModeGlobals.MissionMode || DateGlobals.Week != Week || Eighties || StudentManager.RecordingVideo)
+		if (DateGlobals.Weekday != EventDay || HomeGlobals.LateForSchool || StudentManager.YandereLate || DatingGlobals.SuitorProgress == 2 || GameGlobals.RivalEliminationID > 0 || StudentGlobals.StudentSlave == RivalID || GameGlobals.AlphabetMode || MissionModeGlobals.MissionMode || DateGlobals.Week != Week || Eighties || StudentManager.RecordingVideo)
 		{
 			Spy.Prompt.enabled = false;
 			base.enabled = false;
@@ -133,6 +133,11 @@ public class RivalMorningEventManagerScript : MonoBehaviour
 			{
 				ObjectToActivate.SetActive(value: true);
 			}
+		}
+		if (StudentGlobals.MemorialStudents > 0)
+		{
+			Spy.Prompt.enabled = false;
+			base.enabled = false;
 		}
 	}
 

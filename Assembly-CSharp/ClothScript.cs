@@ -7,9 +7,13 @@ public class ClothScript : MonoBehaviour
 
 	public PromptScript Prompt;
 
+	public GameObject PinkCloth;
+
 	public bool PinkSockTask;
 
 	public string[] BikiniLetters;
+
+	public bool KeepPinkDisabled;
 
 	public bool BikiniCheck;
 
@@ -28,18 +32,23 @@ public class ClothScript : MonoBehaviour
 			Prompt.enabled = true;
 			PinkSockTask = true;
 			base.enabled = true;
+			Prompt.HideButton[1] = true;
+			KeepPinkDisabled = true;
 		}
 	}
 
 	private void Update()
 	{
-		if (PinkSockTask)
+		if (!KeepPinkDisabled)
 		{
-			Prompt.HideButton[1] = false;
-		}
-		else
-		{
-			Prompt.HideButton[1] = true;
+			if (PinkSockTask)
+			{
+				Prompt.HideButton[1] = false;
+			}
+			else
+			{
+				Prompt.HideButton[1] = true;
+			}
 		}
 		if (Prompt.Circle[0].fillAmount == 0f)
 		{
@@ -55,6 +64,7 @@ public class ClothScript : MonoBehaviour
 			Prompt.Yandere.Inventory.PinkCloth = true;
 			SewingMachine.enabled = true;
 			SewingMachine.Check = true;
+			PinkCloth.SetActive(value: false);
 			PinkSockTask = false;
 			if (!GameGlobals.Eighties)
 			{

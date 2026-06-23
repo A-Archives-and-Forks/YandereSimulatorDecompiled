@@ -41,7 +41,7 @@ public class CounselorDoorScript : MonoBehaviour
 						Prompt.Yandere.NotificationManager.DisplayNotification(NotificationType.Custom);
 						flag = true;
 					}
-					else if (studentScript.Fleeing)
+					else if (studentScript.Fleeing || studentScript.GoAway)
 					{
 						Prompt.Yandere.NotificationManager.CustomText = "Not now - wait a minute!";
 						Prompt.Yandere.NotificationManager.DisplayNotification(NotificationType.Custom);
@@ -79,6 +79,7 @@ public class CounselorDoorScript : MonoBehaviour
 					Prompt.Yandere.CharacterAnimation.Play("f02_sit_00");
 					Prompt.Yandere.transform.position = new Vector3(-27.51f, 0f, 12f);
 					Prompt.Yandere.transform.localEulerAngles = new Vector3(0f, -90f, 0f);
+					Physics.SyncTransforms();
 					Counselor.Talk();
 					FadeOut = false;
 					FadeIn = true;

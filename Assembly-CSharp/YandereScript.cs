@@ -195,6 +195,8 @@ public class YandereScript : MonoBehaviour
 
 	public UIPanel HUD;
 
+	public UISprite HUDSprite;
+
 	public CharacterController MyController;
 
 	public Transform ChainsawDismemberSpot;
@@ -206,6 +208,8 @@ public class YandereScript : MonoBehaviour
 	public Transform BookBagParent;
 
 	public Transform DismemberSpot;
+
+	public Transform RyobaPonytail;
 
 	public Transform CameraTarget;
 
@@ -230,6 +234,8 @@ public class YandereScript : MonoBehaviour
 	public Transform PelvisRoot;
 
 	public Transform PoisonSpot;
+
+	public Transform RyobaLoose;
 
 	public Transform CameraPOV;
 
@@ -325,9 +331,13 @@ public class YandereScript : MonoBehaviour
 
 	public GameObject Handcuffs;
 
+	public GameObject PartyHat;
+
 	public GameObject ShoePair;
 
 	public GameObject Barcode;
+
+	public GameObject Bouquet;
 
 	public GameObject Headset;
 
@@ -462,6 +472,8 @@ public class YandereScript : MonoBehaviour
 	public float NextTwitch;
 
 	public float CleaningNotSuspicious;
+
+	public float SanityRecoverySpeed = 1f;
 
 	public float SenpaiThreshold;
 
@@ -1301,6 +1313,8 @@ public class YandereScript : MonoBehaviour
 
 	public Texture WitchFace;
 
+	public PoseModeScript PoseMode;
+
 	public Collider BladeHairCollider1;
 
 	public Collider BladeHairCollider2;
@@ -1860,6 +1874,10 @@ public class YandereScript : MonoBehaviour
 	public bool DefaultHairColor;
 
 	public Color ColorValue;
+
+	private float checkRadius = 1f;
+
+	private float pushSpeed = 1f;
 
 	public float Sanity
 	{
@@ -2950,18 +2968,6 @@ public class YandereScript : MonoBehaviour
 							if (StudentManager.ErrorTimer == 0f)
 							{
 								PauseScreen.NewSettings.Profile.depthOfField.enabled = false;
-								if (CameraEffects.OneCamera)
-								{
-									MainCamera.clearFlags = CameraClearFlags.Color;
-									MainCamera.farClipPlane = 0.02f;
-									HandCamera.clearFlags = CameraClearFlags.Color;
-								}
-								else
-								{
-									MainCamera.clearFlags = CameraClearFlags.Skybox;
-									MainCamera.farClipPlane = OptionGlobals.DrawDistance;
-									HandCamera.clearFlags = CameraClearFlags.Depth;
-								}
 								base.transform.eulerAngles = new Vector3(base.transform.eulerAngles.x, MainCamera.transform.eulerAngles.y, base.transform.eulerAngles.z);
 								CharacterAnimation.Play(IdleAnim);
 								if (!StudentManager.Eighties)
@@ -2978,6 +2984,17 @@ public class YandereScript : MonoBehaviour
 									{
 										PhonePromptBar.Panel.enabled = true;
 										PhonePromptBar.Show = true;
+									}
+									MainCamera.farClipPlane = OptionGlobals.DrawDistance;
+									HandCamera.clearFlags = CameraClearFlags.Depth;
+									if (OptionGlobals.Fog)
+									{
+										Smartphone.backgroundColor = MainCamera.backgroundColor;
+										Smartphone.clearFlags = CameraClearFlags.Color;
+									}
+									else
+									{
+										Smartphone.clearFlags = CameraClearFlags.Skybox;
 									}
 								}
 								else
@@ -3106,7 +3123,6 @@ public class YandereScript : MonoBehaviour
 							if (!Sans && !BlackRobe.activeInHierarchy)
 							{
 								YandereVision = true;
-								Debug.Log("Attempting to activate Yandere Vision.");
 								if (UseCustomHair)
 								{
 									if (CustomHair.gameObject != null)
@@ -3118,7 +3134,6 @@ public class YandereScript : MonoBehaviour
 								{
 									ActivateOutline(Hairstyles[Hairstyle]);
 								}
-								Debug.Log("Successfully activated Yandere Vision.");
 								if (StudentManager.Students[1] != null)
 								{
 									StudentManager.Students[1].TurnOutlinesPink();
@@ -4293,6 +4308,8 @@ public class YandereScript : MonoBehaviour
 					LaughClip = Laugh4;
 					LaughTimer = 2f;
 					LoseGentleEyes();
+					RyobaPonytail.localEulerAngles = new Vector3(30f, 0f, 0f);
+					RyobaLoose.localEulerAngles = new Vector3(45f, 0f, 0f);
 				}
 				else
 				{
@@ -4307,17 +4324,18 @@ public class YandereScript : MonoBehaviour
 					}
 					LaughIntensity = 20f;
 					LaughTimer = 2f;
+					SanityRecoverySpeed += Time.deltaTime;
 				}
 			}
 			if (LaughIntensity > 15f)
 			{
 				if (StudentManager.KokonaTutorial)
 				{
-					Sanity += Time.deltaTime * 20f;
+					Sanity += Time.deltaTime * 20f * SanityRecoverySpeed;
 				}
 				else
 				{
-					Sanity += Time.deltaTime * 10f;
+					Sanity += Time.deltaTime * 10f * SanityRecoverySpeed;
 				}
 			}
 			LaughTimer -= Time.deltaTime;
@@ -4499,6 +4517,9 @@ public class YandereScript : MonoBehaviour
 				}
 				if ((!TargetStudent.Teacher && CharacterAnimation["f02_struggleWinA_00"].time > CharacterAnimation["f02_struggleWinA_00"].length) || (TargetStudent.Teacher && CharacterAnimation["f02_teacherStruggleWinA_00"].time > CharacterAnimation["f02_teacherStruggleWinA_00"].length))
 				{
+					Debug.Log("This is the exact moment that the ''successfully killed a teacher'' animation ends.");
+					MyListener.enabled = true;
+					AttackManager.DisclaimerCamera.SetActive(value: false);
 					MyController.radius = 0.2f;
 					CharacterAnimation.CrossFade(IdleAnim);
 					ShoulderCamera.Struggle = false;
@@ -4511,8 +4532,8 @@ public class YandereScript : MonoBehaviour
 						Pursuer = null;
 						Chased = false;
 					}
-					TargetStudent.BecomeRagdoll();
 					TargetStudent.DeathType = DeathType.Weapon;
+					TargetStudent.BecomeRagdoll();
 					SeenByAuthority = false;
 				}
 			}
@@ -4592,11 +4613,6 @@ public class YandereScript : MonoBehaviour
 			{
 				CurrentRagdoll = Ragdoll.GetComponent<RagdollScript>();
 			}
-			if (DumpTimer == 0f && Carrying)
-			{
-				CurrentRagdoll.CharacterAnimation[CurrentRagdoll.DumpedAnim].time = 2.5f;
-				CharacterAnimation["f02_carryDisposeA_00"].time = 2.5f;
-			}
 			DumpTimer += Time.deltaTime;
 			if (DumpTimer > 1f)
 			{
@@ -4607,7 +4623,7 @@ public class YandereScript : MonoBehaviour
 					CurrentRagdoll.PelvisRoot.localPosition = new Vector3(CurrentRagdoll.PelvisRoot.localPosition.x, CurrentRagdoll.PelvisRoot.localPosition.y, 0f);
 				}
 				CameraTarget.position = Vector3.MoveTowards(CameraTarget.position, new Vector3(Hips.position.x, base.transform.position.y + 1f, Hips.position.z), Time.deltaTime * 10f);
-				if (CharacterAnimation["f02_carryDisposeA_00"].time >= 4.5f)
+				if (CharacterAnimation["f02_rooftopDumping_00"].time >= 1.33333f)
 				{
 					StopCarrying();
 				}
@@ -4621,12 +4637,12 @@ public class YandereScript : MonoBehaviour
 							CurrentRagdoll.AllRigidbodies[ID].isKinematic = true;
 						}
 					}
-					CharacterAnimation.CrossFade("f02_carryDisposeA_00");
-					CurrentRagdoll.CharacterAnimation.CrossFade(CurrentRagdoll.DumpedAnim);
+					CharacterAnimation.CrossFade("f02_rooftopDumping_00");
+					CurrentRagdoll.CharacterAnimation.CrossFade(CurrentRagdoll.RoofDumpAnim);
 					Ragdoll.transform.position = base.transform.position;
 					Ragdoll.transform.eulerAngles = base.transform.eulerAngles;
 				}
-				if (CharacterAnimation["f02_carryDisposeA_00"].time >= CharacterAnimation["f02_carryDisposeA_00"].length)
+				if (CharacterAnimation["f02_rooftopDumping_00"].time >= CharacterAnimation["f02_rooftopDumping_00"].length)
 				{
 					CameraTarget.localPosition = new Vector3(0f, 1f, 0f);
 					FollowHips = false;
@@ -6505,6 +6521,7 @@ public class YandereScript : MonoBehaviour
 			CharacterAnimation.CrossFade(DrownAnim);
 			if (CharacterAnimation[DrownAnim].time > CharacterAnimation[DrownAnim].length)
 			{
+				AttackManager.DisclaimerCamera.SetActive(value: false);
 				TargetStudent.DeathType = DeathType.Drowning;
 				TargetStudent = null;
 				Attacking = false;
@@ -6551,6 +6568,7 @@ public class YandereScript : MonoBehaviour
 				CameraTarget.localPosition = new Vector3(0f, 1f, 0f);
 				TargetStudent.DeathType = DeathType.Falling;
 				TargetStudent = null;
+				AttackManager.DisclaimerCamera.SetActive(value: false);
 				SplashCamera.transform.parent = null;
 				FollowHips = false;
 				Attacking = false;
@@ -6571,7 +6589,6 @@ public class YandereScript : MonoBehaviour
 		}
 		else if (TargetStudent.Teacher && !TargetStudent.Blind)
 		{
-			Debug.Log("Yandere-chan thinks she should play the ''got countered by teacher'' animation now.");
 			CharacterAnimation["f02_teacherCounterA_00"].time = TargetStudent.CharacterAnimation["f02_teacherCounterB_00"].time;
 			CharacterAnimation.CrossFade("f02_teacherCounterA_00");
 			if (EquippedWeapon != null)
@@ -7514,9 +7531,16 @@ public class YandereScript : MonoBehaviour
 				StudentManager.SetAtmosphere();
 			}
 		}
-		if (PickUp != null && PickUp.Flashlight)
+		if (PickUp != null)
 		{
-			RightHand.transform.eulerAngles = new Vector3(0f, base.transform.eulerAngles.y, base.transform.eulerAngles.z);
+			if (PickUp.Balloon)
+			{
+				RightHand.transform.parent.parent.parent.eulerAngles += new Vector3(0f, 22.5f, 0f);
+			}
+			else if (PickUp.Flashlight)
+			{
+				RightHand.transform.eulerAngles = new Vector3(0f, base.transform.eulerAngles.y, base.transform.eulerAngles.z);
+			}
 		}
 		if (ReachWeight > 0f)
 		{
@@ -7571,16 +7595,24 @@ public class YandereScript : MonoBehaviour
 			}
 			SanityLabel.text = (100f - a * 100f).ToString("0") + "%";
 		}
-		if (CanMove && sanity < 33.333f && !NearSenpai && NearestPrompt == null)
+		if (CanMove)
 		{
-			GiggleTimer += Time.deltaTime * (1f - sanity / 33.333f);
-			if (GiggleTimer > 10f)
+			if (sanity < 33.333f && !NearSenpai && NearestPrompt == null)
 			{
-				UnityEngine.Object.Instantiate(GiggleDisc, base.transform.position + Vector3.up, Quaternion.identity);
-				AudioSource.PlayClipAtPoint(CreepyGiggles[UnityEngine.Random.Range(0, CreepyGiggles.Length)], base.transform.position);
-				InsaneLines.Play();
-				GiggleTimer = 0f;
+				GiggleTimer += Time.deltaTime * (1f - sanity / 33.333f);
+				if (GiggleTimer > 10f)
+				{
+					UnityEngine.Object.Instantiate(GiggleDisc, base.transform.position + Vector3.up, Quaternion.identity);
+					AudioSource.PlayClipAtPoint(CreepyGiggles[UnityEngine.Random.Range(0, CreepyGiggles.Length)], base.transform.position);
+					InsaneLines.Play();
+					GiggleTimer = 0f;
+				}
 			}
+		}
+		else if (LaughIntensity > 15f)
+		{
+			RyobaPonytail.localEulerAngles = new Vector3(30f, 0f, 0f);
+			RyobaLoose.localEulerAngles = new Vector3(45f, 0f, 0f);
 		}
 		if (FightHasBrokenUp)
 		{
@@ -7871,6 +7903,7 @@ public class YandereScript : MonoBehaviour
 		if (CanMove || Noticed || BypassRequirement)
 		{
 			Debug.Log("Yandere-chan has now de-equipped her weapon.");
+			Bouquet.SetActive(value: false);
 			if (Equipped < 3)
 			{
 				CharacterAnimation["f02_reachForWeapon_00"].time = 0f;
@@ -8022,6 +8055,8 @@ public class YandereScript : MonoBehaviour
 
 	public void StopLaughing()
 	{
+		RyobaPonytail.localEulerAngles = new Vector3(0f, 0f, 0f);
+		RyobaLoose.localEulerAngles = new Vector3(0f, 0f, 0f);
 		BladeHairCollider1.enabled = false;
 		BladeHairCollider2.enabled = false;
 		if (Sanity < 33.33333f)
@@ -8053,6 +8088,7 @@ public class YandereScript : MonoBehaviour
 		{
 			sanity = 100f;
 		}
+		SanityRecoverySpeed = 1f;
 	}
 
 	public void SetUniform()
@@ -8700,6 +8736,7 @@ public class YandereScript : MonoBehaviour
 
 	private void Pose()
 	{
+		PoseMode.gameObject.SetActive(value: true);
 		if (!StudentManager.Pose)
 		{
 			StudentManager.Pose = true;
@@ -9060,6 +9097,10 @@ public class YandereScript : MonoBehaviour
 		MyRenderer.materials[2].mainTexture = NudeTexture;
 		TheDebugMenuScript.UpdateCensor();
 		ClubAccessory();
+		if (Club == ClubType.Delinquent)
+		{
+			ClubAccessories[14].SetActive(value: true);
+		}
 	}
 
 	private void KLK()
@@ -10412,7 +10453,14 @@ public class YandereScript : MonoBehaviour
 			Hairstyle = 203;
 		}
 		UpdateHair();
-		PantyAttacher.newRenderer.enabled = !Invisible;
+		if (Schoolwear == 1)
+		{
+			PantyAttacher.newRenderer.enabled = !Invisible;
+		}
+		else
+		{
+			PantyAttacher.newRenderer.enabled = false;
+		}
 		CanMove = true;
 	}
 
@@ -11602,6 +11650,20 @@ public class YandereScript : MonoBehaviour
 		else
 		{
 			Debug.LogWarning("OutlineScript not found on target or any of its children.");
+		}
+	}
+
+	public void PushAwayFromDefaultLayer()
+	{
+		Collider[] array = Physics.OverlapSphere(base.transform.position, checkRadius);
+		foreach (Collider collider in array)
+		{
+			if (!(collider.transform == base.transform) && collider.gameObject.layer == LayerMask.NameToLayer("Default"))
+			{
+				Vector3 vector = collider.ClosestPoint(base.transform.position);
+				Vector3 normalized = (base.transform.position - vector).normalized;
+				base.transform.position += normalized * pushSpeed * Time.deltaTime;
+			}
 		}
 	}
 }

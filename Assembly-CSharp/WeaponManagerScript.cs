@@ -45,6 +45,8 @@ public class WeaponManagerScript : MonoBehaviour
 
 	public Texture Blood;
 
+	public bool CensorWeapons;
+
 	public bool DumbbellNear;
 
 	public Transform ChosenDumbbell;
@@ -94,6 +96,7 @@ public class WeaponManagerScript : MonoBehaviour
 			DelinquentWeapons[9].gameObject.SetActive(value: false);
 			DelinquentWeapons[10].gameObject.SetActive(value: false);
 		}
+		CensorWeapons = GameGlobals.CensorWeapons;
 	}
 
 	public void UpdateLabels()
@@ -531,6 +534,24 @@ public class WeaponManagerScript : MonoBehaviour
 			{
 				Weapons[i].Blood.material = Yandere.StudentManager.TransPixelMat;
 			}
+		}
+	}
+
+	public void Censor()
+	{
+		if (Yandere.Armed)
+		{
+			Yandere.EquippedWeapon.MyRenderer.enabled = false;
+			Yandere.Bouquet.SetActive(value: true);
+		}
+	}
+
+	public void Uncensor()
+	{
+		if (Yandere.Armed)
+		{
+			Yandere.EquippedWeapon.MyRenderer.enabled = true;
+			Yandere.Bouquet.SetActive(value: false);
 		}
 	}
 }

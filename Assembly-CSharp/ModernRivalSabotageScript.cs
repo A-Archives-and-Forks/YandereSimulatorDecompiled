@@ -32,6 +32,10 @@ public class ModernRivalSabotageScript : MonoBehaviour
 
 	public Texture OriginalTexture;
 
+	public MeshFilter MyRenderer;
+
+	public Mesh NewMesh;
+
 	public bool[] SabotageCriteria;
 
 	public bool Sabotaged;
@@ -102,28 +106,20 @@ public class ModernRivalSabotageScript : MonoBehaviour
 			}
 			else if (ID == 2)
 			{
-				if (!Prompt.Yandere.Inventory.PinkApron)
+				Prompt.Yandere.StudentManager.CanAnyoneSeeYandere();
+				if (Prompt.Yandere.StudentManager.YandereVisible)
 				{
-					Prompt.Yandere.NotificationManager.CustomText = "Sew a pink apron in the Sewing Club.";
+					Prompt.Yandere.NotificationManager.CustomText = "Can't do that! Someone can see you!";
 					Prompt.Yandere.NotificationManager.DisplayNotification(NotificationType.Custom);
 				}
 				else
 				{
-					Prompt.Yandere.StudentManager.CanAnyoneSeeYandere();
-					if (Prompt.Yandere.StudentManager.YandereVisible)
-					{
-						Prompt.Yandere.NotificationManager.CustomText = "Can't do that! Someone can see you!";
-						Prompt.Yandere.NotificationManager.DisplayNotification(NotificationType.Custom);
-					}
-					else
-					{
-						Prompt.Yandere.NotificationManager.CustomText = "Aprons swapped!";
-						Prompt.Yandere.NotificationManager.DisplayNotification(NotificationType.Custom);
-						Prompt.Yandere.Inventory.PinkApron = false;
-						SabotagedEvent.gameObject.SetActive(value: true);
-						NormalEvent.gameObject.SetActive(value: false);
-						Disable();
-					}
+					Prompt.Yandere.NotificationManager.CustomText = "''Least Favorite'' colors!";
+					Prompt.Yandere.NotificationManager.DisplayNotification(NotificationType.Custom);
+					Prompt.Yandere.NotificationManager.CustomText = "''Favorite'' colors swapped with";
+					Prompt.Yandere.NotificationManager.DisplayNotification(NotificationType.Custom);
+					OngoingEvent.Instructions[8].SpecialCase = 0;
+					Disable();
 				}
 			}
 			else if (ID == 3)
@@ -138,7 +134,9 @@ public class ModernRivalSabotageScript : MonoBehaviour
 				{
 					Prompt.Yandere.NotificationManager.CustomText = "Recipe Sabotaged!";
 					Prompt.Yandere.NotificationManager.DisplayNotification(NotificationType.Custom);
-					OngoingEvent.Instructions[9].Dialogue = "Ew! Yuck! This tastes awful...";
+					OngoingEvent.Instructions[9].Dialogue = OngoingEvent.AlternateDialogue[0];
+					OngoingEvent.Instructions[9].Audio = OngoingEvent.AlternateAudio[0];
+					OngoingEvent.Instructions[9].SpecialCase = 9;
 					SabotagedEvent.gameObject.SetActive(value: true);
 					NormalEvent.gameObject.SetActive(value: false);
 					Disable();
@@ -244,6 +242,45 @@ public class ModernRivalSabotageScript : MonoBehaviour
 						SabotageCriteria[0] = true;
 						CheckForSabotageSuccess();
 					}
+				}
+			}
+			else if (ID == 7)
+			{
+				Prompt.Yandere.StudentManager.CanAnyoneSeeYandere();
+				if (Prompt.Yandere.StudentManager.YandereVisible)
+				{
+					Prompt.Yandere.NotificationManager.CustomText = "Can't do that! Someone can see you!";
+					Prompt.Yandere.NotificationManager.DisplayNotification(NotificationType.Custom);
+				}
+				else if (0 == 0)
+				{
+					Prompt.Yandere.NotificationManager.CustomText = "Obtained pink fabric!";
+					Prompt.Yandere.NotificationManager.DisplayNotification(NotificationType.Custom);
+					Prompt.Yandere.Inventory.PinkCloth = true;
+					MyRenderer.mesh = NewMesh;
+					ObjectToEnable.SetActive(value: true);
+					Prompt.Hide();
+					Prompt.enabled = false;
+					base.enabled = false;
+				}
+			}
+			else if (ID == 8)
+			{
+				Prompt.Yandere.StudentManager.CanAnyoneSeeYandere();
+				if (Prompt.Yandere.StudentManager.YandereVisible)
+				{
+					Prompt.Yandere.NotificationManager.CustomText = "Can't do that! Someone can see you!";
+					Prompt.Yandere.NotificationManager.DisplayNotification(NotificationType.Custom);
+				}
+				else if (0 == 0)
+				{
+					SabotagedEvent.gameObject.SetActive(value: true);
+					NormalEvent.gameObject.SetActive(value: false);
+					ObjectToEnable.SetActive(value: true);
+					Prompt.Yandere.Inventory.PinkCloth = false;
+					Prompt.Hide();
+					Prompt.enabled = false;
+					base.enabled = false;
 				}
 			}
 		}

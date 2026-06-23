@@ -217,8 +217,11 @@ public class AmbientEventScript : MonoBehaviour
 				}
 				EventStudent[j].Pathfinding.canMove = false;
 			}
-			EventStudent[j].MoveTowardsTarget(EventStudent[j].CurrentDestination.position);
-			EventStudent[j].transform.rotation = Quaternion.Slerp(EventStudent[j].transform.rotation, EventStudent[j].CurrentDestination.rotation, 10f * Time.deltaTime);
+			if (EventStudent[j].gameObject.activeInHierarchy)
+			{
+				EventStudent[j].MoveTowardsTarget(EventStudent[j].CurrentDestination.position);
+				EventStudent[j].transform.rotation = Quaternion.Slerp(EventStudent[j].transform.rotation, EventStudent[j].CurrentDestination.rotation, 10f * Time.deltaTime);
+			}
 		}
 		if (!EventStudent[1].Pathfinding.canMove && !EventStudent[2].Pathfinding.canMove)
 		{

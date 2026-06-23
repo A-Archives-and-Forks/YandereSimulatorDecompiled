@@ -294,7 +294,35 @@ public class StudentInfoScript : MonoBehaviour
 		{
 			OccupationLabel.text = "Club";
 		}
-		if (studentJson.Club < ClubType.Teacher)
+		if (studentJson.Club == ClubType.Bully)
+		{
+			ClubLabel.text = "The Popular Girls";
+			if (CurrentStudent == 84)
+			{
+				int num4 = 4;
+				if (StudentGlobals.GetStudentDead(81) || StudentGlobals.GetStudentKidnapped(81) || StudentGlobals.GetStudentArrested(81))
+				{
+					num4--;
+				}
+				if (StudentGlobals.GetStudentDead(82) || StudentGlobals.GetStudentKidnapped(82) || StudentGlobals.GetStudentArrested(82))
+				{
+					num4--;
+				}
+				if (StudentGlobals.GetStudentDead(83) || StudentGlobals.GetStudentKidnapped(83) || StudentGlobals.GetStudentArrested(83))
+				{
+					num4--;
+				}
+				if (StudentGlobals.GetStudentDead(85) || StudentGlobals.GetStudentKidnapped(85) || StudentGlobals.GetStudentArrested(85))
+				{
+					num4--;
+				}
+				if (num4 == 0)
+				{
+					ClubLabel.text = "None";
+				}
+			}
+		}
+		else if (studentJson.Club < ClubType.Teacher)
 		{
 			ClubLabel.text = Club.ClubNames[studentJson.Club];
 		}
@@ -304,7 +332,7 @@ public class StudentInfoScript : MonoBehaviour
 		}
 		if (ClubGlobals.GetClubClosed(studentJson.Club))
 		{
-			ClubLabel.text = "No Club";
+			ClubLabel.text = "None";
 		}
 		StrengthLabel.text = StrengthStrings[studentJson.Strength];
 		AudioSource component = GetComponent<AudioSource>();
@@ -323,12 +351,12 @@ public class StudentInfoScript : MonoBehaviour
 		}
 		if (ID < 98)
 		{
-			int num4 = 11 + DateGlobals.Week;
+			int num5 = 11 + DateGlobals.Week;
 			if (StudentManager.MissionMode)
 			{
-				num4 = 13;
+				num5 = 13;
 			}
-			if (Eighties || (!Eighties && ID < num4) || (!Eighties && ID > 20))
+			if (Eighties || (!Eighties && ID < num5) || (!Eighties && ID > 20))
 			{
 				WWW wWW = new WWW("file:///" + Application.streamingAssetsPath + "/Portraits" + text2 + "/Student_" + ID + ".png");
 				if (!StudentGlobals.GetStudentReplaced(ID))
@@ -788,8 +816,8 @@ public class StudentInfoScript : MonoBehaviour
 				}
 				else
 				{
-					Strings[1] = "?????";
-					Strings[2] = "?????";
+					Strings[1] = (EventGlobals.OsanaEvent1 ? "May be a victim of blackmail." : "?????");
+					Strings[2] = (EventGlobals.OsanaEvent2 ? "Has a stalker." : "?????");
 				}
 				InfoLabel.text = "Senpai's childhood friend.\n\n" + Strings[1] + "\n\n" + Strings[2];
 				return;
@@ -801,8 +829,8 @@ public class StudentInfoScript : MonoBehaviour
 				}
 				else
 				{
-					Strings[1] = "?????";
-					Strings[2] = "?????";
+					Strings[1] = (EventGlobals.LearnedAmaiSecret1 ? "Someone has been sabotaging her family's bakery." : "?????");
+					Strings[2] = (EventGlobals.LearnedAmaiSecret2 ? "Suspicious of the owner of a new bakery in town." : "?????");
 				}
 				InfoLabel.text = "The president of the Cooking Club.\n\n[c][800000]" + Strings[1] + "\n\n" + Strings[2] + "[-][/c]";
 				return;
@@ -870,6 +898,11 @@ public class StudentInfoScript : MonoBehaviour
 			{
 				uISprite.spriteName = "Unknown";
 				continue;
+			}
+			if (JSON.Topics[CurrentStudent].Topics.Length == 0)
+			{
+				Debug.Log("What the FUCK. Topics was an empty array?? Why??");
+				JSON.Topics[CurrentStudent].Topics = new int[25];
 			}
 			int[] topics = JSON.Topics[CurrentStudent].Topics;
 			uISprite.spriteName = OpinionSpriteNames[topics[j]];

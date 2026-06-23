@@ -91,6 +91,7 @@ public class HeartbrokenScript : MonoBehaviour
 
 	private void Start()
 	{
+		Time.timeScale = 1f;
 		if (Yandere != null)
 		{
 			Yandere.CameraEffects.UpdateDOF(1.5f);

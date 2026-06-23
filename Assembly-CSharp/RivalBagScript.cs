@@ -13,7 +13,7 @@ public class RivalBagScript : MonoBehaviour
 
 	private void Start()
 	{
-		if (Schemes.StudentManager.Students[11] == null || StudentGlobals.StudentSlave == 11)
+		if (Schemes.StudentManager.Students[11] == null || StudentGlobals.StudentSlave == 11 || DateGlobals.Week > 1)
 		{
 			base.gameObject.SetActive(value: false);
 			Prompt.enabled = false;

@@ -404,9 +404,5 @@ public class NoteLockerScript : MonoBehaviour
 			Student.MeetSpot = MeetSpots.List[MeetID];
 			Student.MeetTime = MeetTime;
 		}
-		else
-		{
-			Debug.Log("''Student'' was null, somehow...");
-		}
 	}
 }

@@ -10,6 +10,8 @@ public class AlarmDiscScript : MonoBehaviour
 
 	public AudioClip[] MaleScreams;
 
+	public AudioClip[] RivalScreams;
+
 	public AudioClip[] DelinquentScreams;
 
 	public StudentScript Originator;
@@ -77,7 +79,14 @@ public class AlarmDiscScript : MonoBehaviour
 				}
 				if (!Male)
 				{
-					PlayClip(FemaleScreams[Random.Range(0, FemaleScreams.Length)], base.transform.position);
+					if (Originator != null && Originator.Rival && Originator.StudentID == 12)
+					{
+						PlayClip(RivalScreams[Originator.StudentID], base.transform.position);
+					}
+					else
+					{
+						PlayClip(FemaleScreams[Random.Range(0, FemaleScreams.Length)], base.transform.position);
+					}
 				}
 				else if (Delinquent)
 				{
@@ -90,7 +99,14 @@ public class AlarmDiscScript : MonoBehaviour
 			}
 			else if (!Male)
 			{
-				PlayClip(LongFemaleScreams[Random.Range(0, LongFemaleScreams.Length)], base.transform.position);
+				if (Originator.Rival && Originator.StudentID == 12)
+				{
+					PlayClip(RivalScreams[Originator.StudentID], base.transform.position);
+				}
+				else
+				{
+					PlayClip(LongFemaleScreams[Random.Range(0, LongFemaleScreams.Length)], base.transform.position);
+				}
 			}
 			else
 			{
@@ -388,6 +404,10 @@ public class AlarmDiscScript : MonoBehaviour
 		audioSource.maxDistance = 10f;
 		audioSource.spatialBlend = 1f;
 		audioSource.volume = 0.5f;
+		if (GameGlobals.HideKillingAnims)
+		{
+			audioSource.volume = 0f;
+		}
 		if (Student != null)
 		{
 			Student.DeathScream = gameObject;

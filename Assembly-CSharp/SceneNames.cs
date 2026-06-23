@@ -129,4 +129,8 @@ public static class SceneNames
 	public const string WhipTitleScene = "HNSTitleScreen";
 
 	public const string WhipGameScene = "HNSGameplay";
+
+	public const string BurazaTownScene = "BurazaTownScene";
+
+	public const string YouTubeWarningScene = "YouTubeWarningScene";
 }

@@ -158,29 +158,51 @@ public class StruggleBarScript : MonoBehaviour
 			return;
 		}
 		base.transform.localScale = Vector3.zero;
-		if (!Yandere.AttackManager.Censor)
+		if (!Yandere.AttackManager.Blur && !Yandere.AttackManager.Hide)
 		{
 			base.gameObject.SetActive(value: false);
 			return;
 		}
-		if (AttackTimer == 0f)
+		if (Yandere.AttackManager.Blur)
 		{
-			Yandere.Blur.enabled = true;
-			Yandere.Blur.Size = 1f;
+			if (AttackTimer == 0f)
+			{
+				Yandere.Blur.enabled = true;
+				Yandere.Blur.Size = 1f;
+			}
+			AttackTimer += Time.deltaTime;
+			if (AttackTimer < 2.5f)
+			{
+				Yandere.Blur.Size = Mathf.MoveTowards(Yandere.Blur.Size, 16f, Time.deltaTime * 10f);
+			}
+			else
+			{
+				Yandere.Blur.Size = Mathf.Lerp(Yandere.Blur.Size, 1f, Time.deltaTime * 32f);
+				if (AttackTimer >= 3f)
+				{
+					base.gameObject.SetActive(value: false);
+					Yandere.Blur.enabled = false;
+					Yandere.Blur.Size = 1f;
+					AttackTimer = 0f;
+				}
+			}
 		}
-		AttackTimer += Time.deltaTime;
-		if (AttackTimer < 2.5f)
+		if (Yandere.AttackManager.Hide)
 		{
-			Yandere.Blur.Size = Mathf.MoveTowards(Yandere.Blur.Size, 16f, Time.deltaTime * 10f);
-			return;
-		}
-		Yandere.Blur.Size = Mathf.Lerp(Yandere.Blur.Size, 1f, Time.deltaTime * 32f);
-		if (AttackTimer >= 3f)
-		{
-			base.gameObject.SetActive(value: false);
-			Yandere.Blur.enabled = false;
-			Yandere.Blur.Size = 1f;
-			AttackTimer = 0f;
+			if (AttackTimer == 0f)
+			{
+				Debug.Log("Disclaimer Camera being set to ''true'' here.");
+				Yandere.MyListener.enabled = false;
+				Yandere.AttackManager.DisclaimerCamera.SetActive(value: true);
+			}
+			AttackTimer += Time.deltaTime;
+			if (AttackTimer >= 3f)
+			{
+				base.gameObject.SetActive(value: false);
+				Yandere.MyListener.enabled = true;
+				Yandere.AttackManager.DisclaimerCamera.SetActive(value: false);
+				AttackTimer = 0f;
+			}
 		}
 	}
 

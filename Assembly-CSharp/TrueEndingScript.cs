@@ -232,6 +232,9 @@ public class TrueEndingScript : MonoBehaviour
 	public void PauseCutscene()
 	{
 		Debug.Log("Beginning pause.");
+		Ryoba.newRenderer.SetBlendShapeWeight(0, 0f);
+		Ryoba.newRenderer.SetBlendShapeWeight(5, 0f);
+		Ryoba.newRenderer.SetBlendShapeWeight(12, 0f);
 		LastTime = RyobaAnim["f02_trueEnding_00"].time;
 		RyobaAnim.Stop();
 		MyAudio.pitch = 0.0001f;

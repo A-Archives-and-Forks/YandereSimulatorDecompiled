@@ -419,6 +419,17 @@ public class NemesisScript : MonoBehaviour
 				return;
 			}
 			SpecialEffect();
+			if (Yandere.AttackManager.Blur)
+			{
+				Yandere.Blur.enabled = true;
+				Yandere.Blur.Size = Mathf.MoveTowards(Yandere.Blur.Size, 16f, Time.deltaTime * 10f);
+			}
+			if (Yandere.AttackManager.Hide)
+			{
+				Debug.Log("Disclaimer Camera being set to ''true'' here.");
+				Yandere.MyListener.enabled = false;
+				Yandere.AttackManager.DisclaimerCamera.SetActive(value: true);
+			}
 			Yandere.targetRotation = Quaternion.LookRotation(base.transform.position - Yandere.transform.position);
 			Yandere.transform.rotation = Quaternion.Slerp(Yandere.transform.rotation, Yandere.targetRotation, Time.deltaTime * 10f);
 			Yandere.MoveTowardsTarget(base.transform.position + base.transform.forward * 0.5f);
@@ -429,6 +440,8 @@ public class NemesisScript : MonoBehaviour
 			Animation characterAnimation = Student.CharacterAnimation;
 			if (characterAnimation["f02_knifeLowSanityA_00"].time >= characterAnimation["f02_knifeLowSanityA_00"].length)
 			{
+				Yandere.MyListener.enabled = true;
+				Yandere.AttackManager.DisclaimerCamera.SetActive(value: false);
 				if (MissionMode.enabled)
 				{
 					MissionMode.GameOverID = 13;

@@ -47,17 +47,17 @@ public class GloveScript : MonoBehaviour
 			}
 			else if (Prompt.Yandere.WearingRaincoat || Prompt.Yandere.Gloved)
 			{
-				Prompt.Yandere.NotificationManager.CustomText = "Can't combine clothing!";
+				Prompt.Yandere.NotificationManager.CustomText = "Can't combine that clothing!";
 				Prompt.Yandere.NotificationManager.DisplayNotification(NotificationType.Custom);
 			}
 			else if (Prompt.Yandere.Schoolwear == 2)
 			{
-				Prompt.Yandere.NotificationManager.CustomText = "Can't combine this with a swimsuit!";
+				Prompt.Yandere.NotificationManager.CustomText = "Can't combine that with a swimsuit!";
 				Prompt.Yandere.NotificationManager.DisplayNotification(NotificationType.Custom);
 			}
 			else if (Prompt.Yandere.Schoolwear == 0)
 			{
-				Prompt.Yandere.NotificationManager.CustomText = "Can't wear gloves while wearing a towel!";
+				Prompt.Yandere.NotificationManager.CustomText = "Can't combine that with a towel!";
 				Prompt.Yandere.NotificationManager.DisplayNotification(NotificationType.Custom);
 			}
 			else

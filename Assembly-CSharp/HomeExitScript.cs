@@ -5,6 +5,8 @@ public class HomeExitScript : MonoBehaviour
 {
 	public HomeWindowScript PartTimeJobWindow;
 
+	public HomeTriggerScript BasementTrigger;
+
 	public InputManagerScript InputManager;
 
 	public HomeDarknessScript HomeDarkness;
@@ -17,15 +19,15 @@ public class HomeExitScript : MonoBehaviour
 
 	public HomeWindowScript HomeWindow;
 
-	public GameObject BringItemPrompt;
-
 	public Transform Highlight;
 
 	public UILabel[] Labels;
 
-	public int ID = 1;
+	public GameObject TownPrototypeButton;
 
-	public int Zs;
+	public GameObject BringItemPrompt;
+
+	public UILabel BasementLabel;
 
 	public AudioSource MyAudio;
 
@@ -33,9 +35,9 @@ public class HomeExitScript : MonoBehaviour
 
 	public AudioClip OpenDoor;
 
-	public HomeTriggerScript BasementTrigger;
+	public int ID = 1;
 
-	public UILabel BasementLabel;
+	public int Zs;
 
 	public void Start()
 	{
@@ -97,6 +99,10 @@ public class HomeExitScript : MonoBehaviour
 			{
 				Labels[6].alpha = 0.5f;
 			}
+		}
+		if (DateGlobals.Weekday == DayOfWeek.Saturday || DateGlobals.Weekday == DayOfWeek.Sunday || GameGlobals.Eighties || HomeGlobals.Night)
+		{
+			TownPrototypeButton.SetActive(value: false);
 		}
 		Highlight.localPosition = new Vector3(Highlight.localPosition.x, 125f - (float)ID * 50f, Highlight.localPosition.z);
 	}
@@ -206,6 +212,16 @@ public class HomeExitScript : MonoBehaviour
 				HomeYandere.transform.position = new Vector3(-4.111486f, -2.994555f, -3.33333f);
 				HomeYandere.transform.eulerAngles = new Vector3(0f, 180f, 0f);
 			}
+		}
+		else if (Input.GetButtonDown(InputNames.Xbox_X) && TownPrototypeButton.activeInHierarchy)
+		{
+			HomeDarkness.Sprite.color = new Color(1f, 1f, 1f, 0f);
+			HomeDarkness.TownPrototype = true;
+			HomeDarkness.FadeOut = true;
+			HomeWindow.Show = false;
+			base.enabled = false;
+			MyAudio.clip = Confirm;
+			MyAudio.Play();
 		}
 		if (Input.GetKeyDown("z"))
 		{

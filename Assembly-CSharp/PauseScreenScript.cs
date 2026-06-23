@@ -383,8 +383,8 @@ public class PauseScreenScript : MonoBehaviour
 			}
 			if (Police.StudentManager != null)
 			{
-				Police.StudentManager.Portal.GetComponent<PortalScript>().OsanaEvent.EventSubtitle.text = "";
-				Yandere.Subtitle.Label.text = "";
+				Police.StudentManager.Portal.GetComponent<PortalScript>().OsanaEvent.EventSubtitle.transform.localPosition += new Vector3(20000f, 0f, 0f);
+				Yandere.Subtitle.Label.transform.localPosition += new Vector3(20000f, 0f, 0f);
 			}
 			if (Eighties)
 			{
@@ -701,11 +701,9 @@ public class PauseScreenScript : MonoBehaviour
 								StudentInfoMenu.Start();
 								FirstTime = true;
 							}
+							Debug.Log("Now commanding the game to UpdatePortraits() from PauseScreen.");
 							StartCoroutine(StudentInfoMenu.UpdatePortraits());
-							if (!Home)
-							{
-								StudentInfoMenu.GrabbedPortraits = true;
-							}
+							StudentInfoMenu.GrabbedPortraits = true;
 							MainMenu.SetActive(value: false);
 							Sideways = true;
 							PromptBar.ClearButtons();
@@ -1135,6 +1133,7 @@ public class PauseScreenScript : MonoBehaviour
 			{
 				Yandere.GetComponent<AudioSource>().volume = 1f;
 			}
+			Yandere.Subtitle.Label.transform.localPosition = new Vector3(0f, Yandere.Subtitle.Label.transform.localPosition.y, Yandere.Subtitle.Label.transform.localPosition.z);
 		}
 		else
 		{
@@ -1185,6 +1184,13 @@ public class PauseScreenScript : MonoBehaviour
 	private void CheckIfSavePossible()
 	{
 		Debug.Log("Checking to see if it's possible to save the game.");
+		for (int i = 1; i < 86; i++)
+		{
+			if (Yandere.StudentManager.Students[i] != null && !Yandere.StudentManager.Students[i].Alive)
+			{
+				Yandere.StudentManager.Students[i].InEvent = false;
+			}
+		}
 		PhoneIcons[9].color = new Color(1f, 1f, 1f, 1f);
 		if (!Eighties)
 		{
@@ -1198,87 +1204,87 @@ public class PauseScreenScript : MonoBehaviour
 		}
 		if (AtSchool)
 		{
-			for (int i = 1; i < Yandere.StudentManager.Students.Length; i++)
+			for (int j = 1; j < Yandere.StudentManager.Students.Length; j++)
 			{
-				if (Yandere.StudentManager.Students[i] != null && Yandere.StudentManager.Students[i].Alive)
+				if (Yandere.StudentManager.Students[j] != null && Yandere.StudentManager.Students[j].Alive)
 				{
-					if (Yandere.StudentManager.Students[i].Alarmed)
+					if (Yandere.StudentManager.Students[j].Alarmed)
 					{
 						PhoneIcons[9].color = new Color(1f, 1f, 1f, 0.5f);
 						Reason = "You cannot save the game while a student is alarmed.";
 					}
-					if (Yandere.StudentManager.Students[i].Vomiting)
+					if (Yandere.StudentManager.Students[j].Vomiting)
 					{
 						PhoneIcons[9].color = new Color(1f, 1f, 1f, 0.5f);
 						Reason = "You cannot save the game while a student is vomiting.";
 					}
-					if (Yandere.StudentManager.Students[i].Fleeing)
+					if (Yandere.StudentManager.Students[j].EatingSnack)
+					{
+						PhoneIcons[9].color = new Color(1f, 1f, 1f, 0.5f);
+						Reason = "You cannot save the game while a student is eating a snack.";
+					}
+					if (Yandere.StudentManager.Students[j].Fleeing)
 					{
 						PhoneIcons[9].color = new Color(1f, 1f, 1f, 0.5f);
 						Reason = "You cannot save the game while a student is fleeing in fear.";
 					}
-					if (Yandere.StudentManager.Students[i].Burning)
+					if (Yandere.StudentManager.Students[j].Burning)
 					{
 						PhoneIcons[9].color = new Color(1f, 1f, 1f, 0.5f);
 						Reason = "You cannot save the game while a student is burning to death.";
 					}
-					if (Yandere.StudentManager.Students[i].Guarding && Yandere.StudentManager.Students[i].Alive)
+					if (Yandere.StudentManager.Students[j].Guarding && Yandere.StudentManager.Students[j].Alive)
 					{
-						Debug.Log("The student who is Guarding is: Student #" + Yandere.StudentManager.Students[i].StudentID + ", " + Yandere.StudentManager.Students[i].Name);
+						Debug.Log("The student who is Guarding is: Student #" + Yandere.StudentManager.Students[j].StudentID + ", " + Yandere.StudentManager.Students[j].Name);
 						PhoneIcons[9].color = new Color(1f, 1f, 1f, 0.5f);
 						Reason = "You cannot save the game while a student is guarding a corpse.";
 					}
-					if (Yandere.StudentManager.Students[i].Electrocuted || Yandere.StudentManager.Students[i].Electrified)
+					if (Yandere.StudentManager.Students[j].Electrocuted || Yandere.StudentManager.Students[j].Electrified)
 					{
 						PhoneIcons[9].color = new Color(1f, 1f, 1f, 0.5f);
 						Reason = "You cannot save the game while a student is being electrocuted.";
 					}
-					if (Yandere.StudentManager.Students[i].Hunting || Yandere.StudentManager.RobotChan.Hunting)
+					if (Yandere.StudentManager.Students[j].Hunting || Yandere.StudentManager.RobotChan.Hunting)
 					{
 						Debug.Log("RobotChan.Hunting is: " + Yandere.StudentManager.RobotChan.Hunting);
 						PhoneIcons[9].color = new Color(1f, 1f, 1f, 0.5f);
 						Reason = "You cannot save the game when a student is about to be murdered.";
 					}
-					if (Yandere.StudentManager.Students[i].Confessing)
+					if (Yandere.StudentManager.Students[j].Confessing)
 					{
 						PhoneIcons[9].color = new Color(1f, 1f, 1f, 0.5f);
 						Reason = "You cannot save the game while a student is confessing their love.";
 					}
-					if (Yandere.StudentManager.Students[i].Investigating)
+					if (Yandere.StudentManager.Students[j].Investigating)
 					{
-						Debug.Log(Yandere.StudentManager.Students[i].Name + " is investigating.");
+						Debug.Log(Yandere.StudentManager.Students[j].Name + " is investigating.");
 						PhoneIcons[9].color = new Color(1f, 1f, 1f, 0.5f);
 						Reason = "You cannot save the game while a student is investigating something.";
 					}
-					if (Yandere.StudentManager.Students[i].CameraReacting)
+					if (Yandere.StudentManager.Students[j].CameraReacting)
 					{
 						PhoneIcons[9].color = new Color(1f, 1f, 1f, 0.5f);
 						Reason = "You cannot save the game while a student is posing for a photograph.";
 					}
-					if (Yandere.WoodChipper.Bucket != null)
-					{
-						PhoneIcons[9].color = new Color(1f, 1f, 1f, 0.5f);
-						Reason = "You cannot save the game while a bucket is attached to a woodchipper.";
-					}
-					if (Yandere.StudentManager.Students[i].SearchingForPhone)
+					if (Yandere.StudentManager.Students[j].SearchingForPhone)
 					{
 						PhoneIcons[9].color = new Color(1f, 1f, 1f, 0.5f);
 						Reason = "You cannot save the game while a student is searching for a lost phone.";
 					}
-					if (Yandere.StudentManager.Students[i].Wet)
+					if (Yandere.StudentManager.Students[j].Wet)
 					{
 						PhoneIcons[9].color = new Color(1f, 1f, 1f, 0.5f);
 						Reason = "You cannot save the game while a student is wet with any kind of liquid.";
 					}
-					if (Yandere.StudentManager.Students[i].Ragdoll.Zs.activeInHierarchy && Yandere.StudentManager.Police.EndOfDay.TranqCase.VictimID != i)
+					if (Yandere.StudentManager.Students[j].SpecialRivalDeathReaction)
+					{
+						PhoneIcons[9].color = new Color(1f, 1f, 1f, 0.5f);
+						Reason = "You cannot save the game while a student is reacting to a death or corpse.";
+					}
+					if (Yandere.StudentManager.Students[j].Ragdoll.Zs.activeInHierarchy && Yandere.StudentManager.Police.EndOfDay.TranqCase.VictimID != j)
 					{
 						PhoneIcons[9].color = new Color(1f, 1f, 1f, 0.5f);
 						Reason = "You cannot save the game while a student is tranquilized and sleeping on the ground.";
-					}
-					if (Yandere.StudentManager.MissionMode)
-					{
-						PhoneIcons[9].color = new Color(1f, 1f, 1f, 0.5f);
-						Reason = "You cannot save the game during Mission Mode.";
 					}
 				}
 			}
@@ -1292,13 +1298,35 @@ public class PauseScreenScript : MonoBehaviour
 					Reason = "You cannot save the game while a key is on the ground.";
 				}
 			}
+			if (Yandere.Invisible)
+			{
+				PhoneIcons[9].color = new Color(1f, 1f, 1f, 0.5f);
+				Reason = "You cannot save the game while invisible.";
+			}
+			if (Yandere.StudentManager.MissionMode)
+			{
+				PhoneIcons[9].color = new Color(1f, 1f, 1f, 0.5f);
+				Reason = "You cannot save the game during Mission Mode.";
+			}
 			if (Yandere.Dragging)
 			{
 				PhoneIcons[9].color = new Color(1f, 1f, 1f, 0.5f);
 				Reason = "You cannot save the game while dragging a dead body.";
 			}
+			if (Yandere.StudentManager.Tarp)
+			{
+				PhoneIcons[9].color = new Color(1f, 1f, 1f, 0.5f);
+				Reason = "You cannot save the game while tarp is on the ground.";
+			}
+			if (Yandere.StudentManager.Students[1] != null && Yandere.StudentManager.Students[1].InEvent)
+			{
+				Debug.Log("Senpai is currently ''InEvent.''");
+				PhoneIcons[9].color = new Color(1f, 1f, 1f, 0.5f);
+				Reason = "You cannot save the game while Senpai is in an event.";
+			}
 			if (Yandere.StudentManager.Students[Yandere.StudentManager.RivalID] != null && Yandere.StudentManager.Students[Yandere.StudentManager.RivalID].InEvent)
 			{
+				Debug.Log("The rival is currently ''InEvent.''");
 				PhoneIcons[9].color = new Color(1f, 1f, 1f, 0.5f);
 				Reason = "You cannot save the game while a Rival Event is occuring.";
 			}
@@ -1322,7 +1350,12 @@ public class PauseScreenScript : MonoBehaviour
 				PhoneIcons[9].color = new Color(1f, 1f, 1f, 0.5f);
 				Reason = "You cannot save the game while bloody clothing is present at school.";
 			}
-			if (Yandere.StudentManager.Police.LimbParent.childCount > 0 || Yandere.StudentManager.Container.NumberOfBodyParts > 0)
+			if (Yandere.WoodChipper.Bucket != null)
+			{
+				PhoneIcons[9].color = new Color(1f, 1f, 1f, 0.5f);
+				Reason = "You cannot save the game while a bucket is attached to a woodchipper.";
+			}
+			if (Yandere.StudentManager.Police.LimbParent.childCount > 0 || Yandere.StudentManager.Container.NumberOfBodyParts > 0 || (Yandere.StudentManager.GarbageParent.childCount > 0 && HasActiveChildren(Yandere.StudentManager.GarbageParent)))
 			{
 				PhoneIcons[9].color = new Color(1f, 1f, 1f, 0.5f);
 				Reason = "You cannot save the game while dismembered limbs are present at school.";
@@ -1411,5 +1444,17 @@ public class PauseScreenScript : MonoBehaviour
 		StudentInfo.SetActive(value: false);
 		DropsMenu.SetActive(value: false);
 		MainMenu.SetActive(value: true);
+	}
+
+	private bool HasActiveChildren(Transform parent)
+	{
+		for (int i = 0; i < parent.childCount; i++)
+		{
+			if (parent.GetChild(i).gameObject.activeInHierarchy)
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 }

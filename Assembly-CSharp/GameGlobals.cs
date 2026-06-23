@@ -22,7 +22,9 @@ public static class GameGlobals
 
 	private const string Str_CensorPanties = "CensorPanties";
 
-	private const string Str_CensorKillingAnims = "CensorKillingAnims";
+	private const string Str_BlurKillingAnims = "BlurKillingAnims";
+
+	private const string Str_HideKillingAnims = "HideKillingAnims";
 
 	private const string Str_SpareUniform = "SpareUniform";
 
@@ -166,6 +168,12 @@ public static class GameGlobals
 
 	private const string Str_Checkpoint = "Checkpoint";
 
+	private const string Str_CensorCorpses = "CensorCorpses";
+
+	private const string Str_CensorWeapons = "CensorWeapons";
+
+	private const string Str_Anniversary = "Anniversary";
+
 	public static int Profile
 	{
 		get
@@ -286,15 +294,15 @@ public static class GameGlobals
 		}
 	}
 
-	public static bool CensorKillingAnims
+	public static bool BlurKillingAnims
 	{
 		get
 		{
-			return GlobalsHelper.GetBool("Profile__CensorKillingAnims");
+			return GlobalsHelper.GetBool("Profile__BlurKillingAnims");
 		}
 		set
 		{
-			GlobalsHelper.SetBool("Profile__CensorKillingAnims", value);
+			GlobalsHelper.SetBool("Profile__BlurKillingAnims", value);
 		}
 	}
 
@@ -1066,6 +1074,54 @@ public static class GameGlobals
 		}
 	}
 
+	public static bool HideKillingAnims
+	{
+		get
+		{
+			return GlobalsHelper.GetBool("Profile_" + Profile + "_HideKillingAnims");
+		}
+		set
+		{
+			GlobalsHelper.SetBool("Profile_" + Profile + "_HideKillingAnims", value);
+		}
+	}
+
+	public static bool CensorCorpses
+	{
+		get
+		{
+			return GlobalsHelper.GetBool("Profile_" + Profile + "_CensorCorpses");
+		}
+		set
+		{
+			GlobalsHelper.SetBool("Profile_" + Profile + "_CensorCorpses", value);
+		}
+	}
+
+	public static bool CensorWeapons
+	{
+		get
+		{
+			return GlobalsHelper.GetBool("Profile_" + Profile + "_CensorWeapons");
+		}
+		set
+		{
+			GlobalsHelper.SetBool("Profile_" + Profile + "_CensorWeapons", value);
+		}
+	}
+
+	public static bool Anniversary
+	{
+		get
+		{
+			return GlobalsHelper.GetBool("Profile_" + Profile + "_Anniversary");
+		}
+		set
+		{
+			GlobalsHelper.SetBool("Profile_" + Profile + "_Anniversary", value);
+		}
+	}
+
 	public static int GetRivalEliminations(int elimID)
 	{
 		return PlayerPrefs.GetInt("Profile_" + Profile + "_RivalEliminations" + elimID);
@@ -1195,7 +1251,7 @@ public static class GameGlobals
 		Globals.Delete("Profile_" + Profile + "_EmptyDemon");
 		Globals.Delete("Profile_" + Profile + "_CensorBlood");
 		Globals.Delete("Profile_" + Profile + "_CensorPanties");
-		Globals.Delete("Profile_" + Profile + "_CensorKillingAnims");
+		Globals.Delete("Profile_" + Profile + "_BlurKillingAnims");
 		Globals.Delete("Profile_" + Profile + "_SpareUniform");
 		Globals.Delete("Profile_" + Profile + "_BoughtHairDye");
 		Globals.Delete("Profile_" + Profile + "_BlondeHair");
@@ -1272,5 +1328,9 @@ public static class GameGlobals
 		Globals.Delete("Profile_" + Profile + "_WhipGameUnlocked");
 		Globals.Delete("Profile_" + Profile + "_TVHeads");
 		Globals.Delete("Profile_" + Profile + "_Checkpoint");
+		Globals.Delete("Profile_" + Profile + "_HideKillingAnims");
+		Globals.Delete("Profile_" + Profile + "_CensorCorpses");
+		Globals.Delete("Profile_" + Profile + "_CensorWeapons");
+		Globals.Delete("Profile_" + Profile + "_Anniversary");
 	}
 }

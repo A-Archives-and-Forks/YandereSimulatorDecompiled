@@ -6,14 +6,12 @@ public class PhysicsActivatorScript : MonoBehaviour
 
 	private void Start()
 	{
-		Debug.Log("Spawned a PhysicsActivator.");
 	}
 
 	private void Update()
 	{
 		if (Frame > 30)
 		{
-			Debug.Log("Destroyed a PhysicsActivator.");
 			Object.Destroy(base.gameObject);
 		}
 		Frame++;

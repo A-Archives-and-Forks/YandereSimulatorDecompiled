@@ -10,6 +10,8 @@ public class ClockScript : MonoBehaviour
 
 	public Collider MeetingRoomTrespassZone;
 
+	public Collider[] OriginalTrespassZones;
+
 	public Collider[] TrespassZones;
 
 	public StudentManagerScript StudentManager;
@@ -96,6 +98,8 @@ public class ClockScript : MonoBehaviour
 
 	public int Weekday;
 
+	public int Frames;
+
 	public int Period;
 
 	public int ID;
@@ -104,9 +108,15 @@ public class ClockScript : MonoBehaviour
 
 	public bool IgnorePhotographyClub;
 
+	public bool DoneUpdatingBloom;
+
 	public bool BloomDisabled;
 
 	public bool BathroomDim;
+
+	public bool DoNotUnmute;
+
+	public bool Initialized;
 
 	public bool LateStudent;
 
@@ -147,6 +157,8 @@ public class ClockScript : MonoBehaviour
 	public Texture[] RivalScreens;
 
 	public Texture SaiMeet;
+
+	public bool AlreadyGaveWeapon;
 
 	private void Start()
 	{
@@ -266,6 +278,7 @@ public class ClockScript : MonoBehaviour
 			CameraEffects.UpdateBloomRadius(4f);
 			CameraEffects.UpdateBloomKnee(0.75f);
 		}
+		BloomWait = 1f;
 	}
 
 	public void Update()
@@ -279,7 +292,7 @@ public class ClockScript : MonoBehaviour
 				FadeIn = false;
 			}
 		}
-		if (!MissionMode && CameraTimer < 1f)
+		if (!Initialized && !MissionMode)
 		{
 			CameraTimer += Time.deltaTime;
 			if (CameraTimer > 1f && !StudentManager.MemorialScene.enabled)
@@ -303,6 +316,7 @@ public class ClockScript : MonoBehaviour
 					GivePlayerBroughtWeapon();
 				}
 				_ = StudentManager.KokonaTutorial;
+				Initialized = true;
 			}
 		}
 		if (PresentTime < 1080f)
@@ -559,6 +573,18 @@ public class ClockScript : MonoBehaviour
 				Yandere.Unequip();
 			}
 		}
+		if (TimeSkipSpeed == 1f)
+		{
+			if (Yandere.Jukebox.Volume == 0f)
+			{
+				DoNotUnmute = true;
+			}
+			else
+			{
+				DoNotUnmute = false;
+			}
+			Debug.Log("DoNotUnmute is: " + DoNotUnmute);
+		}
 		TimeSkipSpeed += Time.deltaTime;
 		if (Time.timeScale < 10f)
 		{
@@ -619,10 +645,11 @@ public class ClockScript : MonoBehaviour
 		RetroMinigame.MySFX.volume = 0f;
 		RetroMinigame.Show = false;
 		Debug.Log("From the ClockScript, attempting to restore Jukebox volume to previous levels.");
-		if (Yandere.Jukebox.Volume == 0f && Yandere.Jukebox.LastVolume != 0f)
+		if (!DoNotUnmute && Yandere.Jukebox.Volume == 0f && Yandere.Jukebox.LastVolume != 0f)
 		{
 			Yandere.Jukebox.Volume = Yandere.Jukebox.LastVolume;
 		}
+		Yandere.Subtitle.Label.transform.localPosition = new Vector3(0f, Yandere.Subtitle.Label.transform.localPosition.y, Yandere.Subtitle.Label.transform.localPosition.z);
 	}
 
 	public string GetWeekdayText(DayOfWeek weekday)
@@ -781,16 +808,22 @@ public class ClockScript : MonoBehaviour
 
 	public void GivePlayerBroughtWeapon()
 	{
-		int bringingItem = PlayerGlobals.BringingItem;
-		if (bringingItem > 0 && bringingItem < Police.EndOfDay.WeaponManager.BroughtWeapons.Length)
+		if (!AlreadyGaveWeapon)
 		{
-			Police.EndOfDay.WeaponManager.BroughtWeapons[bringingItem].Prompt.Circle[3].fillAmount = 0f;
-			Police.EndOfDay.WeaponManager.BroughtWeapons[bringingItem].UnequipImmediately = true;
-		}
-		if (PlayerGlobals.BringingHardware == 1)
-		{
-			Police.EndOfDay.WeaponManager.BroughtWeapons[3].Prompt.Circle[3].fillAmount = 0f;
-			Police.EndOfDay.WeaponManager.BroughtWeapons[3].UnequipImmediately = true;
+			int bringingItem = PlayerGlobals.BringingItem;
+			if (bringingItem > 0 && bringingItem < Police.EndOfDay.WeaponManager.BroughtWeapons.Length)
+			{
+				Debug.Log("Giving the player a weapon that was brought from home.");
+				Police.EndOfDay.WeaponManager.BroughtWeapons[bringingItem].Prompt.Circle[3].fillAmount = 0f;
+				Police.EndOfDay.WeaponManager.BroughtWeapons[bringingItem].UnequipImmediately = true;
+			}
+			if (PlayerGlobals.BringingHardware == 1)
+			{
+				Debug.Log("Giving the player some hardware that was brought from home.");
+				Police.EndOfDay.WeaponManager.BroughtWeapons[3].Prompt.Circle[3].fillAmount = 0f;
+				Police.EndOfDay.WeaponManager.BroughtWeapons[3].UnequipImmediately = true;
+			}
+			AlreadyGaveWeapon = true;
 		}
 	}
 

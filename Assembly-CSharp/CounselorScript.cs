@@ -35,7 +35,11 @@ public class CounselorScript : MonoBehaviour
 
 	public PromptScript Prompt;
 
+	public GameObject FudgeSabotagedEvent;
+
 	public GameObject DelinquentRadio;
+
+	public GameObject GasLeakSound;
 
 	public GameObject ReportHeader;
 
@@ -1031,6 +1035,12 @@ public class CounselorScript : MonoBehaviour
 									obj.Pathfinding.speed = 1f;
 									obj.GetDestinations();
 								}
+								if (Week == 2 && ReportedAlcohol)
+								{
+									Debug.Log("The counselor was informed of the fire hazard in the Home Ec room, so the fire hazard need to be disabled.");
+									FudgeSabotagedEvent.SetActive(value: false);
+									GasLeakSound.SetActive(value: false);
+								}
 								LectureID = 0;
 							}
 						}
@@ -1706,6 +1716,7 @@ public class CounselorScript : MonoBehaviour
 				Yandere.transform.position = new Vector3(-27.51f, 0f, 12f);
 				Yandere.MainCamera.transform.position = CameraTarget.position;
 				Yandere.MainCamera.transform.eulerAngles = CameraTarget.eulerAngles;
+				Physics.SyncTransforms();
 				if (SilentTreatment)
 				{
 					MyAudio.clip = Silence;

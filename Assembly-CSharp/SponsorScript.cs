@@ -11,7 +11,23 @@ public class SponsorScript : MonoBehaviour
 
 	public float Speed = 1f;
 
+	public int Distance;
+
+	public int Sponsors;
+
+	public int Height;
+
 	public int ID;
+
+	public UITexture[] LogoTextures;
+
+	public UILabel[] NameLabels;
+
+	public Transform[] Sponsor;
+
+	public Texture[] Logos;
+
+	public string[] Names;
 
 	private void Start()
 	{
@@ -44,7 +60,30 @@ public class SponsorScript : MonoBehaviour
 				if (Set[1].alpha < 0.0001f)
 				{
 					Timer = 0f;
-					ID = 4;
+					ID++;
+				}
+			}
+		}
+		else if (ID == 2)
+		{
+			Set[2].alpha = Mathf.MoveTowards(Set[2].alpha, 1f, Time.deltaTime * Speed);
+			if (Set[2].alpha > 0.999f)
+			{
+				ID++;
+			}
+		}
+		else if (ID == 3)
+		{
+			if (Input.anyKeyDown)
+			{
+				Timer = 5f;
+			}
+			if (Timer >= 5f)
+			{
+				Set[2].alpha = Mathf.MoveTowards(Set[2].alpha, 0f, Time.deltaTime * Speed);
+				if (Set[2].alpha < 0.0001f)
+				{
+					ID++;
 				}
 			}
 		}

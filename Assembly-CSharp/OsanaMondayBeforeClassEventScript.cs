@@ -76,7 +76,7 @@ public class OsanaMondayBeforeClassEventScript : MonoBehaviour
 						{
 							Rival = StudentManager.Students[RivalID];
 						}
-						else if (Rival.enabled && Rival.Indoors && !Rival.Alarmed && !Rival.WitnessedCorpse && !Rival.WitnessedMurder && !Rival.Meeting && (Rival.Follower == null || (Rival.Follower != null && !Rival.Follower.Talking && !Rival.Slave)))
+						else if (Rival.enabled && Rival.Indoors && !Rival.Alarmed && !Rival.WitnessedCorpse && !Rival.WitnessedMurder && !Rival.Meeting && !Rival.Slave && !Rival.Wet && (Rival.Follower == null || (Rival.Follower != null && !Rival.Follower.Talking)))
 						{
 							Debug.Log("Osana's before class event has begun. Preparing to put two bento boxes on her desk.");
 							Rival.CharacterAnimation["f02_pondering_00"].speed = 0.65f;
@@ -138,6 +138,10 @@ public class OsanaMondayBeforeClassEventScript : MonoBehaviour
 				Bentos[1].SetActive(value: true);
 				Bentos[2].SetActive(value: true);
 				Phase++;
+			}
+			else if (Rival.Pathfinding.maxSpeed == 4f)
+			{
+				Rival.CharacterAnimation.CrossFade(Rival.SprintAnim);
 			}
 			else
 			{

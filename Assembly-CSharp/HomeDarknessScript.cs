@@ -22,6 +22,8 @@ public class HomeDarknessScript : MonoBehaviour
 
 	public bool Cyberstalking;
 
+	public bool TownPrototype;
+
 	public bool GoWatchAnime;
 
 	public bool ReadingManga;
@@ -59,7 +61,6 @@ public class HomeDarknessScript : MonoBehaviour
 			HomeCamera.Profile.depthOfField.enabled = HomeCamera.RestoreDOF;
 			if (HomeCamera.ID == 0 && !HomeCamera.OutOfRoom)
 			{
-				Debug.Log("Cheeky player stepped out of a trigger...");
 				HomeCamera.ID = HomeCamera.LastID;
 			}
 			if (HomeCamera.ID != 2)
@@ -165,6 +166,10 @@ public class HomeDarknessScript : MonoBehaviour
 					Debug.Log("Going to school because of the Hardware Menu.");
 					CheckForOsanaThursday();
 				}
+				else if (TownPrototype)
+				{
+					SceneManager.LoadScene("BurazaTownScene");
+				}
 				else if (HomeExit.ID == 1)
 				{
 					CheckForOsanaThursday();
@@ -177,6 +182,7 @@ public class HomeDarknessScript : MonoBehaviour
 				{
 					if (HomeYandere.transform.position.y > -5f)
 					{
+						Debug.Log("Teleporting to basement.");
 						HomeYandere.transform.position = new Vector3(-2f, -10f, -2.75f);
 						HomeYandere.transform.eulerAngles = new Vector3(0f, 90f, 0f);
 						HomeYandere.CanMove = true;
@@ -193,6 +199,7 @@ public class HomeDarknessScript : MonoBehaviour
 						Physics.SyncTransforms();
 						return;
 					}
+					Debug.Log("Teleporting out of basement now.");
 					if (HomeCamera.OutOfRoom)
 					{
 						HomeCamera.Destination = HomeCamera.OutOfRoomDestinations[2];
@@ -259,22 +266,46 @@ public class HomeDarknessScript : MonoBehaviour
 				}
 				else if (HomeExit.ID == 6)
 				{
-					HomeCamera.Destination = HomeCamera.OutOfRoomDestinations[2];
-					HomeCamera.LastChangePoint = Vector3.zero;
-					HomeCamera.TooClose = false;
-					HomeCamera.CameraTimer = 0f;
-					HomeYandere.transform.position = new Vector3(-5.5f, 0f, 5.975f);
-					HomeYandere.transform.eulerAngles = new Vector3(0f, 90f, 0f);
-					HomeYandere.MyController.radius = 0.25f;
-					HomeYandere.CanMove = true;
-					FadeOut = false;
-					HomeCamera.enabled = true;
-					HomeCamera.Target = HomeCamera.Targets[0];
-					HomeCamera.Focus.position = HomeCamera.Target.position;
-					HomeCamera.EightiesLabelPanel.SetActive(value: false);
-					HomeCamera.LabelPanel.SetActive(value: true);
-					HomeCamera.ModernDayRoom.SetActive(value: true);
-					HomeCamera.EightiesRoom.SetActive(value: false);
+					if (HomeYandere.transform.position.x > -3f)
+					{
+						Debug.Log("HomeDarknessScript is now trying to teleport Ryoba out of her bedroom.");
+						HomeCamera.Destination = HomeCamera.OutOfRoomDestinations[2];
+						HomeCamera.LastChangePoint = Vector3.zero;
+						HomeCamera.TooClose = false;
+						HomeCamera.CameraTimer = 0f;
+						HomeYandere.transform.position = new Vector3(-5.5f, 0f, 5.975f);
+						HomeYandere.transform.eulerAngles = new Vector3(0f, 90f, 0f);
+						HomeYandere.MyController.radius = 0.25f;
+						HomeYandere.CanMove = true;
+						FadeOut = false;
+						HomeCamera.enabled = true;
+						HomeCamera.Target = HomeCamera.Targets[0];
+						HomeCamera.Focus.position = HomeCamera.Target.position;
+						HomeCamera.EightiesLabelPanel.SetActive(value: false);
+						HomeCamera.LabelPanel.SetActive(value: true);
+						HomeCamera.ModernDayRoom.SetActive(value: true);
+						HomeCamera.EightiesRoom.SetActive(value: false);
+					}
+					else
+					{
+						Debug.Log("HomeDarknessScript is now trying to teleport Ryoba into her bedroom.");
+						HomeCamera.Destination = HomeCamera.Destinations[0];
+						HomeCamera.LastChangePoint = Vector3.zero;
+						HomeCamera.TooClose = false;
+						HomeCamera.CameraTimer = 0f;
+						HomeYandere.transform.position = new Vector3(0f, 0f, 0f);
+						HomeYandere.transform.eulerAngles = new Vector3(0f, 0f, 0f);
+						HomeYandere.MyController.radius = 0.445f;
+						HomeYandere.CanMove = true;
+						FadeOut = false;
+						HomeCamera.enabled = true;
+						HomeCamera.Target = HomeCamera.Targets[0];
+						HomeCamera.Focus.position = HomeCamera.Target.position;
+						HomeCamera.EightiesLabelPanel.SetActive(value: true);
+						HomeCamera.LabelPanel.SetActive(value: false);
+						HomeCamera.ModernDayRoom.SetActive(value: false);
+						HomeCamera.EightiesRoom.SetActive(value: true);
+					}
 					Physics.SyncTransforms();
 				}
 				return;
@@ -352,20 +383,29 @@ public class HomeDarknessScript : MonoBehaviour
 		if (!GameGlobals.Eighties && GameGlobals.RivalEliminationID == 0 && !StudentGlobals.GetStudentKidnapped(num) && StudentGlobals.StudentSlave != num && DateGlobals.Weekday == DayOfWeek.Thursday && !HomeGlobals.LateForSchool && StudentGlobals.GetStudentReputation(num) > -100 && buildIndexByScenePath > -1)
 		{
 			SceneManager.LoadScene("WalkToSchoolScene");
+			return;
 		}
-		else if (DateGlobals.Weekday == DayOfWeek.Saturday)
+		if (DateGlobals.Weekday == DayOfWeek.Saturday)
 		{
 			DateGlobals.PassDays = 1;
 			SceneManager.LoadScene("CalendarScene");
+			return;
 		}
-		else if (GameGlobals.ShowAbduction)
+		if (GameGlobals.ShowAbduction)
 		{
 			SceneManager.LoadScene("AbductionScene");
 			GameGlobals.ShowAbduction = false;
+			return;
 		}
-		else
+		if (GameGlobals.Anniversary)
 		{
-			SceneManager.LoadScene("LoadingScene");
+			for (int i = 1; i < 101; i++)
+			{
+				StudentGlobals.SetStudentPhotographed(i, value: true);
+				PlayerGlobals.SetStudentFriend(i, value: true);
+				PlayerGlobals.Friends = 100;
+			}
 		}
+		SceneManager.LoadScene("LoadingScene");
 	}
 }

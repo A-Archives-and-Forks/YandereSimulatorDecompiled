@@ -96,7 +96,7 @@ public class IronMaidenScript : MonoBehaviour
 								Prompt.Yandere.NotificationManager.DisplayNotification(NotificationType.Custom);
 								continue;
 							}
-							if (StudentManager.Students[i].Strength == 9 || StudentManager.Students[i].Teacher)
+							if (StudentManager.Students[i].Teacher)
 							{
 								StudentManager.Students[i].AttackReaction();
 								continue;
